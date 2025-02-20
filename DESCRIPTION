@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Aurélien Nicosia <aurelien.nicosia@mat.ulaval.ca>
 Maintainer: Aurélien Nicosia <aurelien.nicosia@mat.ulaval.ca>
 Description: This package provides functions for estimating densities using the General Linear Blend Frequency Polygon (GLBFP) approach. It includes tools for estimating densities at specific points and across datasets, as well as visualization tools for one and two-dimensional data.
-License: GPL-3
+License: GPL (>= 3)
 Imports: 
     ggplot2,
     plotly,
