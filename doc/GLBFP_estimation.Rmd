@@ -1,0 +1,235 @@
+---
+title: "General Linear Blend Frequency Polygon (GLBFP) density estimation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GLBF_estimation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+Imports:
+    GLBFP
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+# Introduction
+
+The General Linear Blend Frequency Polygon (GLBFP) method is a powerful tool for nonparametric density estimation. This vignette illustrates how to use the key functions in the `GLBFP` package for local and global density estimation, with detailed examples and visualizations. GLBFP is particularly useful for data that require flexible density estimation techniques.
+
+# Local estimation
+
+
+In density estimation, the choice of the bin width $b$ is critical. A small $b$ can lead to overfitting (capturing noise rather than structure), while a large $b$ may oversmooth the data, masking important features. The `GLBFP` package provides tools to select an optimal bin width and apply it effectively.
+
+## Optimal value of $b$
+
+
+To determine the optimal value of $b$, we use the dataset `ashua`, included in the `GLBFP` package, to demonstrate a practical example
+
+```{r, echo=TRUE, message=FALSE}
+library(GLBFP)
+
+# Load the example dataset `ashua` from the package
+data("ashua")  
+
+df = data.frame(level = ashua$level, log_flow = log(ashua$flow))
+head(df)
+```
+The optimal $b$ value can be evaluated using the `compute_bi_optim` function:
+
+```{r}
+compute_bi_optim(df, m = c(1,1))
+```
+This function returns the optimal bin width for each dimension of the dataset, which is critical for accurate density estimation.
+
+## Density estimation at local point
+
+### LBFP
+
+Following the methodology in REF_ARTICLE, we set the bin width as `c(0.19, 0.15)`. The `LBFP` function can be used to estimate the density at a local point
+
+```{r}
+b_ashua <- c(0.19, 0.15)  # Bin width for each dimension 
+x_ashua <- c(round(mean(df$level),2), round(mean(df$log_flow),2)) # single point to evaluate
+
+out <- LBFP(x = x_ashua, data = df, b = b_ashua)
+out
+names(out)
+
+```
+The output is a list containing:
+
+- `estimation`: the density value at `x`.
+- `sd`: the standard error.
+- `IC`: the 95% confidence interval.
+- `b` :the bin width used.
+
+### ASH and GLFBP
+
+Similarly, the user can estimate density at the same point using `ASH` or `GLBFP` functions:
+```{r}
+ASH(x_ashua, df, b_ashua)
+GLBFP(x_ashua, df, b_ashua)
+```
+
+### GLBFP
+The user can use the `GLBFP` function to estimate the density at `x_ashua` point:
+```{r}
+
+```
+The `GLBFP` function allows flexibility in setting shifts for each dimension, which can refine the estimation further:
+```{r}
+GLBFP(x_ashua, df, b_ashua, m = c(5, 8))
+```
+
+# Global estimation
+
+Global density estimation evaluates the density across a grid of points. The `*_estimate` functions in the `GLBFP` package simplify this process.
+
+## Using a Grid
+
+Two approaches are available:
+
+- *Automatic Grid*: Specify `grid_size` (default is 20), and the grid spans the range of each dimension.
+- *Custom Grid*: Provide specific `grid_points`.
+
+Example with default grid size:
+
+```{r}
+
+out <- LBFP_estimate(df, b = b_ashua, grid_size = 20) # default is grid_size = 20
+out
+names(out)
+head(cbind(out$grid, out$densities))
+```
+Example with a custom grid:
+
+```{r}
+
+## grid zoomed in mean +- 1*sd
+
+spec_grid <- list(level = seq(mean(df$level)-sd(df$level),mean(df$level)+sd(df$level),length.out = 10),
+                   log_flow =                   seq(mean(df$log_flow)-sd(df$log_flow),mean(df$log_flow)+sd(df$log_flow),length.out = 10))
+spec_grid
+
+spec_grid_ex <- as.matrix(expand.grid(spec_grid))
+
+out_spec_grid <- LBFP_estimate(df, b = b_ashua, grid_points = spec_grid_ex) # default is grid_size = 20
+out_spec_grid
+names(out_spec_grid)
+head(cbind(out_spec_grid$grid, out_spec_grid$densities))
+
+```
+
+For GLBFP, note that the number of evaluations increases with grid size and shift values. The number of ASH evaluation is:
+
+$$
+gridsize*gridsize* \prod_{i=1}^d (2*m_i)
+$$
+
+
+
+```{r}
+out_GLBFP <- GLBFP::GLBFP_estimate(df, b = b_ashua, m = c(3,3), grid_size = 5) # default is grid_size = 20
+out_GLBFP
+names(out_GLBFP)
+head(cbind(out_GLBFP$grid, out_GLBFP$densities))
+```
+
+
+
+## Visualization¸
+
+For dimensions $d \leq 2$, the `*_estimate` functions include `plot` methods:
+
+```{r}
+
+plot(out, contour = TRUE)
+
+```
+
+```{r}
+plot(out, contour = FALSE)
+```
+
+
+
+# Others examples
+
+
+
+## Example 1: More Complex Example with Autocorrelation
+
+REFERENCE ARTICLE
+
+We simulate autocorrelated data based on a Markov chain scenario to demonstrate the flexibility of the `*_estimate` functions.
+
+```{r, echo=TRUE, message=FALSE}
+library(MASS)  # For generating multivariate normal data
+
+# Define the parameters for the Markov chain
+P <- matrix(c(0.7, 0.2, 0.05, 0.05,
+              0.15, 0.7, 0.1, 0.05,
+              0, 0.15, 0.8, 0.05,
+              0.15, 0.05, 0.2, 0.6),
+            nrow = 4, byrow = TRUE)
+
+# Stationary distribution
+pi_tilde <- c(2/9, 1/3, 1/3, 1/9)
+
+# Means of the bivariate normals
+mu_list <- list(c(-1.5, -1.5),
+                c(-1.5, 1.5),
+                c(1.5, -1.5),
+                c(1.5, 1.5))
+
+# Covariance matrices
+V1 <- V2 <- matrix(c(0.15, 0.0415, 0.0415, 0.25), nrow = 2)
+V3 <- V4 <- matrix(c(0.15, -0.0415, -0.0415, 0.25), nrow = 2)
+V_list <- list(V1, V2, V3, V4)
+
+# Number of realizations to generate
+n <- 1000
+
+# Initialize vectors to store the results
+Y <- numeric(n)
+X <- matrix(0, nrow = n, ncol = 2)
+
+# Generate Y0 from the stationary distribution
+set.seed(123)  # For reproducibility
+Y[1] <- sample(1:4, size = 1, prob = pi_tilde)
+
+# Generate X0 based on Y0
+X[1, ] <- mvrnorm(1, mu = mu_list[[Y[1]]], Sigma = V_list[[Y[1]]])
+
+# Generate the Markov chain and bivariate normals
+for (t in 2:n) {
+  # Generate Y_t based on Y_{t-1}
+  Y[t] <- sample(1:4, size = 1, prob = P[Y[t - 1], ])
+  
+  # Generate X_t based on Y_t
+  X[t, ] <- mvrnorm(1, mu = mu_list[[Y[t]]], Sigma = V_list[[Y[t]]])
+}
+
+# Estimate the density across a grid using estimate_LBFP
+
+
+b <- c(0.075, 0.15)  # Bin width for each dimension
+result <- LBFP_estimate(X, b)
+result2 <- GLBFP_estimate(X, b , m=c(5,5))
+plot(result)
+plot(result2)
+
+
+```
+
+
+
+# Conclusion
+The `GLBFP`` package provides robust tools for density estimation, both locally and globally. Its flexibility in handling different bin widths and shifts makes it suitable for a wide range of applications.
