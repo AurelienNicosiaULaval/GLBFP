@@ -12,7 +12,8 @@ Imports:
     data.table,
     MASS,
     parallel,
-    magrittr
+    magrittr,
+    MASS
 Suggests:
     testthat,
     knitr,
