@@ -1,3 +1,5 @@
+# GLBFP 0.3.0
+
 # GLBFP 0.2.0
 * fix error in ASH and GLBFP functions. 
 
