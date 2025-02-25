@@ -42,8 +42,8 @@ GLBFP <- function(x, data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), 
   delta <- b / m
   
   # Compute minimum and maximum bounds for each dimension
-  a <- min_vals + b/2
-  max_vals <- max_vals + b/2
+  a <- min_vals + delta/2
+  max_vals <- max_vals + delta/2
   
   # Compute the index of the cell containing the point x
   idx <- pmin(pmax(1, floor((x - a) / delta) + 1), sapply(1:d, function(i) length(seq(a[i], max_vals[i], by = delta[i])) - 1))
@@ -64,7 +64,7 @@ GLBFP <- function(x, data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), 
   
   # Compute the midpoint of the current cell
   mid <- a + (idx - 0.5) * delta
-  u <- (x - (mid-(delta/2))) / delta # ajout de (-delta/2) dans la parenthèse
+  u <- (x - (mid-delta/2)) / delta
   
   # Pre-compute weights for all combinations of local indices
   weights <- apply(local_indices_matrix, 1, function(row) {
@@ -78,8 +78,8 @@ GLBFP <- function(x, data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), 
     
     # Compute bounds for each dimension and all local indices
     cell_bounds <- lapply(1:d, function(j) {
-      lower <- x0[j] + (local_indices_matrix[, j] - 0.5) * delta[j]
-      upper <- x0[j] + (local_indices_matrix[, j] + 0.5) * delta[j]
+      lower <- x0[j] + (local_indices_matrix[, j]  - 0.5) * delta[j]
+      upper <- x0[j] + (local_indices_matrix[, j]  + 0.5) * delta[j]
       list(lower = lower, upper = upper)
     })
     
@@ -98,7 +98,6 @@ GLBFP <- function(x, data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), 
     
     # Compute c_j, the contribution of this neighbor
     vector_c <- prod(u^neighbor * (1 - u)^(1 - neighbor))
-    
     return(c(ash_estimation, vector_c))
   })
   
