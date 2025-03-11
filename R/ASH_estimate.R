@@ -10,18 +10,16 @@
 #' @param min_vals Minimum value of initial grid. Default value is the minimum on each column.
 #' @param max_vals Maximum value of initial grid. Default value is the maximum on each column.
 #' @examples
-#' # Example for ASH_estimate function with bivariate normale distribution
-#' data <- as.data.frame(mvrnorm(n = 1000, mu =  c(0, 0), Sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2)))
-#'
+#'  # Example for ASH_estimate function with ashua data
 #' ##  Use of grid_size
 #' b <- c(0.5, 0.5)
-#' out <- ASH_estimate(data, b, grid_size = 30)
+#' out <- ASH_estimate(ashua[,-3], b, grid_size = 30)
 #' out
 #' plot(out)
 #'
 #' ## with a specific grid_points
-#' grid_points <- data.frame(X = seq(-1,1,0.1), Y =  seq(-1,1,0.1))
-#' out <- ASH_estimate(data, b, grid_points = grid_points)
+#' grid_points <- data.frame(expand.grid(seq(200,250,1), seq(29,30,0.1)))
+#' out <- ASH_estimate(ashua[,-3], b, grid_points = grid_points)
 #' out
 #' @return An object of class "ASH_estimate" containing the grid and density estimates.
 #' @export
@@ -60,20 +58,21 @@ ASH_estimate <- function(data, b = compute_bi_optim(data, m = rep(1,  ncol(data)
     grid_points <- as.matrix(expand.grid(grid_points))
   }
 
-  # # compute estimation on each grid points
-
-  estimations <- sapply(1:nrow(grid_points), function(i) {
+  # Compute estimation, sd, and IC on each grid point
+  results <- lapply(1:nrow(grid_points), function(i) {
     point <- as.numeric(grid_points[i, ])
-    ASH(point, data, b, m, min_vals, max_vals)$estimation
+    res <- ASH(point, data, b, m, min_vals, max_vals)
+    c(estimation = res$estimation)
   })
-
-  result <- list(
-    grid = grid_points,
-    densities = estimations,
-    b = b,
-    m = m,
-    grid_size = grid_size
-  )
+  
+  results_mat <- do.call(rbind, results)
+  
+  result <- list(grid = grid_points,
+                 densities = results_mat[, "estimation"],
+                 b = b,
+                 m = m,
+                 grid_size = grid_size)
+  
   class(result) <- "ASH_estimate"
   return(result)
 }

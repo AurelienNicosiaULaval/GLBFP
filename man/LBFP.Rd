@@ -41,12 +41,11 @@ at a single given point. The LBFP is a continuous density estimator inspired by 
 
 }}
 \examples{
-# Example for LBFP function with bivariate normale distribution
-data <- as.data.frame(mvrnorm(n = 1000, mu =  c(0, 0), Sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2)))
-x <- c(0.5, 0.5)
+# Example for GLBFP function with ashua data
+x <- c(200, 30)
 ## with a selected bin width
 b <- c(0.5, 0.5)
-LBFP(x, data, b)
-## with optimal b
-LBFP(x, data)
+LBFP(x, ashua[,-3], b)
+## with optimal b 
+LBFP(x, ashua[,-3])
 }

@@ -10,15 +10,14 @@
 #' @param min_vals Minimum value of initial grid (I_0(k)). Default value is the minimum on each column.
 #' @param max_vals Maximum value of initial grid (I_0(k)). Default value is the maximum on each column.
 #' @examples
-#' # Example for GLBFP function with bivariate normale distribution
-#' data <- as.data.frame(mvrnorm(n = 1000, mu =  c(0, 0), Sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2)))
-#' x <- c(0.5, 0.5)
+#' # Example for GLBFP function with ashua data
+#' x <- c(200, 30)
 #' ## with a selected bin width
 #' b <- c(0.5, 0.5)
 #' m <- c(1,1)
-#' GLBFP(x, data, b, m)
+#' GLBFP(x, ashua[,-3], b, m)
 #' ## with optimal b and shift m=3
-#' GLBFP(x, data, m = c(3,3))
+#' GLBFP(x, ashua[,-3], m = c(3,3))
 #' @return A list containing the estimated density at point `x` using the GLBFP estimator, the bin width vector `b`, the shift vector `m`, the point of estimation `x`, the standard deviation of the estimation and finally 95% confidence interval.
 #' @import data.table
 #' @export

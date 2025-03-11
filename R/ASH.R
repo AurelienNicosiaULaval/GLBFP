@@ -10,15 +10,14 @@
 #' @param max_vals Maximum value of initial grid. Default value is the maximum on each column.
 #' @return A list containing the estimated density at point `x` using the ASH estimator, the bin width vector `b`, the shift vector `m` and `x`
 #' @examples
-#' # Example for ASH function with bivariate normale distribution
-#' data <- as.data.frame(mvrnorm(n = 1000, mu =  c(0, 0), Sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2)))
-#' x <- c(0.5, 0.5)
+#' # Example for ASH function with ashua data
+#' x <- c(200, 30)
 #' ## with a selected bin width
 #' b <- c(0.5, 0.5)
 #' m <- c(1,1)
-#' ASH(x, data, b, m)
+#' ASH(x, ashua[,-3], b, m)
 #' ## with optimal b and shift m=3
-#' ASH(x, data, m = c(3,3))
+#' ASH(x, ashua[,-3], m = c(3,3))
 #' @export
 #'
 ASH <- function(x, data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), m = rep(1,  ncol(data)), min_vals =  apply(data, 2, min), max_vals =  apply(data, 2, max)) {

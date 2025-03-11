@@ -9,18 +9,16 @@
 #' @param min_vals Minimum value of initial grid. Default value is the minimum on each column.
 #' @param max_vals Maximum value of initial grid. Default value is the maximum on each column.
 #' @examples
-#' # Example for LBFP_estimate function with bivariate normale distribution
-#' data <- as.data.frame(mvrnorm(n = 1000, mu =  c(0, 0), Sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2)))
-#'
+#'  # Example for LBFP_estimate function with ashua data
 #' ##  Use of grid_size
 #' b <- c(0.5, 0.5)
-#' out <- LBFP_estimate(data, b, grid_size = 30)
+#' out <- LBFP_estimate(ashua[,-3], b, grid_size = 30)
 #' out
 #' plot(out)
 #'
 #' ## with a specific grid_points
-#' grid_points <- data.frame(X = seq(-1,1,0.1), Y =  seq(-1,1,0.1))
-#' out <- LBFP_estimate(data, b, grid_points = grid_points)
+#' grid_points <- data.frame(expand.grid(seq(200,250,1), seq(29,30,0.1)))
+#' out <- LBFP_estimate(ashua[,-3], b, grid_points = grid_points)
 #' out
 #' @importFrom data.table as.data.table
 #' @return A list containing the estimated density values for each point in the grid, the bin width vector `b`, the grid points and the `grid_size`.
@@ -61,17 +59,22 @@ LBFP_estimate <- function(data, b = compute_bi_optim(data, m = rep(1,  ncol(data
 
 
 
-# compute estimation on each grid points
-  estimations <- sapply(1:nrow(grid_points), function(i) {
+  # Compute estimation, sd, and IC on each grid point
+  results <- lapply(1:nrow(grid_points), function(i) {
     point <- as.numeric(grid_points[i, ])
-    LBFP(point, data, b, min_vals, max_vals)$estimation
+    res <- LBFP(point, data, b, min_vals, max_vals)
+    c(estimation = res$estimation, sd = res$sd, IC_lower = res$IC[1], IC_upper = res$IC[2])
   })
-
-
+  
+  results_mat <- do.call(rbind, results)
+  
   result <- list(grid = grid_points,
-                 densities = estimations,
+                 densities = results_mat[, "estimation"],
+                 sd = results_mat[, "sd"],
+                 IC = results_mat[, c("IC_lower", "IC_upper")],
                  b = b,
                  grid_size = grid_size)
+  
   class(result) <- "LBFP_estimate"
   return(result)
 }

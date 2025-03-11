@@ -56,17 +56,15 @@ Plot the LBFP density estimate for 1D or 2D datasets.
 
 }}
 \examples{
-# Example for LBFP_estimate function with bivariate normale distribution
-data <- as.data.frame(mvrnorm(n = 1000, mu =  c(0, 0), Sigma = matrix(c(1, 0.5, 0.5, 1), nrow = 2)))
-
+ # Example for LBFP_estimate function with ashua data
 ##  Use of grid_size
 b <- c(0.5, 0.5)
-out <- LBFP_estimate(data, b, grid_size = 30)
+out <- LBFP_estimate(ashua[,-3], b, grid_size = 30)
 out
 plot(out)
 
 ## with a specific grid_points
-grid_points <- data.frame(X = seq(-1,1,0.1), Y =  seq(-1,1,0.1))
-out <- LBFP_estimate(data, b, grid_points = grid_points)
+grid_points <- data.frame(expand.grid(seq(200,250,1), seq(29,30,0.1)))
+out <- LBFP_estimate(ashua[,-3], b, grid_points = grid_points)
 out
 }
