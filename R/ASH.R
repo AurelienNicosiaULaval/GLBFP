@@ -101,14 +101,15 @@ ASH <- function(x, data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), m 
 
 #' @describeIn ASH Print method for object of class \code{"ASH"}
 #' @method print ASH
-#' @param obj object of class \code{"ASH"}
+#' @param x object of class \code{"ASH"}
+#' @param ... Additional arguments (unused).
 #' @export
 #' @keywords internal
-print.ASH <- function(obj) {
+print.ASH <- function(x, ...) {
   cat("ASH Density Estimation:\n")
-  cat("Point of estimation:", paste0("(", paste(obj$x, collapse = ", "), ")"), "\n")
-  cat("Estimated density:", obj$estimation, "\n")
-  cat("Bandwidths (b):", paste(obj$b, collapse = ", "), "\n")
-  cat("Shifts (m):", paste(obj$m, collapse = ", "), "\n")
+  cat("Point of estimation:", paste0("(", paste(x$x, collapse = ", "), ")"), "\n")
+  cat("Estimated density:", x$estimation, "\n")
+  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
+  cat("Shifts (m):", paste(x$m, collapse = ", "), "\n")
 }
 

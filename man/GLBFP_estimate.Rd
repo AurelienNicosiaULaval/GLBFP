@@ -16,9 +16,9 @@ GLBFP_estimate(
   max_vals = apply(data, 2, max)
 )
 
-\method{print}{GLBFP_estimate}(obj)
+\method{print}{GLBFP_estimate}(x, ...)
 
-\method{plot}{GLBFP_estimate}(obj, contour = FALSE, ...)
+\method{plot}{GLBFP_estimate}(x, contour = FALSE, ...)
 }
 \arguments{
 \item{data}{Matrix or data frame of observations (n rows, d columns).}
@@ -35,7 +35,7 @@ GLBFP_estimate(
 
 \item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
 
-\item{obj}{The list object returned by the `GLBFP_estimate` function.}
+\item{x}{The list object returned by the `GLBFP_estimate` function.}
 
 \item{contour}{logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.}
 

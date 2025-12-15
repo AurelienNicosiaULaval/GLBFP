@@ -84,32 +84,33 @@ LBFP_estimate <- function(data, b = compute_bi_optim(data, m = rep(1,  ncol(data
 #'
 #' Print the density estimates calculated by the `LBFP_estimate` function.
 #'
-#' @param obj The list object returned by the `LBFP_estimate` function.
+#' @param x The list object returned by the `LBFP_estimate` function.
+#' @param ... Additional arguments (unused).
 #' @export
-print.LBFP_estimate <- function(obj) {
+print.LBFP_estimate <- function(x, ...) {
   cat("LBFP Density Estimation on Grid:\n")
-  cat("Grid size:", obj$grid_size, "\n")
-  cat("Bandwidths (b):", paste(obj$b, collapse = ", "), "\n")
-  cat("Number of estimated densities:", length(obj$densities), "\n")
+  cat("Grid size:", x$grid_size, "\n")
+  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
+  cat("Number of estimated densities:", length(x$densities), "\n")
 }
 
 #' @describeIn LBFP_estimate Plot object of class \code{"LBFP_estimate"}
 #'
 #' Plot the LBFP density estimate for 1D or 2D datasets.
 #'
-#' @param obj The list object returned by the `LBFP_estimate` function.
+#' @param x The list object returned by the `LBFP_estimate` function.
 #' @param contour logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.
 #' @param ... Additional arguments for customization.
 #' @importFrom magrittr %>%
 #' @export
-plot.LBFP_estimate <- function(obj, contour = FALSE, ... ) {
-  if (!is.list(obj) || !"densities" %in% names(obj) || !"grid" %in% names(obj)) {
+plot.LBFP_estimate <- function(x, contour = FALSE, ... ) {
+  if (!is.list(x) || !"densities" %in% names(x) || !"grid" %in% names(x)) {
     stop("Invalid LBFP_estimate object. Expected a list with 'estimations' and 'grid' components.")
   }
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("The ggplot2 package is required for plotting. Please install it.")
   }
-  data <- obj$grid
+  data <- x$grid
   if (!is.matrix(data) && !is.data.frame(data)) {
     stop("grid must be a matrix or data frame.")
   }
@@ -120,7 +121,7 @@ plot.LBFP_estimate <- function(obj, contour = FALSE, ... ) {
 
   if (d == 1) {
     # 1D plot of density estimates using ggplot2
-    df <- data.frame(Values = obj$grid, Density = obj$densities)
+    df <- data.frame(Values = x$grid, Density = x$densities)
     p <- ggplot2::ggplot(df, ggplot2::aes(x = Values, y = Density)) +
       ggplot2::geom_line(color = "blue") +
       ggplot2::geom_point(color = "red") +
@@ -136,7 +137,7 @@ plot.LBFP_estimate <- function(obj, contour = FALSE, ... ) {
       stop("The plotly package is required for 3D plotting. Please install it.")
     }
     if (contour) {
-      df <- data.frame(x = obj$grid[, 1], y = obj$grid[, 2], z = obj$densities)
+      df <- data.frame(x = x$grid[, 1], y = x$grid[, 2], z = x$densities)
       # Contour plot using ggplot2
       p <- ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, z = z)) +
         ggplot2::geom_contour_filled() +
@@ -148,9 +149,9 @@ plot.LBFP_estimate <- function(obj, contour = FALSE, ... ) {
       print(p)
     } else {
       # 3D Plot using plotly
-      x_val <- unique(obj$grid[,1])
-      y_val <- unique(obj$grid[,2])
-      z_val <-matrix(obj$densities, nrow = obj$grid_size, ncol = obj$grid_size)
+      x_val <- unique(x$grid[,1])
+      y_val <- unique(x$grid[,2])
+      z_val <-matrix(x$densities, nrow = x$grid_size, ncol = x$grid_size)
       plotly::plot_ly() %>%
         plotly::add_surface(x = ~x_val, y = ~y_val, z = ~z_val) %>%
         plotly::layout(scene = list(

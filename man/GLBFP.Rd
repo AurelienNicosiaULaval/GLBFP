@@ -14,7 +14,7 @@ GLBFP(
   max_vals = apply(data, 2, max)
 )
 
-\method{print}{GLBFP}(obj, ...)
+\method{print}{GLBFP}(x, ...)
 }
 \arguments{
 \item{x}{Numeric vector representing the point where the density is to be estimated.}
