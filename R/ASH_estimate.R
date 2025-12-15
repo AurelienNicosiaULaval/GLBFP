@@ -77,94 +77,42 @@ ASH_estimate <- function(data, b = compute_bi_optim(data, m = rep(1,  ncol(data)
   return(result)
 }
 
-#' @describeIn ASH_estimate Print method for object of class \code{"ASH_estimate"}
-#' Print the density estimates calculated by the `ASH_estimate` function.
-#'
-#' @param obj The list object returned by the `ASH_estimate` function.
-#' @export
-print.ASH_estimate <- function(obj) {
-  cat("ASH Density Estimation on Grid:\n")
-  cat("Grid size:", obj$grid_size, "\n")
-  cat("Bandwidths (b):", paste(obj$b, collapse = ", "), "\n")
-  cat("Shifts (m):", paste(obj$m, collapse = ", "), "\n")
-  cat("Number of estimated densities:", length(obj$densities), "\n")
-}
-
-#' @describeIn ASH_estimate Plot method for object of class \code{"ASH_estimate"}
-#' Plot the ASH density estimate for 1D or 2D datasets.
-#'
-#' @param obj The list object returned by the `ASH_estimate` function.
-#' @param contour logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.
-#' @param ... Additional arguments for customization.
-#' @export
-plot.ASH_estimate <- function(obj, contour = FALSE, ...) {
-  d <- ncol(obj$grid)
-  if (d == 1) {
-    df <- data.frame(grid = obj$grid[, 1], density = obj$densities)
-    ggplot2::ggplot(df, aes(x = grid, y = density)) +
-      geom_line() +
-      labs(title = "ASH Density Estimation", x = "Grid", y = "Density")
-  } else if (d == 2) {
-    df <- data.frame(x = obj$grid[, 1], y = obj$grid[, 2], z = obj$densities)
-    if (contour) {
-      ggplot2::ggplot(df, aes(x = x, y = y, z = z)) +
-        geom_contour_filled() +
-        labs(title = "ASH Density Estimation", x = "X", y = "Y")
-    } else {
-      x_val <- unique(obj$grid[,1])
-      y_val <- unique(obj$grid[,2])
-      z_val <-  matrix(obj$densities, nrow = obj$grid_size, ncol = obj$grid_size)
-      plotly::plot_ly() %>%
-        plotly::add_surface(x = ~x_val, y = ~y_val, z = ~z_val) %>%
-        plotly::layout(scene = list(
-          xaxis = list(title = colnames(data)[1]),
-          yaxis = list(title = colnames(data)[2]),
-          zaxis = list(title = "Estimated density")
-        ))
-    }
-  } else {
-    stop("Plotting is only supported for d <= 2.")
-  }
-}
-
-
-
-
 #' @describeIn ASH_estimate Print object of class \code{"ASH_estimate"}
-#' @param obj Object form \code{ASH_estimate} to print
+#' @param x Object form \code{ASH_estimate} to print
+#' @param ... Additional arguments (unused).
 #' @method print ASH_estimate
 #' @export
-print.ASH_estimate <- function(obj, ...) {
+print.ASH_estimate <- function(x, ...) {
   cat("ASH Density Estimation on Grid:\n")
-  cat("Grid size:", obj$grid_size, "\n")
-  cat("Bandwidths (b):", paste(obj$b, collapse = ", "), "\n")
-  cat("Shifts (m):", paste(obj$m, collapse = ", "), "\n")
-  cat("Number of estimated densities:", length(obj$densities), "\n")
+  cat("Grid size:", x$grid_size, "\n")
+  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
+  cat("Shifts (m):", paste(x$m, collapse = ", "), "\n")
+  cat("Number of estimated densities:", length(x$densities), "\n")
 }
 
 #' @describeIn ASH_estimate Plot object of class \code{"ASH_estimate"}
-#' @param obj Object form \code{ASH_estimate} to plot
+#' @param x Object form \code{ASH_estimate} to plot
 #' @param contour Logical to plot contour plot or interactive 3D plot. Default is FALSE (3D plot)
 #' @method plot ASH_estimate
 #' @export
-plot.ASH_estimate <- function(obj, contour = FALSE, ...) {
-  d <- ncol(obj$grid)
+plot.ASH_estimate <- function(x, contour = FALSE, ...) {
+  d <- ncol(x$grid)
   if (d == 1) {
-    df <- data.frame(grid = obj$grid[, 1], density = obj$densities)
+    df <- data.frame(grid = x$grid[, 1], density = x$densities)
     ggplot2::ggplot(df,  ggplot2::aes(x = grid, y = density)) +
       ggplot2::geom_line() +
       ggplot2::labs(title = "ASH Density Estimation", x = "Grid", y = "Density")
   } else if (d == 2) {
-    df <- data.frame(x = obj$grid[, 1], y = obj$grid[, 2], z = obj$densities)
+    df <- data.frame(x = x$grid[, 1], y = x$grid[, 2], z = x$densities)
     if (contour) {
       ggplot2::ggplot(df,  ggplot2::aes(x = x, y = y, z = z)) +
         ggplot2::geom_contour_filled() +
         ggplot2::labs(title = "ASH Density Estimation",  x = colnames(data)[1],
                       y = colnames(data)[2])
     } else {
-      x_val <- unique(obj$grid[,1])
-      y_val <- unique(obj$grid[,2])
-      z_val <-  matrix(obj$densities, nrow = obj$grid_size, ncol = obj$grid_size)
+      x_val <- unique(x$grid[,1])
+      y_val <- unique(x$grid[,2])
+      z_val <-  matrix(x$densities, nrow = x$grid_size, ncol = x$grid_size)
       plotly::plot_ly() %>%
         plotly::add_surface(x = ~x_val, y = ~y_val, z = ~z_val) %>%
         plotly::layout(scene = list(

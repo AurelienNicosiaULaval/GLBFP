@@ -88,45 +88,46 @@ GLBFP_estimate <- function(data, b = compute_bi_optim(data, m = rep(1,  ncol(dat
 #' @describeIn GLBFP_estimate print method for object of class \code{GLBFP_estimate}
 #' Print the density estimates calculated by the `GLBFP_estimate` function.
 #'
-#' @param obj The list object returned by the `GLBFP_estimate` function.
+#' @param x The list object returned by the `GLBFP_estimate` function.
+#' @param ... Additional arguments (unused).
 #' @export
-print.GLBFP_estimate <- function(obj) {
+print.GLBFP_estimate <- function(x, ...) {
   cat("GLBFP Density Estimation on Grid:\n")
-  cat("Grid size:", obj$grid_size, "\n")
-  cat("Bandwidths (b):", paste(obj$b, collapse = ", "), "\n")
-  cat("Shifts (m):", paste(obj$m, collapse = ", "), "\n")
-  cat("Number of estimated densities:", length(obj$densities), "\n")
+  cat("Grid size:", x$grid_size, "\n")
+  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
+  cat("Shifts (m):", paste(x$m, collapse = ", "), "\n")
+  cat("Number of estimated densities:", length(x$densities), "\n")
 }
 
 #' @describeIn GLBFP_estimate plot method for object of class \code{GLBFP_estimate}
 #' Plot the GLBFP density estimate for 1D or 2D datasets.
 #'
-#' @param obj The list object returned by the `GLBFP_estimate` function.
+#' @param x The list object returned by the `GLBFP_estimate` function.
 #' @param contour logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.
 #' @param ... Additional arguments for customization.
 #' @export
-plot.GLBFP_estimate <- function(obj, contour = FALSE, ...) {
-  d <- ncol(obj$grid)
-  col_names <- obj$col_names
+plot.GLBFP_estimate <- function(x, contour = FALSE, ...) {
+  d <- ncol(x$grid)
+  col_names <- x$col_names
   if (is.null(col_names)) {
     col_names <- paste0("V", seq_len(d))
   }
   if (d == 1) {
-    df <- data.frame(grid = obj$grid[, 1], density = obj$densities)
+    df <- data.frame(grid = x$grid[, 1], density = x$densities)
     ggplot2::ggplot(df,  ggplot2::aes(x = grid, y = density)) +
       ggplot2::geom_line() +
       ggplot2::labs(title = "GLBFP Density Estimation", x = col_names[1], y = "Density")
   } else if (d == 2) {
-    df <- data.frame(x = obj$grid[, 1], y = obj$grid[, 2], z = obj$densities)
+    df <- data.frame(x = x$grid[, 1], y = x$grid[, 2], z = x$densities)
     if (contour) {
       ggplot2::ggplot(df,  ggplot2::aes(x = x, y = y, z = z)) +
         ggplot2::geom_contour_filled() +
         ggplot2::labs(title = "GLBFP Density Estimation", x = col_names[1],
                       y = col_names[2])
     } else {
-      x_val <- unique(obj$grid[,1])
-      y_val <- unique(obj$grid[,2])
-      z_val <-  matrix(obj$densities, nrow = obj$grid_size, ncol = obj$grid_size)
+      x_val <- unique(x$grid[,1])
+      y_val <- unique(x$grid[,2])
+      z_val <-  matrix(x$densities, nrow = x$grid_size, ncol = x$grid_size)
       plotly::plot_ly() %>%
         plotly::add_surface(x = ~x_val, y = ~y_val, z = ~z_val) %>%
         plotly::layout(scene = list(

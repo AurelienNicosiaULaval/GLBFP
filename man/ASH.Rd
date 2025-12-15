@@ -14,7 +14,7 @@ ASH(
   max_vals = apply(data, 2, max)
 )
 
-\method{print}{ASH}(obj)
+\method{print}{ASH}(x, ...)
 }
 \arguments{
 \item{x}{Numeric vector representing the point at which to estimate density.}
@@ -29,7 +29,7 @@ ASH(
 
 \item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
 
-\item{obj}{object of class \code{"ASH"}}
+\item{x}{object of class \code{"ASH"}}
 }
 \value{
 A list containing the estimated density at point `x` using the ASH estimator, the bin width vector `b`, the shift vector `m` and `x`

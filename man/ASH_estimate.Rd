@@ -16,13 +16,9 @@ ASH_estimate(
   max_vals = apply(data, 2, max)
 )
 
-\method{print}{ASH_estimate}(obj, ...)
+\method{print}{ASH_estimate}(x, ...)
 
-\method{plot}{ASH_estimate}(obj, contour = FALSE, ...)
-
-\method{print}{ASH_estimate}(obj, ...)
-
-\method{plot}{ASH_estimate}(obj, contour = FALSE, ...)
+\method{plot}{ASH_estimate}(x, contour = FALSE, ...)
 }
 \arguments{
 \item{data}{Matrix or data frame of observations (n rows, d columns).}
@@ -39,7 +35,7 @@ ASH_estimate(
 
 \item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
 
-\item{obj}{Object form \code{ASH_estimate} to plot}
+\item{x}{Object from \code{ASH_estimate} to plot}
 
 \item{...}{Additional arguments for customization.}
 
@@ -53,12 +49,6 @@ Computes ASH density estimates on a regular grid.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{print(ASH_estimate)}: Print method for object of class \code{"ASH_estimate"}
-Print the density estimates calculated by the `ASH_estimate` function.
-
-\item \code{plot(ASH_estimate)}: Plot method for object of class \code{"ASH_estimate"}
-Plot the ASH density estimate for 1D or 2D datasets.
-
 \item \code{print(ASH_estimate)}: Print object of class \code{"ASH_estimate"}
 
 \item \code{plot(ASH_estimate)}: Plot object of class \code{"ASH_estimate"}

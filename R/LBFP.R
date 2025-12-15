@@ -100,13 +100,14 @@ LBFP <- function(x, data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), m
 
 #' @describeIn LBFP Print object of class \code{"LBFP"}
 #' @method print LBFP
-#' @param obj Object form \code{LBFP} to print
+#' @param x Object from \code{LBFP} to print
+#' @param ... Additional arguments (unused).
 #' @export
-print.LBFP <- function(obj) {
+print.LBFP <- function(x, ...) {
   cat("LBFP Density Estimation:\n")
-  cat("Point of estimation:", paste0("(", paste(obj$x, collapse = ", "), ")"), "\n")
-  cat("Estimated density:", obj$estimation,"\n")
-  cat("Estimated standard error",obj$sd, "\n")
-  cat("95% confidence interval:",obj$IC,"\n")
-  cat("Bandwidths (b):", paste(obj$b, collapse = ", "), "\n")
+  cat("Point of estimation:", paste0("(", paste(x$x, collapse = ", "), ")"), "\n")
+  cat("Estimated density:", x$estimation,"\n")
+  cat("Estimated standard error",x$sd, "\n")
+  cat("95% confidence interval:",x$IC,"\n")
+  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
 }
