@@ -26,7 +26,9 @@ LBFP(
 
 \item{max_vals}{Maximum value of initial grid (I_0(k)). Default value is the maximum on each column.}
 
-\item{x}{Object from \code{LBFP} to print}
+\item{object}{Object from \code{LBFP} to print.}
+
+\item{...}{Additional arguments (unused).}
 }
 \value{
 A list containing the estimated density at point x using the LBFP estimator, the bin width vector b, the standard deviation of the estimation and finally 95% confidence interval.

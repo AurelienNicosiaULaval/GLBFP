@@ -130,15 +130,15 @@ GLBFP <- function(x, data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), 
 
 #' @describeIn GLBFP print method for object of class "GLBFP"
 #' @method print GLBFP
-#' @param x Object returned by \code{GLBFP}.
+#' @param object Object returned by \code{GLBFP}.
 #' @param ... Additional arguments (unused).
 #' @export
-print.GLBFP <- function(x, ...) {
+print.GLBFP <- function(object, ...) {
   cat("GLBFP Density Estimation:\n")
-  cat("Point of estimation:", paste0("(", paste(x$x, collapse = ", "), ")"), "\n")
-  cat("Estimated density:", x$estimation, "\n")
-  cat("Estimated standard error",x$sd, "\n")
-  cat("95% confidence interval:",x$IC,"\n")
-  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
-  cat("Shifts (m):", paste(x$m, collapse = ", "), "\n")
+  cat("Point of estimation:", paste0("(", paste(object$x, collapse = ", "), ")"), "\n")
+  cat("Estimated density:", object$estimation, "\n")
+  cat("Estimated standard error",object$sd, "\n")
+  cat("95% confidence interval:",object$IC,"\n")
+  cat("Bandwidths (b):", paste(object$b, collapse = ", "), "\n")
+  cat("Shifts (m):", paste(object$m, collapse = ", "), "\n")
 }

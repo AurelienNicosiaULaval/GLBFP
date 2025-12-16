@@ -29,7 +29,9 @@ ASH(
 
 \item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
 
-\item{x}{object of class \code{"ASH"}}
+\item{object}{Object of class \code{"ASH"}.}
+
+\item{...}{Additional arguments (unused).}
 }
 \value{
 A list containing the estimated density at point `x` using the ASH estimator, the bin width vector `b`, the shift vector `m` and `x`

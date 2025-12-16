@@ -28,6 +28,10 @@ GLBFP(
 \item{min_vals}{Minimum value of initial grid (I_0(k)). Default value is the minimum on each column.}
 
 \item{max_vals}{Maximum value of initial grid (I_0(k)). Default value is the maximum on each column.}
+
+\item{object}{Object returned by \code{GLBFP}.}
+
+\item{...}{Additional arguments (unused).}
 }
 \value{
 A list containing the estimated density at point `x` using the GLBFP estimator, the bin width vector `b`, the shift vector `m`, the point of estimation `x`, the standard deviation of the estimation and finally 95% confidence interval.
