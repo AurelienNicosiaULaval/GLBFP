@@ -1,4 +1,5 @@
 # GLBFP
+[![DOI](https://zenodo.org/badge/936140873.svg)](https://doi.org/10.5281/zenodo.17945962)
 
 **GLBFP** is an R package designed for estimating densities using the General Linear Blend Frequency Polygon (GLBFP) approach. It includes tools for estimating densities at specific points and across datasets, as well as visualization tools for one and two-dimensional data..
 
