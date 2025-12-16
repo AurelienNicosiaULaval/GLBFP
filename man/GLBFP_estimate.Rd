@@ -37,9 +37,9 @@ GLBFP_estimate(
 
 \item{x}{The list object returned by the `GLBFP_estimate` function.}
 
-\item{contour}{logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.}
-
 \item{...}{Additional arguments for customization.}
+
+\item{contour}{logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.}
 }
 \value{
 An object of class "GLBFP_estimate" containing the grid and density estimates.

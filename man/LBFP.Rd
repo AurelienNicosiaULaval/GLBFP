@@ -16,7 +16,7 @@ LBFP(
 \method{print}{LBFP}(x, ...)
 }
 \arguments{
-\item{x}{Numeric vector representing the point where the density is to be estimated.}
+\item{x}{Object from \code{LBFP} to print.}
 
 \item{data}{Numeric matrix or data frame representing the dataset. Each row is an observation.}
 
@@ -25,8 +25,6 @@ LBFP(
 \item{min_vals}{Minimum value of initial grid (I_0(k)). Default value is the minimum on each column.}
 
 \item{max_vals}{Maximum value of initial grid (I_0(k)). Default value is the maximum on each column.}
-
-\item{object}{Object from \code{LBFP} to print.}
 
 \item{...}{Additional arguments (unused).}
 }
@@ -48,6 +46,6 @@ x <- c(200, 30)
 ## with a selected bin width
 b <- c(0.5, 0.5)
 LBFP(x, ashua[,-3], b)
-## with optimal b 
+## with optimal b
 LBFP(x, ashua[,-3])
 }

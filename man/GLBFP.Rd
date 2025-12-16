@@ -17,7 +17,7 @@ GLBFP(
 \method{print}{GLBFP}(x, ...)
 }
 \arguments{
-\item{x}{Numeric vector representing the point where the density is to be estimated.}
+\item{x}{Object returned by \code{GLBFP}.}
 
 \item{data}{Numeric matrix or data frame representing the dataset. Each row is an observation.}
 
@@ -28,8 +28,6 @@ GLBFP(
 \item{min_vals}{Minimum value of initial grid (I_0(k)). Default value is the minimum on each column.}
 
 \item{max_vals}{Maximum value of initial grid (I_0(k)). Default value is the maximum on each column.}
-
-\item{object}{Object returned by \code{GLBFP}.}
 
 \item{...}{Additional arguments (unused).}
 }

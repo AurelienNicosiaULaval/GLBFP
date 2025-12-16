@@ -17,7 +17,7 @@ ASH(
 \method{print}{ASH}(x, ...)
 }
 \arguments{
-\item{x}{Numeric vector representing the point at which to estimate density.}
+\item{x}{Object of class \code{"ASH"}.}
 
 \item{data}{Matrix or data frame of observations (n rows, d columns).}
 
@@ -28,8 +28,6 @@ ASH(
 \item{min_vals}{Minimum value of initial grid. Default value is the minimum on each column.}
 
 \item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
-
-\item{object}{Object of class \code{"ASH"}.}
 
 \item{...}{Additional arguments (unused).}
 }

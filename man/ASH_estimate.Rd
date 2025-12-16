@@ -35,9 +35,9 @@ ASH_estimate(
 
 \item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
 
-\item{x}{Object from \code{ASH_estimate} to plot}
+\item{x}{Object form \code{ASH_estimate} to plot}
 
-\item{...}{Additional arguments for customization.}
+\item{...}{Additional arguments (unused).}
 
 \item{contour}{Logical to plot contour plot or interactive 3D plot. Default is FALSE (3D plot)}
 }

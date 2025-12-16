@@ -34,9 +34,9 @@ LBFP_estimate(
 
 \item{x}{The list object returned by the `LBFP_estimate` function.}
 
-\item{contour}{logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.}
-
 \item{...}{Additional arguments for customization.}
+
+\item{contour}{logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.}
 }
 \value{
 A list containing the estimated density values for each point in the grid, the bin width vector `b`, the grid points and the `grid_size`.
