@@ -1,0 +1,48 @@
+---
+title: "GLBFP: General Linear Blend Frequency Polygon Density Estimation in R"
+format: html
+---
+
+## Abstract
+
+One paragraph on motivation, contribution, and practical scope.
+
+## 1. Introduction
+
+- Problem setting and nonparametric density estimation context.
+- Why GLBFP/LBFP/ASH in practice.
+- Package goals and user audience.
+
+## 2. Package design
+
+- Core API (`ASH`, `LBFP`, `GLBFP`, and `*_estimate`).
+- Object model and S3 methods (`print`, `plot`, `summary`, `predict`).
+- Input validation and numerical robustness strategy.
+
+## 3. Reproducible examples
+
+- Quick 1D example.
+- Quick 2D example.
+- Practical parameter guidance (`b`, `m`, grid size).
+
+## 4. Empirical validation
+
+- Simulation scenarios (S1-S5).
+- ISE/MISE comparison vs KDE.
+- Runtime comparison.
+- Sensitivity analysis.
+
+## 5. Limitations and future work
+
+- Scalability in higher dimension.
+- Adaptive bandwidths and possible extensions.
+
+## 6. Conclusion
+
+- Summary of package contribution.
+- Practical takeaways.
+
+## Reproducibility appendix
+
+- Session info.
+- Benchmark scripts under `inst/bench`.

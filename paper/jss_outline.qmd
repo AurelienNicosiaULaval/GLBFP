@@ -1,0 +1,63 @@
+---
+title: "GLBFP: A Reproducible R Implementation of General Linear Blend Frequency Polygon Estimators"
+format: html
+---
+
+## Abstract
+
+Long-form abstract with algorithmic and software emphasis.
+
+## 1. Introduction
+
+- Statistical background.
+- Related density estimators.
+- Positioning of GLBFP.
+
+## 2. Methodological background
+
+- ASH and LBFP recap.
+- GLBFP formulation and notation.
+- Bandwidth/shift selection principles.
+
+## 3. Software architecture
+
+- Package structure.
+- Core algorithms and complexity considerations.
+- S3 object interfaces and extension points.
+
+## 4. Numerical stability and implementation details
+
+- Input validation strategy.
+- Covariance stabilization in `compute_bi_optim`.
+- Grid construction and handling of irregular grids.
+
+## 5. Validation study
+
+- Simulation design (S1-S5).
+- ISE/MISE estimation details.
+- Runtime protocol and hardware notes.
+
+## 6. Results
+
+- Accuracy tables.
+- Runtime tables.
+- Parameter sensitivity and robustness tests.
+
+## 7. Real-data illustration
+
+- `ashua` dataset setup.
+- Practical interpretation of estimates.
+
+## 8. Reproducibility and packaging
+
+- How to rerun all scripts.
+- CI/check strategy.
+- CRAN-readiness notes.
+
+## 9. Discussion
+
+- Strengths, limitations, and roadmap.
+
+## Appendix A: Additional derivations
+
+## Appendix B: Extended benchmark tables
