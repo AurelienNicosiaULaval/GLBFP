@@ -1,0 +1,7 @@
+linters: linters_with_defaults(
+  line_length_linter = line_length_linter(100)
+)
+
+exclusions: list(
+  "R/K(mi).R"
+)
