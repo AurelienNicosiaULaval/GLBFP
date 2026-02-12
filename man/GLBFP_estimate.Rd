@@ -4,7 +4,7 @@
 \alias{GLBFP_estimate}
 \alias{print.GLBFP_estimate}
 \alias{plot.GLBFP_estimate}
-\title{GLBFP Estimate for Grid}
+\title{GLBFP density estimation on a grid}
 \usage{
 GLBFP_estimate(
   data,
@@ -21,51 +21,45 @@ GLBFP_estimate(
 \method{plot}{GLBFP_estimate}(x, contour = FALSE, ...)
 }
 \arguments{
-\item{data}{Matrix or data frame of observations (n rows, d columns).}
+\item{data}{Numeric matrix or data frame of observations (\verb{n x d}).}
 
-\item{b}{Numeric vector of bandwidths for each dimension (length d).}
+\item{b}{Positive numeric vector of bandwidths (length \code{d}).}
 
-\item{m}{Numeric vector of shifts for each dimension (length d).}
+\item{m}{Positive integer vector of shifts (length \code{d}).}
 
-\item{grid_size}{Integer specifying the number of grid points per dimension.}
+\item{grid_size}{Integer number of grid points per dimension when
+\code{grid_points = NULL}.}
 
-\item{grid_points}{Numeric matrix of data framne as the grid to use to estimate LBFP estimator on each points of the grid. Default is NULL, in this case a grid is created from minimum to maximum on each dimension with step `grid_size`.}
+\item{grid_points}{Optional matrix/data frame of explicit evaluation points.}
 
-\item{min_vals}{Minimum value of initial grid. Default value is the minimum on each column.}
+\item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
-\item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
+\item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
 
-\item{x}{The list object returned by the `GLBFP_estimate` function.}
+\item{x}{Object returned by \code{\link[=GLBFP_estimate]{GLBFP_estimate()}}.}
 
-\item{...}{Additional arguments for customization.}
+\item{...}{Additional arguments (unused).}
 
-\item{contour}{logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.}
+\item{contour}{If \code{TRUE}, draw a contour-like 2D representation for 2D data.}
 }
 \value{
-An object of class "GLBFP_estimate" containing the grid and density estimates.
+A list with class \code{c("glbfp_grid", "GLBFP_estimate")} containing
+grid coordinates, densities, uncertainty estimates, and grid metadata.
 }
 \description{
-Computes GLBFP density estimates on a regular grid.
+Computes GLBFP density estimates on a regular or user-supplied grid.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{print(GLBFP_estimate)}: print method for object of class \code{GLBFP_estimate}
-Print the density estimates calculated by the `GLBFP_estimate` function.
+\item \code{print(GLBFP_estimate)}: Print method for object of class \code{"GLBFP_estimate"}.
 
-\item \code{plot(GLBFP_estimate)}: plot method for object of class \code{GLBFP_estimate}
-Plot the GLBFP density estimate for 1D or 2D datasets.
+\item \code{plot(GLBFP_estimate)}: Plot method for object of class \code{"GLBFP_estimate"}.
 
 }}
 \examples{
- # Example for GLBFP_estimate function with ashua data
-##  Use of grid_size
 b <- c(0.5, 0.5)
-out <- GLBFP_estimate(ashua[,-3], b, grid_size = 30)
+out <- GLBFP_estimate(ashua[, -3], b = b, m = c(1, 1), grid_size = 15)
 out
-plot(out)
+plot(out, contour = TRUE)
 
-## with a specific grid_points
-grid_points <- data.frame(expand.grid(seq(200,250,1), seq(29,30,0.1)))
-out <- GLBFP_estimate(ashua[,-3], b, grid_points = grid_points)
-out
 }

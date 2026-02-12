@@ -4,7 +4,7 @@
 \alias{LBFP_estimate}
 \alias{print.LBFP_estimate}
 \alias{plot.LBFP_estimate}
-\title{LBFP Density Estimator}
+\title{LBFP density estimation on a grid}
 \usage{
 LBFP_estimate(
   data,
@@ -20,51 +20,43 @@ LBFP_estimate(
 \method{plot}{LBFP_estimate}(x, contour = FALSE, ...)
 }
 \arguments{
-\item{data}{Numeric matrix or data frame representing the dataset. Each row is an observation.}
+\item{data}{Numeric matrix or data frame of observations (\verb{n x d}).}
 
-\item{b}{Numeric vector representing the bin width for each dimension. Default is optimal bi calculated using \code{compute_bi_optim}.}
+\item{b}{Positive numeric vector of bandwidths (length \code{d}).}
 
-\item{grid_size}{Size of the grid for each dimension. Default is 20.}
+\item{grid_size}{Integer number of grid points per dimension when
+\code{grid_points = NULL}.}
 
-\item{grid_points}{Numeric matrix of data framne as the grid to use to estimate LBFP estimator on each points of the grid. Default is NULL, in this case a grid is created from minimum to maximum on each dimension with step `grid_size`.}
+\item{grid_points}{Optional matrix/data frame of explicit evaluation points.}
 
-\item{min_vals}{Minimum value of initial grid. Default value is the minimum on each column.}
+\item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
-\item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
+\item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
 
-\item{x}{The list object returned by the `LBFP_estimate` function.}
+\item{x}{Object returned by \code{\link[=LBFP_estimate]{LBFP_estimate()}}.}
 
-\item{...}{Additional arguments for customization.}
+\item{...}{Additional arguments (unused).}
 
-\item{contour}{logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.}
+\item{contour}{If \code{TRUE}, draw a contour-like 2D representation for 2D data.}
 }
 \value{
-A list containing the estimated density values for each point in the grid, the bin width vector `b`, the grid points and the `grid_size`.
+A list with class \code{c("glbfp_grid", "LBFP_estimate")} containing
+grid coordinates, densities, uncertainty estimates, and grid metadata.
 }
 \description{
-This function computes the LBFP density estimate for every observation in the dataset.
+Computes LBFP density estimates on a regular or user-supplied grid.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{print(LBFP_estimate)}: Print object of class \code{"LBFP_estimate"}
+\item \code{print(LBFP_estimate)}: Print method for object of class \code{"LBFP_estimate"}.
 
-Print the density estimates calculated by the `LBFP_estimate` function.
-
-\item \code{plot(LBFP_estimate)}: Plot object of class \code{"LBFP_estimate"}
-
-Plot the LBFP density estimate for 1D or 2D datasets.
+\item \code{plot(LBFP_estimate)}: Plot method for object of class \code{"LBFP_estimate"}.
 
 }}
 \examples{
- # Example for LBFP_estimate function with ashua data
-##  Use of grid_size
 b <- c(0.5, 0.5)
-out <- LBFP_estimate(ashua[,-3], b, grid_size = 30)
+out <- LBFP_estimate(ashua[, -3], b = b, grid_size = 15)
 out
-plot(out)
+plot(out, contour = TRUE)
 
-## with a specific grid_points
-grid_points <- data.frame(expand.grid(seq(200,250,1), seq(29,30,0.1)))
-out <- LBFP_estimate(ashua[,-3], b, grid_points = grid_points)
-out
 }

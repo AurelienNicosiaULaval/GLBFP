@@ -3,7 +3,7 @@
 \name{LBFP}
 \alias{LBFP}
 \alias{print.LBFP}
-\title{LBFP Density Estimator at a Single Point}
+\title{Linear Blend Frequency Polygon (LBFP) estimator at a single point}
 \usage{
 LBFP(
   x,
@@ -16,36 +16,33 @@ LBFP(
 \method{print}{LBFP}(x, ...)
 }
 \arguments{
-\item{x}{Object from \code{LBFP} to print.}
+\item{x}{Object from \code{\link[=LBFP]{LBFP()}}.}
 
-\item{data}{Numeric matrix or data frame representing the dataset. Each row is an observation.}
+\item{data}{Numeric matrix or data frame of observations (\verb{n x d}).}
 
-\item{b}{Numeric vector representing the bin width for each dimension. Default is optimal bi calculated using \code{compute_bi_optim}.}
+\item{b}{Positive numeric vector of bandwidths (length \code{d}).}
 
-\item{min_vals}{Minimum value of initial grid (I_0(k)). Default value is the minimum on each column.}
+\item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
-\item{max_vals}{Maximum value of initial grid (I_0(k)). Default value is the maximum on each column.}
+\item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
 
 \item{...}{Additional arguments (unused).}
 }
 \value{
-A list containing the estimated density at point x using the LBFP estimator, the bin width vector b, the standard deviation of the estimation and finally 95% confidence interval.
+A list with class \code{c("glbfp_fit", "LBFP")} containing:
+\code{x}, \code{estimation}, \code{sd}, \code{IC}, \code{b}, \code{method}, and \code{dimension}.
 }
 \description{
-This function computes the LBFP (Linear Blend Frequency Polygon) estimate of the density
-at a single given point. The LBFP is a continuous density estimator inspired by the frequency polygon.
+Computes the LBFP density estimate at point \code{x}.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{print(LBFP)}: Print object of class \code{"LBFP"}
+\item \code{print(LBFP)}: Print method for object of class \code{"LBFP"}.
 
 }}
 \examples{
-# Example for GLBFP function with ashua data
 x <- c(200, 30)
-## with a selected bin width
 b <- c(0.5, 0.5)
-LBFP(x, ashua[,-3], b)
-## with optimal b
-LBFP(x, ashua[,-3])
+LBFP(x, ashua[, -3], b = b)
+
 }

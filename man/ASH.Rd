@@ -3,7 +3,7 @@
 \name{ASH}
 \alias{ASH}
 \alias{print.ASH}
-\title{Averaged Shifted Histogram (ASH) Estimator}
+\title{Averaged Shifted Histogram (ASH) estimator at a single point}
 \usage{
 ASH(
   x,
@@ -19,37 +19,34 @@ ASH(
 \arguments{
 \item{x}{Object of class \code{"ASH"}.}
 
-\item{data}{Matrix or data frame of observations (n rows, d columns).}
+\item{data}{Numeric matrix or data frame of observations (\verb{n x d}).}
 
-\item{b}{Numeric vector representing the bin width for each dimension. Default is optimal bi calculated using \code{compute_bi_optim}.}
+\item{b}{Positive numeric vector of bandwidths (length \code{d}).}
 
-\item{m}{Numeric vector representing the shift for each dimension. Default is 1 on each dimension.}
+\item{m}{Positive integer vector of shifts (length \code{d}).}
 
-\item{min_vals}{Minimum value of initial grid. Default value is the minimum on each column.}
+\item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
-\item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
+\item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
 
 \item{...}{Additional arguments (unused).}
 }
 \value{
-A list containing the estimated density at point `x` using the ASH estimator, the bin width vector `b`, the shift vector `m` and `x`
+A list with class \code{c("glbfp_fit", "ASH")} containing:
+\code{x}, \code{estimation}, \code{b}, \code{m}, \code{method}, and \code{dimension}.
 }
 \description{
-Computes the ASH density estimate at a single point `x`.
+Computes the ASH density estimate at point \code{x}.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{print(ASH)}: Print method for object of class \code{"ASH"}
+\item \code{print(ASH)}: Print method for object of class \code{"ASH"}.
 
 }}
 \examples{
-# Example for ASH function with ashua data
 x <- c(200, 30)
-## with a selected bin width
 b <- c(0.5, 0.5)
-m <- c(1,1)
-ASH(x, ashua[,-3], b, m)
-## with optimal b and shift m=3
-ASH(x, ashua[,-3], m = c(3,3))
+m <- c(1, 1)
+ASH(x, ashua[, -3], b = b, m = m)
+
 }
-\keyword{internal}

@@ -1,144 +1,155 @@
-
-#' @title GLBFP Estimate for Grid
-#' @description Computes GLBFP density estimates on a regular grid.
-#' @param data Matrix or data frame of observations (n rows, d columns).
-#' @param b Numeric vector of bandwidths for each dimension (length d).
-#' @param m Numeric vector of shifts for each dimension (length d).
-#' @param grid_size Integer specifying the number of grid points per dimension.
-#' @param grid_points Numeric matrix of data framne as the grid to use to estimate LBFP estimator on each points of the grid. Default is NULL, in this case a grid is created from minimum to maximum on each dimension with step `grid_size`.
-#' @param min_vals Minimum value of initial grid. Default value is the minimum on each column.
-#' @param max_vals Maximum value of initial grid. Default value is the maximum on each column.
-#' @examples
-#'  # Example for GLBFP_estimate function with ashua data
-#' ##  Use of grid_size
-#' b <- c(0.5, 0.5)
-#' out <- GLBFP_estimate(ashua[,-3], b, grid_size = 30)
-#' out
-#' plot(out)
+#' GLBFP density estimation on a grid
 #'
-#' ## with a specific grid_points
-#' grid_points <- data.frame(expand.grid(seq(200,250,1), seq(29,30,0.1)))
-#' out <- GLBFP_estimate(ashua[,-3], b, grid_points = grid_points)
+#' Computes GLBFP density estimates on a regular or user-supplied grid.
+#'
+#' @param data Numeric matrix or data frame of observations (`n x d`).
+#' @param b Positive numeric vector of bandwidths (length `d`).
+#' @param m Positive integer vector of shifts (length `d`).
+#' @param grid_size Integer number of grid points per dimension when
+#'   `grid_points = NULL`.
+#' @param grid_points Optional matrix/data frame of explicit evaluation points.
+#' @param min_vals Numeric vector of lower grid bounds (length `d`).
+#' @param max_vals Numeric vector of upper grid bounds (length `d`).
+#'
+#' @return A list with class `c("glbfp_grid", "GLBFP_estimate")` containing
+#' grid coordinates, densities, uncertainty estimates, and grid metadata.
+#'
+#' @examples
+#' b <- c(0.5, 0.5)
+#' out <- GLBFP_estimate(ashua[, -3], b = b, m = c(1, 1), grid_size = 15)
 #' out
-#' @return An object of class "GLBFP_estimate" containing the grid and density estimates.
+#' plot(out, contour = TRUE)
+#'
 #' @export
-GLBFP_estimate <- function(data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), m = rep(1,  ncol(data)), grid_size = 20, grid_points = NULL, min_vals =  apply(data, 2, min), max_vals =  apply(data, 2, max) ) {
-  # Input validation
-  if ( !is.numeric(b) || !is.numeric(m) || (!is.matrix(data) && !is.data.frame(data))) {
-    stop("Inputs must be numeric vectors for x, m, and b, and a matrix or data frame for data.")
-  }
+GLBFP_estimate <- function(
+  data,
+  b = compute_bi_optim(data, m = rep(1, ncol(data))),
+  m = rep(1, ncol(data)),
+  grid_size = 20,
+  grid_points = NULL,
+  min_vals = apply(data, 2, min),
+  max_vals = apply(data, 2, max)
+) {
+  data <- glbfp_validate_data(data)
   d <- ncol(data)
-  if ( length(b) != d || length(m) != d || length(min_vals) != d || length(max_vals) != d) {
-    stop("The point, bin width, min_vals, max_vals and m vectors must match the dataset dimensions.")
-  }
-  if (any(b <= 0)) stop("All bin widths must be positive.")
-  if (any(m <= 0)) stop("All m values must be positive.")
 
-  if ((grid_size <= 0)) {
-    stop("Grid size must be positive.")
-  }
-  if (!is.null(grid_points) && (!is.matrix(grid_points) && !is.data.frame(grid_points) && !is.numeric(grid_points) || ncol(grid_points)!= ncol(data))){
-    stop("Grid_points must be numeric and match the number of columns in the data")
-  }
-  col_names <- colnames(data)
-  if (is.null(col_names)) {
-    col_names <- paste0("V", seq_len(d))
-  }
-  if(!is.null(grid_points))   grid_size <- length(unique(grid_points[,1]))
-  if(is.null(grid_points)){
-    # Get the bounds for the grid
-    d <- ncol(data)
-    grid_points <- vector("list", d)
-    # Convert to data.table for faster operations
-    data <- data.table::as.data.table(data)
-    # Calculate the bounds for each dimension
-    for (i in 1:d) {
-      grid_points[[i]] <- seq(min(data[[i]]), max(data[[i]]), length.out = grid_size)
-    }
+  b <- glbfp_validate_vector(b, d = d, name = "b", positive = TRUE)
+  m <- glbfp_validate_vector(m, d = d, name = "m", positive = TRUE, integerish = TRUE)
 
-    # Create the grid
-    grid_points <- as.matrix(expand.grid(grid_points))
-  }
+  bounds <- glbfp_validate_bounds(min_vals, max_vals, d = d)
+  min_vals <- bounds$min_vals
+  max_vals <- bounds$max_vals
 
-  colnames(grid_points) <- col_names
+  grid_info <- glbfp_prepare_grid(
+    data = data,
+    grid_size = grid_size,
+    grid_points = grid_points,
+    min_vals = min_vals,
+    max_vals = max_vals
+  )
 
-
-  # Compute estimation, sd, and IC on each grid point
-  results <- lapply(1:nrow(grid_points), function(i) {
-    point <- as.numeric(grid_points[i, ])
-    res <- GLBFP(point, data, b, m, min_vals, max_vals)
+  results <- vapply(seq_len(nrow(grid_info$grid)), function(i) {
+    res <- GLBFP(
+      x = as.numeric(grid_info$grid[i, ]),
+      data = data,
+      b = b,
+      m = m,
+      min_vals = min_vals,
+      max_vals = max_vals
+    )
     c(estimation = res$estimation, sd = res$sd, IC_lower = res$IC[1], IC_upper = res$IC[2])
-  })
-  
-  results_mat <- do.call(rbind, results)
-  
-  result <- list(grid = grid_points,
-                 densities = results_mat[, "estimation"],
-                 sd = results_mat[, "sd"],
-                 IC = results_mat[, c("IC_lower", "IC_upper")],
-                 b = b,
-                 m = m,
-                 grid_size = grid_size,
-                 col_names = col_names)
+  }, numeric(4))
 
-  class(result) <- "GLBFP_estimate"
-  return(result)
+  result <- list(
+    grid = grid_info$grid,
+    densities = as.numeric(results["estimation", ]),
+    sd = as.numeric(results["sd", ]),
+    IC = cbind(
+      IC_lower = as.numeric(results["IC_lower", ]),
+      IC_upper = as.numeric(results["IC_upper", ])
+    ),
+    b = b,
+    m = m,
+    method = "GLBFP",
+    grid_size = if (length(unique(grid_info$grid_dims)) == 1L) grid_info$grid_dims[1] else NA_integer_,
+    grid_dims = grid_info$grid_dims,
+    is_rectangular = grid_info$is_rectangular,
+    col_names = grid_info$col_names
+  )
+
+  class(result) <- c("glbfp_grid", "GLBFP_estimate")
+  result
 }
 
-#' @describeIn GLBFP_estimate print method for object of class \code{GLBFP_estimate}
-#' Print the density estimates calculated by the `GLBFP_estimate` function.
-#'
-#' @param x The list object returned by the `GLBFP_estimate` function.
+#' @describeIn GLBFP_estimate Print method for object of class `"GLBFP_estimate"`.
+#' @param x Object returned by [GLBFP_estimate()].
 #' @param ... Additional arguments (unused).
 #' @export
 print.GLBFP_estimate <- function(x, ...) {
   cat("GLBFP Density Estimation on Grid:\n")
-  cat("Grid size:", x$grid_size, "\n")
+  cat("Grid points:", nrow(x$grid), "\n")
+  cat("Dimensions:", ncol(x$grid), "\n")
   cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
   cat("Shifts (m):", paste(x$m, collapse = ", "), "\n")
-  cat("Number of estimated densities:", length(x$densities), "\n")
 }
 
-#' @describeIn GLBFP_estimate plot method for object of class \code{GLBFP_estimate}
-#' Plot the GLBFP density estimate for 1D or 2D datasets.
-#'
-#' @param x The list object returned by the `GLBFP_estimate` function.
-#' @param contour logical (TRUE or FALSE). \code{contour = TRUE} makes a contour plot, whereas \code{contour = FALSE} makes a 3D plot using plotly.
-#' @param ... Additional arguments for customization.
+#' @describeIn GLBFP_estimate Plot method for object of class `"GLBFP_estimate"`.
+#' @param contour If `TRUE`, draw a contour-like 2D representation for 2D data.
 #' @export
 plot.GLBFP_estimate <- function(x, contour = FALSE, ...) {
   d <- ncol(x$grid)
   col_names <- x$col_names
-  if (is.null(col_names)) {
-    col_names <- paste0("V", seq_len(d))
-  }
-  if (d == 1) {
+
+  if (d == 1L) {
     df <- data.frame(grid = x$grid[, 1], density = x$densities)
-    ggplot2::ggplot(df,  ggplot2::aes(x = grid, y = density)) +
-      ggplot2::geom_line() +
-      ggplot2::labs(title = "GLBFP Density Estimation", x = col_names[1], y = "Density")
-  } else if (d == 2) {
+    return(
+      ggplot2::ggplot(df, ggplot2::aes(x = grid, y = density)) +
+        ggplot2::geom_line() +
+        ggplot2::labs(title = "GLBFP Density Estimation", x = col_names[1], y = "Density")
+    )
+  }
+
+  if (d == 2L) {
     df <- data.frame(x = x$grid[, 1], y = x$grid[, 2], z = x$densities)
-    if (contour) {
-      ggplot2::ggplot(df,  ggplot2::aes(x = x, y = y, z = z)) +
-        ggplot2::geom_contour_filled() +
-        ggplot2::labs(title = "GLBFP Density Estimation", x = col_names[1],
-                      y = col_names[2])
-    } else {
-      x_val <- unique(x$grid[,1])
-      y_val <- unique(x$grid[,2])
-      z_val <-  matrix(x$densities, nrow = x$grid_size, ncol = x$grid_size)
-      plotly::plot_ly() %>%
-        plotly::add_surface(x = ~x_val, y = ~y_val, z = ~z_val) %>%
+
+    if (isTRUE(contour)) {
+      if (isTRUE(x$is_rectangular)) {
+        return(
+          ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, z = z)) +
+            ggplot2::geom_contour_filled() +
+            ggplot2::labs(title = "GLBFP Density Estimation", x = col_names[1], y = col_names[2])
+        )
+      }
+      return(
+        ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = z)) +
+          ggplot2::geom_point(size = 1.5) +
+          ggplot2::labs(title = "GLBFP Density Estimation (Irregular Grid)", x = col_names[1], y = col_names[2], color = "Density")
+      )
+    }
+
+    if (isTRUE(x$is_rectangular)) {
+      x_val <- sort(unique(x$grid[, 1]))
+      y_val <- sort(unique(x$grid[, 2]))
+      z_val <- matrix(x$densities, nrow = length(x_val), ncol = length(y_val), byrow = FALSE)
+      return(
+        plotly::plot_ly(x = x_val, y = y_val, z = z_val, type = "surface") |>
+          plotly::layout(scene = list(
+            xaxis = list(title = col_names[1]),
+            yaxis = list(title = col_names[2]),
+            zaxis = list(title = "Estimated density")
+          ))
+      )
+    }
+
+    return(
+      plotly::plot_ly(df, x = ~x, y = ~y, z = ~z, type = "scatter3d", mode = "markers") |>
         plotly::layout(scene = list(
           xaxis = list(title = col_names[1]),
           yaxis = list(title = col_names[2]),
           zaxis = list(title = "Estimated density")
         ))
-    }
-  } else {
-    stop("Plotting is only supported for d <= 2.")
+    )
   }
+
+  stop("Plotting is only supported for dimension <= 2.", call. = FALSE)
 }
-
-

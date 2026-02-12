@@ -1,127 +1,151 @@
-
-
-#' @title ASH Estimate for Grid
-#' @description Computes ASH density estimates on a regular grid.
-#' @param data Matrix or data frame of observations (n rows, d columns).
-#' @param b Numeric vector of bandwidths for each dimension (length d).
-#' @param m Numeric vector of shifts for each dimension (length d).
-#' @param grid_size Integer specifying the number of grid points per dimension.
-#' @param grid_points Numeric matrix of data framne as the grid to use to estimate LBFP estimator on each points of the grid. Default is NULL, in this case a grid is created from minimum to maximum on each dimension with step `grid_size`.
-#' @param min_vals Minimum value of initial grid. Default value is the minimum on each column.
-#' @param max_vals Maximum value of initial grid. Default value is the maximum on each column.
-#' @examples
-#'  # Example for ASH_estimate function with ashua data
-#' ##  Use of grid_size
-#' b <- c(0.5, 0.5)
-#' out <- ASH_estimate(ashua[,-3], b, grid_size = 30)
-#' out
-#' plot(out)
+#' ASH density estimation on a grid
 #'
-#' ## with a specific grid_points
-#' grid_points <- data.frame(expand.grid(seq(200,250,1), seq(29,30,0.1)))
-#' out <- ASH_estimate(ashua[,-3], b, grid_points = grid_points)
+#' Computes ASH density estimates on a regular or user-supplied grid.
+#'
+#' @param data Numeric matrix or data frame of observations (`n x d`).
+#' @param b Positive numeric vector of bandwidths (length `d`).
+#' @param m Positive integer vector of shifts (length `d`).
+#' @param grid_size Integer number of grid points per dimension when
+#'   `grid_points = NULL`.
+#' @param grid_points Optional matrix/data frame of explicit evaluation points.
+#' @param min_vals Numeric vector of lower grid bounds (length `d`).
+#' @param max_vals Numeric vector of upper grid bounds (length `d`).
+#'
+#' @return A list with class `c("glbfp_grid", "ASH_estimate")` containing
+#' grid coordinates, densities, and grid metadata.
+#'
+#' @examples
+#' b <- c(0.5, 0.5)
+#' out <- ASH_estimate(ashua[, -3], b = b, m = c(1, 1), grid_size = 15)
 #' out
-#' @return An object of class "ASH_estimate" containing the grid and density estimates.
+#' plot(out, contour = TRUE)
+#'
 #' @export
-ASH_estimate <- function(data, b = compute_bi_optim(data, m = rep(1,  ncol(data))), m = rep(1,  ncol(data)), grid_size = 20, grid_points = NULL, min_vals =  apply(data, 2, min), max_vals =  apply(data, 2, max) ) {
-  # Input validation
-  if ( !is.numeric(b) || !is.numeric(m) || (!is.matrix(data) && !is.data.frame(data))) {
-    stop("Inputs must be numeric vectors for x, m, and b, and a matrix or data frame for data.")
-  }
+ASH_estimate <- function(
+  data,
+  b = compute_bi_optim(data, m = rep(1, ncol(data))),
+  m = rep(1, ncol(data)),
+  grid_size = 20,
+  grid_points = NULL,
+  min_vals = apply(data, 2, min),
+  max_vals = apply(data, 2, max)
+) {
+  data <- glbfp_validate_data(data)
   d <- ncol(data)
-  if ( length(b) != d || length(m) != d || length(min_vals) != d || length(max_vals) != d ) {
-    stop("The point, bin width, min_vals, max_vals and m vectors must match the dataset dimensions.")
-  }
-  if (any(b <= 0)) stop("All bin widths must be positive.")
-  if (any(m <= 0)) stop("All m values must be positive.")
 
-  if ((grid_size <= 0)) {
-    stop("Grid size must be positive.")
-  }
-  if (!is.null(grid_points) && (!is.matrix(grid_points) && !is.data.frame(grid_points) || ncol(grid_points)!= ncol(data))){
-    stop("Grid_points must be numeric and match the number of columns in the data")
-  }
-  if(!is.null(grid_points))   grid_size <- length(unique(grid_points[,1]))
+  b <- glbfp_validate_vector(b, d = d, name = "b", positive = TRUE)
+  m <- glbfp_validate_vector(m, d = d, name = "m", positive = TRUE, integerish = TRUE)
 
-  if(is.null(grid_points)){
-    # Get the bounds for the grid
-    d <- ncol(data)
-    grid_points <- vector("list", d)
-    # Convert to data.table for faster operations
-    data <- data.table::as.data.table(data)
-    # Calculate the bounds for each dimension
-    for (i in 1:d) {
-      grid_points[[i]] <- seq(min(data[[i]]), max(data[[i]]), length.out = grid_size)
-    }
+  bounds <- glbfp_validate_bounds(min_vals, max_vals, d = d)
+  min_vals <- bounds$min_vals
+  max_vals <- bounds$max_vals
 
-    # Create the grid
-    grid_points <- as.matrix(expand.grid(grid_points))
-  }
+  grid_info <- glbfp_prepare_grid(
+    data = data,
+    grid_size = grid_size,
+    grid_points = grid_points,
+    min_vals = min_vals,
+    max_vals = max_vals
+  )
 
-  # Compute estimation, sd, and IC on each grid point
-  results <- lapply(1:nrow(grid_points), function(i) {
-    point <- as.numeric(grid_points[i, ])
-    res <- ASH(point, data, b, m, min_vals, max_vals)
-    c(estimation = res$estimation)
-  })
-  
-  results_mat <- do.call(rbind, results)
-  
-  result <- list(grid = grid_points,
-                 densities = results_mat[, "estimation"],
-                 b = b,
-                 m = m,
-                 grid_size = grid_size)
-  
-  class(result) <- "ASH_estimate"
-  return(result)
+  densities <- vapply(seq_len(nrow(grid_info$grid)), function(i) {
+    ASH(
+      x = as.numeric(grid_info$grid[i, ]),
+      data = data,
+      b = b,
+      m = m,
+      min_vals = min_vals,
+      max_vals = max_vals
+    )$estimation
+  }, numeric(1))
+
+  result <- list(
+    grid = grid_info$grid,
+    densities = as.numeric(densities),
+    b = b,
+    m = m,
+    method = "ASH",
+    grid_size = if (length(unique(grid_info$grid_dims)) == 1L) grid_info$grid_dims[1] else NA_integer_,
+    grid_dims = grid_info$grid_dims,
+    is_rectangular = grid_info$is_rectangular,
+    col_names = grid_info$col_names
+  )
+
+  class(result) <- c("glbfp_grid", "ASH_estimate")
+  result
 }
 
-#' @describeIn ASH_estimate Print object of class \code{"ASH_estimate"}
-#' @param x Object form \code{ASH_estimate} to print
+#' @describeIn ASH_estimate Print method for object of class `"ASH_estimate"`.
+#' @param x Object from [ASH_estimate()] to print.
 #' @param ... Additional arguments (unused).
 #' @method print ASH_estimate
 #' @export
 print.ASH_estimate <- function(x, ...) {
   cat("ASH Density Estimation on Grid:\n")
-  cat("Grid size:", x$grid_size, "\n")
+  cat("Grid points:", nrow(x$grid), "\n")
+  cat("Dimensions:", ncol(x$grid), "\n")
   cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
   cat("Shifts (m):", paste(x$m, collapse = ", "), "\n")
-  cat("Number of estimated densities:", length(x$densities), "\n")
 }
 
-#' @describeIn ASH_estimate Plot object of class \code{"ASH_estimate"}
-#' @param x Object form \code{ASH_estimate} to plot
-#' @param contour Logical to plot contour plot or interactive 3D plot. Default is FALSE (3D plot)
+#' @describeIn ASH_estimate Plot method for object of class `"ASH_estimate"`.
+#' @param contour If `TRUE`, draw a contour-like 2D representation for 2D data.
 #' @method plot ASH_estimate
 #' @export
 plot.ASH_estimate <- function(x, contour = FALSE, ...) {
   d <- ncol(x$grid)
-  if (d == 1) {
+  col_names <- x$col_names
+
+  if (d == 1L) {
     df <- data.frame(grid = x$grid[, 1], density = x$densities)
-    ggplot2::ggplot(df,  ggplot2::aes(x = grid, y = density)) +
-      ggplot2::geom_line() +
-      ggplot2::labs(title = "ASH Density Estimation", x = "Grid", y = "Density")
-  } else if (d == 2) {
+    return(
+      ggplot2::ggplot(df, ggplot2::aes(x = grid, y = density)) +
+        ggplot2::geom_line() +
+        ggplot2::labs(title = "ASH Density Estimation", x = col_names[1], y = "Density")
+    )
+  }
+
+  if (d == 2L) {
     df <- data.frame(x = x$grid[, 1], y = x$grid[, 2], z = x$densities)
-    if (contour) {
-      ggplot2::ggplot(df,  ggplot2::aes(x = x, y = y, z = z)) +
-        ggplot2::geom_contour_filled() +
-        ggplot2::labs(title = "ASH Density Estimation",  x = colnames(data)[1],
-                      y = colnames(data)[2])
-    } else {
-      x_val <- unique(x$grid[,1])
-      y_val <- unique(x$grid[,2])
-      z_val <-  matrix(x$densities, nrow = x$grid_size, ncol = x$grid_size)
-      plotly::plot_ly() %>%
-        plotly::add_surface(x = ~x_val, y = ~y_val, z = ~z_val) %>%
+
+    if (isTRUE(contour)) {
+      if (isTRUE(x$is_rectangular)) {
+        return(
+          ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, z = z)) +
+            ggplot2::geom_contour_filled() +
+            ggplot2::labs(title = "ASH Density Estimation", x = col_names[1], y = col_names[2])
+        )
+      }
+      return(
+        ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = z)) +
+          ggplot2::geom_point(size = 1.5) +
+          ggplot2::labs(title = "ASH Density Estimation (Irregular Grid)", x = col_names[1], y = col_names[2], color = "Density")
+      )
+    }
+
+    if (isTRUE(x$is_rectangular)) {
+      x_val <- sort(unique(x$grid[, 1]))
+      y_val <- sort(unique(x$grid[, 2]))
+      z_val <- matrix(x$densities, nrow = length(x_val), ncol = length(y_val), byrow = FALSE)
+      return(
+        plotly::plot_ly(x = x_val, y = y_val, z = z_val, type = "surface") |>
+          plotly::layout(scene = list(
+            xaxis = list(title = col_names[1]),
+            yaxis = list(title = col_names[2]),
+            zaxis = list(title = "Estimated density")
+          ))
+      )
+    }
+
+    return(
+      plotly::plot_ly(df, x = ~x, y = ~y, z = ~z, type = "scatter3d", mode = "markers") |>
         plotly::layout(scene = list(
-          xaxis = list(title = colnames(data)[1]),
-          yaxis = list(title = colnames(data)[2]),
+          xaxis = list(title = col_names[1]),
+          yaxis = list(title = col_names[2]),
           zaxis = list(title = "Estimated density")
         ))
-    }
-  } else {
-    stop("Plotting is only supported for d <= 2.")
+    )
   }
+
+  stop("Plotting is only supported for dimension <= 2.", call. = FALSE)
 }

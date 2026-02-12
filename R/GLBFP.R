@@ -1,25 +1,23 @@
-#' GLBFP Density Estimator at a Single Point
+#' General Linear Blend Frequency Polygon (GLBFP) estimator at a single point
 #'
-#' This function computes the GLBFP (General Linear Blend Frequency Polygon) estimate of the density
-#' at a single given point. The GLBFP is a continuous density estimator inspired by the frequency polygon.
+#' Computes the GLBFP density estimate at point `x`.
 #'
-#' @param x Numeric vector representing the point where the density is to be estimated.
-#' @param data Numeric matrix or data frame representing the dataset. Each row is an observation.
-#' @param b Numeric vector representing the bin width for each dimension. Default is optimal bi calculated using \code{compute_bi_optim}.
-#' @param m Numeric vector representing the shift for each dimension. Default is 1 on each dimension (similar to LBFP estimation).
-#' @param min_vals Minimum value of initial grid (I_0(k)). Default value is the minimum on each column.
-#' @param max_vals Maximum value of initial grid (I_0(k)). Default value is the maximum on each column.
+#' @param x Numeric vector with one coordinate per data dimension.
+#' @param data Numeric matrix or data frame of observations (`n x d`).
+#' @param b Positive numeric vector of bandwidths (length `d`).
+#' @param m Positive integer vector of shifts (length `d`).
+#' @param min_vals Numeric vector of lower grid bounds (length `d`).
+#' @param max_vals Numeric vector of upper grid bounds (length `d`).
+#'
+#' @return A list with class `c("glbfp_fit", "GLBFP")` containing:
+#' `x`, `estimation`, `sd`, `IC`, `b`, `m`, `method`, and `dimension`.
+#'
 #' @examples
-#' # Example for GLBFP function with ashua data
 #' x <- c(200, 30)
-#' ## with a selected bin width
 #' b <- c(0.5, 0.5)
-#' m <- c(1,1)
-#' GLBFP(x, ashua[,-3], b, m)
-#' ## with optimal b and shift m=3
-#' GLBFP(x, ashua[,-3], m = c(3,3))
-#' @return A list containing the estimated density at point `x` using the GLBFP estimator, the bin width vector `b`, the shift vector `m`, the point of estimation `x`, the standard deviation of the estimation and finally 95% confidence interval.
-#' @import data.table
+#' m <- c(1, 1)
+#' GLBFP(x, ashua[, -3], b = b, m = m)
+#'
 #' @export
 GLBFP <- function(
   x,
@@ -29,154 +27,99 @@ GLBFP <- function(
   min_vals = apply(data, 2, min),
   max_vals = apply(data, 2, max)
 ) {
-  # Input validation
-  if (
-    !is.numeric(x) ||
-      !is.numeric(b) ||
-      !is.numeric(m) ||
-      (!is.matrix(data) && !is.data.frame(data))
-  ) {
-    stop(
-      "Inputs must be numeric vectors for x, m, and b, and a matrix or data frame for data."
-    )
-  }
+  data <- glbfp_validate_data(data)
   d <- ncol(data)
-  if (
-    length(x) != d ||
-      length(b) != d ||
-      length(m) != d ||
-      length(min_vals) != d ||
-      length(max_vals) != d
-  ) {
-    stop(
-      "The point, bin width, min_vals, max_val and m vectors must match the dataset dimensions."
-    )
-  }
-  if (any(b <= 0)) {
-    stop("All bin widths must be positive.")
-  }
-  if (any(m <= 0)) {
-    stop("All m values must be positive.")
-  }
-
-  # Convert data to matrix for faster processing
   n <- nrow(data)
-  data <- as.matrix(data)
 
-  # Compute the size of subcells (delta) within each dimension
+  x <- glbfp_validate_vector(x, d = d, name = "x")
+  b <- glbfp_validate_vector(b, d = d, name = "b", positive = TRUE)
+  m <- glbfp_validate_vector(m, d = d, name = "m", positive = TRUE, integerish = TRUE)
+
+  bounds <- glbfp_validate_bounds(min_vals, max_vals, d = d)
+  min_vals <- bounds$min_vals
+  max_vals <- bounds$max_vals
+
   delta <- b / m
-
-  # Compute minimum and maximum bounds for each dimension
   a <- min_vals + delta / 2
   max_vals <- max_vals + delta / 2
 
-  # Compute the index of the cell containing the point x
+  cell_count <- vapply(seq_len(d), function(i) {
+    glbfp_cell_count(a[i], max_vals[i], delta[i])
+  }, integer(1))
+
   idx <- pmin(
-    pmax(1, floor((x - a) / delta) + 1),
-    sapply(1:d, function(i) length(seq(a[i], max_vals[i], by = delta[i])) - 1)
+    pmax(1L, floor((x - a) / delta) + 1L),
+    cell_count
   )
 
-  # Compute the lower and upper bounds of the current cell
   lowerbound_cell <- a + (idx - 1) * delta
-  upperbound_cell <- a + idx * delta
 
-  # Generate all possible neighbors (binary combinations)
-  neighbors <- expand.grid(rep(list(0:1), d))
+  neighbors <- as.matrix(expand.grid(rep(list(0:1), d)))
+  local_indices_matrix <- as.matrix(expand.grid(lapply(m, function(mi) seq(1 - mi, mi - 1))))
 
-  # Generate all possible local indices for m
-  local_indices_matrix <- expand.grid(lapply(m, function(mi) {
-    seq(1 - mi, mi - 1)
-  }))
-  local_indices_matrix <- as.matrix(local_indices_matrix)
-
-  # Compute the midpoint of the current cell
   mid <- a + (idx - 0.5) * delta
   u <- (x - (mid - delta / 2)) / delta
 
-  # Pre-compute weights for all combinations of local indices
   weights <- apply(local_indices_matrix, 1, function(row) {
     prod(pmax(0, 1 - abs(row) / m))
   })
 
-  # Compute ash estimation for each neighbor
-  counts <- apply(neighbors, 1, function(neighbor) {
-    # Compute the starting point of the subcell for the current neighbor
+  counts <- vapply(seq_len(nrow(neighbors)), function(i) {
+    neighbor <- neighbors[i, ]
     x0 <- lowerbound_cell + neighbor * delta
 
-    # Compute bounds for each dimension and all local indices
-    cell_bounds <- lapply(1:d, function(j) {
+    valid_combined <- Reduce(`&`, lapply(seq_len(d), function(j) {
       lower <- x0[j] + (local_indices_matrix[, j] - 0.5) * delta[j]
       upper <- x0[j] + (local_indices_matrix[, j] + 0.5) * delta[j]
-      list(lower = lower, upper = upper)
-    })
+      outer(data[, j], lower, `>=`) & outer(data[, j], upper, `<`)
+    }))
 
-    # Filter valid points within the bounds for each dimension
-    valid_points <- lapply(1:d, function(j) {
-      outer(data[, j], cell_bounds[[j]]$lower, `>=`) &
-        outer(data[, j], cell_bounds[[j]]$upper, `<`)
-    })
-
-    # Combine results across dimensions and count valid rows
-    valid_combined <- Reduce(`&`, valid_points)
-    counts <- colSums(valid_combined)
-
-    # Compute ash estimation
-    ash_estimation <- sum(weights * counts) / (n * prod(b))
-
-    # Compute c_j, the contribution of this neighbor
+    cell_counts <- colSums(valid_combined)
+    ash_estimation <- sum(weights * cell_counts) / (n * prod(b))
     vector_c <- prod(u^neighbor * (1 - u)^(1 - neighbor))
-    return(c(ash_estimation, vector_c))
-  })
 
-  # Final estimation by combining ash estimations and weights
-  estimation <- sum(counts[2, ] * counts[1, ])
+    c(ash = ash_estimation, c_j = vector_c)
+  }, numeric(2))
 
-  # ensure estimation is greater than 0 (boundary)
-  if (estimation < 0 || is.nan(estimation)) {
-    estimation <- 0
-  }
+  estimation <- sum(counts["c_j", ] * counts["ash", ])
+  estimation <- glbfp_safe_estimation(estimation)
 
-  # variance estimation
-  sigma_hat2 <- 1 /
-    (n * prod(b)) *
+  sigma_hat2 <- (1 / (n * prod(b))) *
     prod((2 * m^2 + 1 - 6 * u * (1 - u)) / (3 * m^2)) *
     estimation
+  sigma_hat2 <- glbfp_safe_estimation(sigma_hat2)
 
-  # confiance interval
-  IC = c(
-    estimation + qnorm(0.025) / sqrt((n * prod(b))) * sqrt(sigma_hat2),
-    estimation + qnorm(0.975) / sqrt((n * prod(b))) * sqrt(sigma_hat2)
+  se_term <- sqrt(sigma_hat2) / sqrt(n * prod(b))
+  IC <- c(
+    estimation + stats::qnorm(0.025) * se_term,
+    estimation + stats::qnorm(0.975) * se_term
   )
 
-  # Return the result as a list
   result <- list(
     x = x,
     estimation = estimation,
     sd = sqrt(sigma_hat2),
     IC = IC,
     b = b,
-    m = m
+    m = m,
+    method = "GLBFP",
+    dimension = d
   )
-  class(result) <- "GLBFP"
-  return(result)
+  class(result) <- c("glbfp_fit", "GLBFP")
+  result
 }
 
-
-#' @describeIn GLBFP print method for object of class "GLBFP"
+#' @describeIn GLBFP Print method for object of class `"GLBFP"`.
 #' @method print GLBFP
-#' @param x Object returned by \code{GLBFP}.
+#' @param x Object returned by [GLBFP()].
 #' @param ... Additional arguments (unused).
 #' @export
 print.GLBFP <- function(x, ...) {
   cat("GLBFP Density Estimation:\n")
-  cat(
-    "Point of estimation:",
-    paste0("(", paste(x$x, collapse = ", "), ")"),
-    "\n"
-  )
+  cat("Point:", paste0("(", paste(x$x, collapse = ", "), ")"), "\n")
   cat("Estimated density:", x$estimation, "\n")
-  cat("Estimated standard error", x$sd, "\n")
-  cat("95% confidence interval:", x$IC, "\n")
+  cat("Estimated standard error:", x$sd, "\n")
+  cat("95% confidence interval:", paste(x$IC, collapse = ", "), "\n")
   cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
   cat("Shifts (m):", paste(x$m, collapse = ", "), "\n")
 }
