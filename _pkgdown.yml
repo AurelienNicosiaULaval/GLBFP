@@ -1,0 +1,31 @@
+url: https://aureliennicosiaulaval.github.io/GLBFP/
+template:
+  bootstrap: 5
+
+reference:
+  - title: Point estimators
+    contents:
+      - ASH
+      - LBFP
+      - GLBFP
+  - title: Grid estimators
+    contents:
+      - ASH_estimate
+      - LBFP_estimate
+      - GLBFP_estimate
+  - title: Bandwidth helpers
+    contents:
+      - compute_bi_optim
+      - compute_G_star
+      - G_i
+      - K_mi
+  - title: Data
+    contents:
+      - ashua
+
+articles:
+  - title: User guides
+    navbar: User guides
+    contents:
+      - GLBFP_introduction
+      - GLBFP_validation
