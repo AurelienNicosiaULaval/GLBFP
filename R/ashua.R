@@ -1,20 +1,22 @@
-#' River Ashuapmushuan Daily Flow and Level Data
+#' River Ashuapmushuan daily flow and level data
 #'
-#' This dataset contains 4389 daily readings of the flow rate and level of the river Ashuapmushuan in cubic meters per second (m³/s) and meters (m), respectively. Data covers the period from 22 March 1992 to 30 September 2007, with a few missing days.
+#' Daily observations of river flow and level for the Ashuapmushuan river.
 #'
-#' @format A data frame with 4389 rows and 3 variables:
+#' @format A data frame with 4,389 rows and 3 variables:
 #' \describe{
-#'   \item{flow}{Flow rate of the river in cubic meters per second (m³/s)}
-#'   \item{level}{Level of the river in meters (m)}
-#'   \item{day}{Date of the reading (class \code{day})}
+#'   \item{flow}{Flow rate in cubic meters per second.}
+#'   \item{level}{Water level in meters.}
+#'   \item{day}{Day code as integer in `YYYYDDD` format.}
 #' }
-#' @details The dataset was extracted from the Environment and Climate Change Canada Historical Hydrometric Data website on 26 July 2023. Data may contain some missing days within the period.
-#' @source Environment and Climate Change Canada Historical Hydrometric Data, \url{https://wateroffice.ec.gc.ca/mainmenu/historical_data_index_e.html}
+#'
+#' @details
+#' Data cover 22 March 1992 to 30 September 2007 with a small number of missing
+#' calendar days.
+#'
+#' @source Environment and Climate Change Canada Historical Hydrometric Data,
+#'   \url{https://wateroffice.ec.gc.ca/mainmenu/historical_data_index_e.html}
 #'
 #' @examples
-#' # Load the ashua data
 #' data(ashua)
-#' # Basic summary of the flow and level variables
 #' summary(ashua)
-#'
 "ashua"

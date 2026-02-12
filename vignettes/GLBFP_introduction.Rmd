@@ -1,0 +1,83 @@
+---
+title: "Introduction to GLBFP"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to GLBFP}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(2026)
+```
+
+## Motivation
+
+`GLBFP` provides nonparametric density estimators based on histogram-style
+constructions that remain computationally light and interpretable.
+
+Use cases:
+
+- fast exploratory density estimation,
+- smooth alternatives to raw histograms,
+- 1D and 2D density estimation with consistent API.
+
+## Core functions
+
+```{r}
+library(GLBFP)
+
+data("ashua")
+head(ashua)
+```
+
+- `ASH()` estimates at one point.
+- `LBFP()` estimates at one point with linear blending.
+- `GLBFP()` extends LBFP with shift parameter `m`.
+- `*_estimate()` runs the same estimators over a grid.
+
+## 1D workflow
+
+```{r}
+x1 <- matrix(rnorm(300), ncol = 1)
+b1 <- compute_bi_optim(x1, m = 1)
+
+fit1 <- GLBFP(x = 0, data = x1, b = b1, m = 1)
+fit1
+
+grid1 <- GLBFP_estimate(data = x1, b = b1, m = 1, grid_size = 100)
+plot(grid1)
+```
+
+## 2D workflow
+
+```{r}
+x2 <- ashua[, c("flow", "level")]
+b2 <- c(8, 0.4)
+
+fit2 <- GLBFP(x = c(mean(x2$flow), mean(x2$level)), data = x2, b = b2, m = c(1, 1))
+fit2
+
+grid2 <- GLBFP_estimate(data = x2, b = b2, m = c(1, 1), grid_size = 20)
+plot(grid2, contour = TRUE)
+```
+
+## FAQ
+
+### How should I choose `b`?
+
+Start with `compute_bi_optim(data, m = rep(1, d))`, then tune around this value
+for your context.
+
+### How should I choose `m`?
+
+Use small integers first (e.g. `1` or `2`). Larger values increase smoothing and
+compute time.
+
+### What are common pitfalls?
+
+- Missing values (`NA`) are not accepted.
+- Very small samples can produce unstable tails.
+- For custom `grid_points`, irregular grids are allowed but 3D surfaces are most
+  interpretable with rectangular grids.
