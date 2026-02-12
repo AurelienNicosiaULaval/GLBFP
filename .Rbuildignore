@@ -3,3 +3,8 @@
 ^doc$
 ^LICENSE\.md$
 ^Meta$
+^paper$
+^cran-comments\.md$
+^\.lintr$
+^_pkgdown\.yml$
+^CITATION\.cff$

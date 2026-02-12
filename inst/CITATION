@@ -1,0 +1,22 @@
+citHeader("To cite package 'GLBFP' in publications use:")
+
+bibentry(
+  bibtype = "Manual",
+  title = "GLBFP: General Linear Blend Frequency Polygon Density Estimation",
+  author = c(
+    person("Aurélien", "Nicosia")
+  ),
+  year = "2026",
+  note = "R package version 0.5.1",
+  url = "https://github.com/AurelienNicosiaULaval/GLBFP"
+)
+
+bibentry(
+  bibtype = "Misc",
+  title = "Methodological reference for GLBFP",
+  author = c(
+    person("Aurélien", "Nicosia")
+  ),
+  year = "2026",
+  note = "Replace with the final accepted methodological article citation."
+)

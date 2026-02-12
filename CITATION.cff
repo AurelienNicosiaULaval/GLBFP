@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+title: "GLBFP"
+message: "If you use GLBFP, please cite this software and the methodological article."
+type: software
+authors:
+  - family-names: "Nicosia"
+    given-names: "Aurélien"
+    email: "aurelien.nicosia@mat.ulaval.ca"
+repository-code: "https://github.com/AurelienNicosiaULaval/GLBFP"
+url: "https://github.com/AurelienNicosiaULaval/GLBFP"
+license: "GPL-3.0-or-later"
+version: "0.5.1"
+doi: "10.5281/zenodo.17945962"
+date-released: "2026-02-12"
