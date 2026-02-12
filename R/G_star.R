@@ -16,6 +16,10 @@
 #' }
 #' @export
 compute_G_star <- function(d) {
+  if (!is.numeric(d) || length(d) != 1L || !is.finite(d) || d < 1 || abs(d - round(d)) > sqrt(.Machine$double.eps)) {
+    stop("`d` must be a positive integer.", call. = FALSE)
+  }
+  d <- as.integer(round(d))
   two_term <- 2^((3 * (d - 4)) / (2 * (4 + d)))
   e1_term <- exp(1 / (4 + d))
   pi_term <- pi^(d / 2) / (4 + d)

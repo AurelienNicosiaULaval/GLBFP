@@ -2,37 +2,29 @@
 % Please edit documentation in R/compute_bi_optim.R
 \name{compute_bi_optim}
 \alias{compute_bi_optim}
-\title{Function that computes the optimal \eqn{b_i}}
+\title{Compute bandwidth vector \eqn{b_i}}
 \usage{
 compute_bi_optim(data, m = rep(1, ncol(data)))
 }
 \arguments{
-\item{data}{A data frame representing the input dataset, where rows correspond to observations and columns to variables (or dimensions).}
+\item{data}{A numeric matrix or data frame where rows are observations and
+columns are variables.}
 
-\item{m}{A vector of integers representing the values of \eqn{m_i} for each dimension of the dataset. Default value is 1 on each dimension.}
+\item{m}{A positive integer vector of shifts, one value per dimension.}
 }
 \value{
-A vector containing the optimal \eqn{b_i} values for each dimension.
+A numeric vector of positive bandwidths with one value per column in
+\code{data}.
 }
 \description{
-This function calculates the optimal values of \eqn{b_i}, which are used in nonparametric density estimation in multiple dimensions. The calculation involves the covariance matrix of the input data, the inverse covariance matrix, and various other terms derived from the dimensionality of the data and statistical properties of the estimator.
-}
-\details{
-This function performs the following steps:
-- Computes the covariance matrix \eqn{\Sigma} and its inverse and determinant.
-- Calculates \eqn{G_0} as the product of \eqn{K(m_i)} for each dimension.
-- Computes \eqn{G_i} values for each dimension.
-- Calculates \eqn{G^*} using the formula that depends on the dimensionality \eqn{d}.
-- Uses these intermediate results to compute the optimal \eqn{b_i} values, following the formula:
-\deqn{b_i = G^* \cdot G_0^{2 / (4 + d)} \cdot \prod(G_i)^{1 / (2 \cdot (4 + d))} \cdot (\det(\Sigma))^{1 / (2 \cdot (4 + d))} \cdot (\Sigma^{-1}_{ii})^{1 / (2 \cdot (4 + d))} \cdot G_i^{-1 / 2} \cdot (\Sigma^{-1}_{ii})^{-1 / (2 \cdot (4 + d))} \cdot n^{-1 / (4 + d)}}.
+Computes a plug-in bandwidth vector used by GLBFP/LBFP/ASH estimators.
+The function validates numeric inputs, stabilizes near-singular covariance
+matrices with a small ridge if needed, and returns strictly positive
+bandwidths.
 }
 \examples{
-\dontrun{
-if(interactive()){
- # Example usage with a sample dataset
- sample_data <- data.frame(x = rnorm(100), y = rnorm(100))
- m_values <- c(2, 2)
- compute_bi_optim(sample_data, m_values)
-}
-}
+set.seed(1)
+x <- cbind(rnorm(200), rnorm(200))
+compute_bi_optim(x, m = c(1, 1))
+
 }

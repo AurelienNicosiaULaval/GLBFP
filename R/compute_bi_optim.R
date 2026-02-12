@@ -1,54 +1,49 @@
-#' @title Function that computes the optimal \eqn{b_i}
-#' @description This function calculates the optimal values of \eqn{b_i}, which are used in nonparametric density estimation in multiple dimensions. The calculation involves the covariance matrix of the input data, the inverse covariance matrix, and various other terms derived from the dimensionality of the data and statistical properties of the estimator.
-#' @param data A data frame representing the input dataset, where rows correspond to observations and columns to variables (or dimensions).
-#' @param m A vector of integers representing the values of \eqn{m_i} for each dimension of the dataset. Default value is 1 on each dimension.
-#' @return A vector containing the optimal \eqn{b_i} values for each dimension.
-#' @details This function performs the following steps:
-#' - Computes the covariance matrix \eqn{\Sigma} and its inverse and determinant.
-#' - Calculates \eqn{G_0} as the product of \eqn{K(m_i)} for each dimension.
-#' - Computes \eqn{G_i} values for each dimension.
-#' - Calculates \eqn{G^*} using the formula that depends on the dimensionality \eqn{d}.
-#' - Uses these intermediate results to compute the optimal \eqn{b_i} values, following the formula:
-#' \deqn{b_i = G^* \cdot G_0^{2 / (4 + d)} \cdot \prod(G_i)^{1 / (2 \cdot (4 + d))} \cdot (\det(\Sigma))^{1 / (2 \cdot (4 + d))} \cdot (\Sigma^{-1}_{ii})^{1 / (2 \cdot (4 + d))} \cdot G_i^{-1 / 2} \cdot (\Sigma^{-1}_{ii})^{-1 / (2 \cdot (4 + d))} \cdot n^{-1 / (4 + d)}}.
+#' Compute bandwidth vector \eqn{b_i}
+#'
+#' Computes a plug-in bandwidth vector used by GLBFP/LBFP/ASH estimators.
+#' The function validates numeric inputs, stabilizes near-singular covariance
+#' matrices with a small ridge if needed, and returns strictly positive
+#' bandwidths.
+#'
+#' @param data A numeric matrix or data frame where rows are observations and
+#'   columns are variables.
+#' @param m A positive integer vector of shifts, one value per dimension.
+#'
+#' @return A numeric vector of positive bandwidths with one value per column in
+#'   `data`.
+#'
 #' @examples
-#' \dontrun{
-#' if(interactive()){
-#'  # Example usage with a sample dataset
-#'  sample_data <- data.frame(x = rnorm(100), y = rnorm(100))
-#'  m_values <- c(2, 2)
-#'  compute_bi_optim(sample_data, m_values)
-#' }
-#' }
+#' set.seed(1)
+#' x <- cbind(rnorm(200), rnorm(200))
+#' compute_bi_optim(x, m = c(1, 1))
+#'
 #' @export
 compute_bi_optim <- function(data, m = rep(1, ncol(data))) {
-
-  # Check if the input is a data.frame
-  if (!is.data.frame(data) && !is.matrix(data)) {
-    stop("data should be a data.frame.")
-  }
-
-  n <- nrow(data)
+  data <- glbfp_validate_data(data)
   d <- ncol(data)
+  n <- nrow(data)
 
-  # Estimate the variance-covariance matrix Σ and its inverse
-  Sigma <- cov(data)
-  Sigma_inv <- solve(Sigma)
-  Sigma_det <- det(Sigma)  # Calculate the determinant of Σ
+  m <- glbfp_validate_vector(m, d = d, name = "m", positive = TRUE, integerish = TRUE)
 
-  # Calculate G_0 as the product of K(m_i)
-  G_0 <- prod(sapply(m, K_mi))
+  Sigma <- stats::cov(data)
+  Sigma_stable <- glbfp_stabilize_covariance(Sigma)
+  Sigma_inv <- Sigma_stable$Sigma_inv
+  Sigma_det <- Sigma_stable$Sigma_det
 
-  G_i_values <- sapply(m, G_i)  # G_i is calculated for each m_i
-
+  G_0 <- prod(vapply(m, K_mi, numeric(1)))
+  G_i_values <- vapply(m, G_i, numeric(1))
   G_star <- compute_G_star(d)
 
-  # Vectorized calculation of b_i for each dimension
   bi <- G_star * G_0^(2 / (4 + d)) * prod(G_i_values)^(1 / (2 * (4 + d))) *
-    (Sigma_det^(1 / (2 * (4 + d)))) *
-    (prod(diag(Sigma_inv))^(1 / (2 * (4 + d)))) *
+    Sigma_det^(1 / (2 * (4 + d))) *
+    prod(diag(Sigma_inv))^(1 / (2 * (4 + d))) *
     G_i_values^(-1 / 2) *
     diag(Sigma_inv)^(-1 / (2 * (4 + d))) *
     n^(-1 / (4 + d))
 
-  return(bi)
+  if (any(!is.finite(bi)) || any(bi <= 0)) {
+    stop("Failed to compute strictly positive finite bandwidths.", call. = FALSE)
+  }
+
+  unname(as.numeric(bi))
 }
