@@ -1,0 +1,60 @@
+---
+title: "GLBFP validation and comparison"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GLBFP validation and comparison}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(20260212)
+library(GLBFP)
+source(system.file("bench", "sim_scenarios.R", package = "GLBFP"))
+source(system.file("bench", "run_validation.R", package = "GLBFP"))
+```
+
+This vignette provides a lightweight, fully reproducible benchmark for:
+
+- **1D scenarios**: S1 normal, S2 bimodal mixture, S3 heavy-tail (`t` with 4 d.f.)
+- **2D scenarios**: S4 bimodal correlated mixture, S5 correlated Gaussian
+
+Compared methods:
+
+- `ASH_estimate()`
+- `LBFP_estimate()`
+- `GLBFP_estimate()`
+- KDE (`stats::density`, `MASS::kde2d`)
+
+Metrics:
+
+- ISE per run, MISE across repetitions
+- elapsed time per run
+- sensitivity to parameter changes (`b`, `m`)
+
+## Run benchmark suite
+
+```{r}
+result <- run_validation_suite(reps = 2, grid_size_1d = 60, grid_size_2d = 16)
+summary_tbl <- summarise_validation(result)
+summary_tbl
+```
+
+## MISE ranking by scenario
+
+```{r}
+mi <- summary_tbl[order(summary_tbl$scenario, summary_tbl$ise_mean), ]
+mi[, c("scenario", "dimension", "method", "ise_mean", "elapsed_mean")]
+```
+
+## Sensitivity analysis (`b`, `m`)
+
+```{r}
+result$sensitivity
+```
+
+## Notes
+
+- The benchmark is intentionally small to keep vignette runtime short.
+- Increase `reps` and grid sizes in `inst/bench/run_validation.R` for paper-grade tables.
