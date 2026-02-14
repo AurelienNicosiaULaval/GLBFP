@@ -58,8 +58,9 @@ Computes GLBFP density estimates on a regular or user-supplied grid.
 }}
 \examples{
 b <- c(0.5, 0.5)
-out <- GLBFP_estimate(ashua[, -3], b = b, m = c(1, 1), grid_size = 15)
+# Use a small, representative subset so examples remain fast in checks.
+sample_data <- as.matrix(ashua[seq_len(120), -3])
+out <- GLBFP_estimate(sample_data, b = b, m = c(1, 1), grid_size = 10)
 out
-plot(out, contour = TRUE)
 
 }
