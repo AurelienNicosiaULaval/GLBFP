@@ -1,20 +1,26 @@
-#' @title Function that calculates \eqn{G(m_i)}
-#' @description This function computes the value of \eqn{G(m_i)}, which is a term related to the asymptotic properties of the variance of the average shifted histogram estimator.
-#' @param mi An integer representing the index value, typically a positive integer related to the number of bins or intervals in the context of shifted histograms.
-#' @return The computed value of \eqn{G(m_i)}, used in the context of variance calculations in nonparametric density estimation.
-#' @details The function implements the formula given by
-#' \eqn{G(m_i) = \frac{1}{12} \left(1 + \frac{1}{2m_i^2}\right)}. This expression is derived from theoretical considerations on the bias and variance trade-off in density estimation using average shifted histograms.
-#' @examples
-#' \dontrun{
-#' if(interactive()){
-#'  # Calculate G for mi = 2
-#'  G_i(2)
+#' Compute the \eqn{G(m_i)} bandwidth constant
 #'
-#'  # Calculate G for mi = 5
-#'  G_i(5)
-#' }
-#' }
+#' Computes the scalar constant \eqn{G(m_i)} used by [compute_bi_optim()].
+#'
+#' @param mi A single positive numeric value. In package estimators, `mi`
+#'   corresponds to one component of the integer shift vector `m`.
+#'
+#' @return A positive numeric scalar.
+#'
+#' @details
+#' The implemented formula is
+#' \deqn{G(m_i) = \frac{1}{12}\left(1 + \frac{1}{2m_i^2}\right).}
+#'
+#' @seealso [compute_bi_optim()], [K_mi()], [compute_G_star()]
+#'
+#' @examples
+#' G_i(1)
+#' G_i(2)
+#'
 #' @export
 G_i <- function(mi) {
-  return((1 / 12) * (1 + 1 / (2 * mi^2)))
+  if (!is.numeric(mi) || length(mi) != 1L || !is.finite(mi) || mi <= 0) {
+    stop("`mi` must be a single positive numeric value.", call. = FALSE)
+  }
+  (1 / 12) * (1 + 1 / (2 * mi^2))
 }

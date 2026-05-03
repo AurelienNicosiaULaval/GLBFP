@@ -1,0 +1,101 @@
+---
+title: "Getting started with GLBFP"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with GLBFP}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(2026)
+```
+
+This vignette shows the basic workflow for pointwise and grid-based density
+estimation with `GLBFP`.
+
+## Installation
+
+```{r, eval = FALSE}
+install.packages("remotes")
+remotes::install_github("AurelienNicosiaULaval/GLBFP")
+```
+
+## Load the package
+
+```{r}
+library(GLBFP)
+```
+
+## Estimate density at one point
+
+The functions `ASH()`, `LBFP()`, and `GLBFP()` estimate the density at a single
+point. The data are supplied as a numeric matrix or data frame with observations
+in rows.
+
+```{r}
+x <- matrix(rnorm(300), ncol = 1)
+b <- compute_bi_optim(x, m = 1)
+
+fit <- GLBFP(x = 0, data = x, b = b, m = 1)
+fit
+```
+
+The returned object contains the evaluation point, the estimated density, the
+bandwidth, and the shift parameter. For `LBFP()` and `GLBFP()`, uncertainty
+components are also returned.
+
+```{r}
+names(fit)
+summary(fit)
+predict(fit)
+```
+
+## Estimate density on a grid
+
+The `*_estimate()` functions evaluate the same estimator over a regular grid or
+a user-supplied set of points.
+
+```{r}
+grid_fit <- GLBFP_estimate(data = x, b = b, m = 1, grid_size = 80)
+head(cbind(grid_fit$grid, density = grid_fit$densities))
+```
+
+For one-dimensional grids, the plot method returns a `ggplot2` object.
+
+```{r}
+plot(grid_fit)
+```
+
+## Using the included data
+
+The `ashua` data contain daily flow and level observations for the Ashuapmushuan
+river. The example below uses a small grid so the vignette remains fast.
+
+```{r}
+data("ashua")
+
+river_data <- ashua[, c("flow", "level")]
+b2 <- c(8, 0.4)
+x0 <- c(mean(river_data$flow), mean(river_data$level))
+
+fit2 <- GLBFP(x = x0, data = river_data, b = b2, m = c(1, 1))
+fit2
+
+grid_fit2 <- GLBFP_estimate(
+  data = river_data,
+  b = b2,
+  m = c(1, 1),
+  grid_size = 15
+)
+
+plot(grid_fit2, contour = TRUE)
+```
+
+## Input expectations
+
+The package expects finite numeric data. Missing values should be removed or
+imputed before estimation. Constant data require explicit non-degenerate
+`min_vals` and `max_vals` bounds because a density estimator for continuous data
+needs a positive evaluation range.

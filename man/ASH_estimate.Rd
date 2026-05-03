@@ -4,7 +4,7 @@
 \alias{ASH_estimate}
 \alias{print.ASH_estimate}
 \alias{plot.ASH_estimate}
-\title{ASH Estimate for Grid}
+\title{ASH density estimation on a grid}
 \usage{
 ASH_estimate(
   data,
@@ -21,49 +21,54 @@ ASH_estimate(
 \method{plot}{ASH_estimate}(x, contour = FALSE, ...)
 }
 \arguments{
-\item{data}{Matrix or data frame of observations (n rows, d columns).}
+\item{data}{Numeric matrix or data frame of observations (\verb{n x d}).}
 
-\item{b}{Numeric vector of bandwidths for each dimension (length d).}
+\item{b}{Positive numeric vector of bandwidths (length \code{d}).}
 
-\item{m}{Numeric vector of shifts for each dimension (length d).}
+\item{m}{Positive integer vector of shifts (length \code{d}).}
 
-\item{grid_size}{Integer specifying the number of grid points per dimension.}
+\item{grid_size}{Integer number of grid points per dimension when
+\code{grid_points = NULL}.}
 
-\item{grid_points}{Numeric matrix of data framne as the grid to use to estimate LBFP estimator on each points of the grid. Default is NULL, in this case a grid is created from minimum to maximum on each dimension with step `grid_size`.}
+\item{grid_points}{Optional matrix/data frame of explicit evaluation points.}
 
-\item{min_vals}{Minimum value of initial grid. Default value is the minimum on each column.}
+\item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
-\item{max_vals}{Maximum value of initial grid. Default value is the maximum on each column.}
+\item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
 
-\item{x}{Object form \code{ASH_estimate} to plot}
+\item{x}{Object from \code{\link[=ASH_estimate]{ASH_estimate()}} to print.}
 
 \item{...}{Additional arguments (unused).}
 
-\item{contour}{Logical to plot contour plot or interactive 3D plot. Default is FALSE (3D plot)}
+\item{contour}{If \code{TRUE}, draw a contour-like 2D representation for 2D data.}
 }
 \value{
-An object of class "ASH_estimate" containing the grid and density estimates.
+A list with class \code{c("glbfp_grid", "ASH_estimate")} containing
+grid coordinates, densities, and grid metadata.
 }
 \description{
-Computes ASH density estimates on a regular grid.
+Computes ASH density estimates on a regular or user-supplied grid.
+}
+\details{
+When \code{grid_points} is \code{NULL}, a regular grid is constructed from \code{min_vals} to
+\code{max_vals}. Custom grids may be irregular; in that case plotting uses point or
+scatter representations instead of a surface.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{print(ASH_estimate)}: Print object of class \code{"ASH_estimate"}
+\item \code{print(ASH_estimate)}: Print method for object of class \code{"ASH_estimate"}.
 
-\item \code{plot(ASH_estimate)}: Plot object of class \code{"ASH_estimate"}
+\item \code{plot(ASH_estimate)}: Plot method for object of class \code{"ASH_estimate"}.
 
 }}
 \examples{
- # Example for ASH_estimate function with ashua data
-##  Use of grid_size
 b <- c(0.5, 0.5)
-out <- ASH_estimate(ashua[,-3], b, grid_size = 30)
+# Use a small, representative subset so examples remain fast in checks.
+sample_data <- as.matrix(ashua[seq_len(120), -3])
+out <- ASH_estimate(sample_data, b = b, m = c(1, 1), grid_size = 10)
 out
-plot(out)
 
-## with a specific grid_points
-grid_points <- data.frame(expand.grid(seq(200,250,1), seq(29,30,0.1)))
-out <- ASH_estimate(ashua[,-3], b, grid_points = grid_points)
-out
+}
+\seealso{
+\code{\link[=ASH]{ASH()}}, \code{\link[=LBFP_estimate]{LBFP_estimate()}}, \code{\link[=GLBFP_estimate]{GLBFP_estimate()}}
 }

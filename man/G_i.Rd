@@ -2,31 +2,29 @@
 % Please edit documentation in R/G_i.R
 \name{G_i}
 \alias{G_i}
-\title{Function that calculates \eqn{G(m_i)}}
+\title{Compute the \eqn{G(m_i)} bandwidth constant}
 \usage{
 G_i(mi)
 }
 \arguments{
-\item{mi}{An integer representing the index value, typically a positive integer related to the number of bins or intervals in the context of shifted histograms.}
+\item{mi}{A single positive numeric value. In package estimators, \code{mi}
+corresponds to one component of the integer shift vector \code{m}.}
 }
 \value{
-The computed value of \eqn{G(m_i)}, used in the context of variance calculations in nonparametric density estimation.
+A positive numeric scalar.
 }
 \description{
-This function computes the value of \eqn{G(m_i)}, which is a term related to the asymptotic properties of the variance of the average shifted histogram estimator.
+Computes the scalar constant \eqn{G(m_i)} used by \code{\link[=compute_bi_optim]{compute_bi_optim()}}.
 }
 \details{
-The function implements the formula given by
-\eqn{G(m_i) = \frac{1}{12} \left(1 + \frac{1}{2m_i^2}\right)}. This expression is derived from theoretical considerations on the bias and variance trade-off in density estimation using average shifted histograms.
+The implemented formula is
+\deqn{G(m_i) = \frac{1}{12}\left(1 + \frac{1}{2m_i^2}\right).}
 }
 \examples{
-\dontrun{
-if(interactive()){
- # Calculate G for mi = 2
- G_i(2)
+G_i(1)
+G_i(2)
 
- # Calculate G for mi = 5
- G_i(5)
 }
-}
+\seealso{
+\code{\link[=compute_bi_optim]{compute_bi_optim()}}, \code{\link[=K_mi]{K_mi()}}, \code{\link[=compute_G_star]{compute_G_star()}}
 }

@@ -3,3 +3,11 @@
 ^doc$
 ^LICENSE\.md$
 ^Meta$
+^benchmarks$
+^data-raw$
+^dev$
+^rjournal-prep$
+^cran-comments\.md$
+^\.lintr$
+^_pkgdown\.yml$
+^CITATION\.cff$

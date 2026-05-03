@@ -2,31 +2,32 @@
 % Please edit documentation in R/G_star.R
 \name{compute_G_star}
 \alias{compute_G_star}
-\title{Function that calculates \eqn{G^*}}
+\title{Compute the \eqn{G^*} bandwidth constant}
 \usage{
 compute_G_star(d)
 }
 \arguments{
-\item{d}{An integer representing the dimension of the dataset.}
+\item{d}{A single positive integer giving the data dimension.}
 }
 \value{
-The computed value of \eqn{G^*}, used in the context of high-dimensional nonparametric density estimation.
+A positive numeric scalar.
 }
 \description{
-This function computes the value of \eqn{G^*}, a constant derived from the asymptotic analysis of bandwidth selection in high-dimensional settings.
+Computes the dimension-dependent constant \eqn{G^*} used by
+\code{\link[=compute_bi_optim]{compute_bi_optim()}}.
 }
 \details{
-The function implements the formula given by
-\eqn{G^* = 2^{\frac{3(d - 4)}{2(4 + d)}} \cdot \exp\left(\frac{1}{4 + d}\right) \cdot \frac{\pi^{d/2}}{4 + d}}. This formula is derived from the analysis of high-dimensional density estimation techniques, where it acts as a scaling factor in the calculation of bandwidth.
+The implemented formula is
+\deqn{G^* =
+2^{\frac{3(d - 4)}{2(4 + d)}}
+\exp\left(\frac{1}{4 + d}\right)
+\frac{\pi^{d / 2}}{4 + d}.}
 }
 \examples{
-\dontrun{
-if(interactive()){
- # Calculate G* for d = 2
- compute_G_star(2)
+compute_G_star(1)
+compute_G_star(2)
 
- # Calculate G* for d = 5
- compute_G_star(5)
 }
-}
+\seealso{
+\code{\link[=compute_bi_optim]{compute_bi_optim()}}, \code{\link[=G_i]{G_i()}}, \code{\link[=K_mi]{K_mi()}}
 }
