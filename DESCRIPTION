@@ -12,7 +12,8 @@ Description: Implements nonparametric density estimation with Averaged Shifted
     and grid-based estimation workflows for one and two-dimensional settings,
     including plotting helpers and plug-in bandwidth selection.
 License: GPL (>= 3)
-URL: https://github.com/AurelienNicosiaULaval/GLBFP
+URL: https://github.com/AurelienNicosiaULaval/GLBFP,
+    https://aureliennicosiaulaval.github.io/GLBFP/
 BugReports: https://github.com/AurelienNicosiaULaval/GLBFP/issues
 Depends:
     R (>= 4.1.0)

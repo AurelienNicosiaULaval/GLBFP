@@ -3,6 +3,9 @@ template:
   bootstrap: 5
 
 reference:
+  - title: Package overview
+    contents:
+      - GLBFP-package
   - title: Point estimators
     contents:
       - ASH
@@ -22,6 +25,10 @@ reference:
   - title: Data
     contents:
       - ashua
+  - title: S3 helpers
+    contents:
+      - predict.glbfp_fit
+      - summary.glbfp_fit
 
 articles:
   - title: User guides
@@ -32,3 +39,4 @@ articles:
       - two-dimensional-density
       - GLBFP_introduction
       - GLBFP_validation
+      - GLBFP_estimation

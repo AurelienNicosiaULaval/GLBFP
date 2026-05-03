@@ -21,6 +21,7 @@ Main entry points:
 Useful links:
 \itemize{
   \item \url{https://github.com/AurelienNicosiaULaval/GLBFP}
+  \item \url{https://aureliennicosiaulaval.github.io/GLBFP/}
   \item Report bugs at \url{https://github.com/AurelienNicosiaULaval/GLBFP/issues}
 }
 
