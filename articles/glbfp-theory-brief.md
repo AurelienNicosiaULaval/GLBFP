@@ -1,0 +1,64 @@
+# Brief methodological background
+
+This vignette gives only the background needed to understand the
+software interface. It is not a replacement for the methodological
+paper.
+
+## Histogram-based density estimation
+
+Histogram-based estimators approximate a density by aggregating
+observations into bins. Frequency polygon estimators smooth the
+histogram idea through linear interpolation between neighboring bin
+heights. Averaged shifted histograms use several shifted grids and
+average the resulting estimates.
+
+These ideas are discussed in standard references on multivariate density
+estimation, including Scott (1992), and in work on nonparametric density
+estimation bounds such as Terrell and Scott (1985).
+
+## Estimators implemented in the package
+
+[`ASH()`](https://aureliennicosiaulaval.github.io/GLBFP/reference/ASH.md)
+computes an averaged shifted histogram estimate at a point.
+
+[`LBFP()`](https://aureliennicosiaulaval.github.io/GLBFP/reference/LBFP.md)
+computes a linear blend frequency polygon estimate at a point.
+
+[`GLBFP()`](https://aureliennicosiaulaval.github.io/GLBFP/reference/GLBFP.md)
+computes the general linear blend frequency polygon estimate at a point,
+using the shift vector `m`.
+
+The corresponding `*_estimate()` functions evaluate the same estimators
+on a grid. They are intended for visualization and reproducible
+numerical summaries.
+
+## Bandwidth and shift parameters
+
+The bandwidth vector `b` controls the scale of the bins. Smaller values
+can increase local variation, while larger values can smooth the
+estimate. The helper
+[`compute_bi_optim()`](https://aureliennicosiaulaval.github.io/GLBFP/reference/compute_bi_optim.md)
+provides a plug-in starting value.
+
+The shift vector `m` must contain positive integers. Larger values
+increase the number of shifted components and therefore increase
+computational cost.
+
+## Scope of this package
+
+The package provides an R implementation, documentation, examples,
+tests, and benchmark scaffolding for GLBFP workflows. It does not
+introduce a new theoretical result.
+
+## References
+
+Scott, D. W. (1992). Multivariate Density Estimation: Theory, Practice,
+and Visualization. Wiley. <doi:10.1002/9780470316849>.
+
+Terrell, G. R., and Scott, D. W. (1985). Oversmoothed Nonparametric
+Density Estimates. Journal of the American Statistical Association,
+80(389), 209-214. <doi:10.1080/01621459.1985.10477163>.
+
+The complete bibliographic record for the original GLBFP methodological
+article has not yet been verified in this repository. It should be added
+before using this vignette as source material for a journal article.
