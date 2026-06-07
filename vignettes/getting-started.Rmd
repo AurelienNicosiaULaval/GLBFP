@@ -42,6 +42,14 @@ fit <- GLBFP(x = 0, data = x, b = b, m = 1)
 fit
 ```
 
+Lowercase aliases are also available for interactive workflows. They call the
+same estimators and keep the original uppercase API unchanged.
+
+```{r}
+fit_alias <- glbfp(x = 0, data = x, b = b, m = 1)
+identical(fit$estimation, fit_alias$estimation)
+```
+
 The returned object contains the evaluation point, the estimated density, the
 bandwidth, and the shift parameter. For `LBFP()` and `GLBFP()`, uncertainty
 components are also returned.
@@ -60,6 +68,7 @@ a user-supplied set of points.
 ```{r}
 grid_fit <- GLBFP_estimate(data = x, b = b, m = 1, grid_size = 80)
 head(cbind(grid_fit$grid, density = grid_fit$densities))
+head(as.data.frame(grid_fit))
 ```
 
 For one-dimensional grids, the plot method returns a `ggplot2` object.
@@ -91,6 +100,25 @@ grid_fit2 <- GLBFP_estimate(
 )
 
 plot(grid_fit2, contour = TRUE)
+```
+
+## Leave-one-out scores
+
+The function `compute_Di()` computes fixed-grid leave-one-out self-support
+scores. These scores are useful for diagnosing observations that receive little
+support from the fitted grid estimator.
+
+```{r}
+scores <- compute_Di(
+  river_data,
+  b = b2,
+  m = c(1, 1),
+  estimator = "GLBFP"
+)
+
+summary(scores)
+head(as.data.frame(scores))
+plot(scores)
 ```
 
 ## Input expectations

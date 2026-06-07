@@ -1,0 +1,66 @@
+---
+title: "Objects, summaries and plotting"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Objects, summaries and plotting}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(20260607)
+```
+
+`GLBFP` objects are ordinary S3 objects. Point estimators inherit from
+`"glbfp_fit"`, grid estimators inherit from `"glbfp_grid"`, and leave-one-out
+score objects inherit from `"glbfp_di"`.
+
+```{r}
+library(GLBFP)
+
+x <- matrix(rnorm(200), ncol = 1)
+b <- compute_bi_optim(x, m = 1)
+
+point_fit <- glbfp(0, x, b = b, m = 1)
+class(point_fit)
+summary(point_fit)
+predict(point_fit)
+```
+
+Grid fits support `summary()`, `predict()`, `plot()` and `as.data.frame()`.
+
+```{r}
+grid_fit <- glbfp_estimate(x, b = b, m = 1, grid_size = 60)
+
+class(grid_fit)
+summary(grid_fit)
+
+grid_df <- as.data.frame(grid_fit)
+head(grid_df)
+```
+
+Prediction from a grid fit uses nearest-grid lookup. This is intended as a
+lightweight helper for exploratory workflows.
+
+```{r}
+new_points <- matrix(c(-1, 0, 1), ncol = 1)
+predict(grid_fit, newdata = new_points)
+```
+
+Plot methods return `ggplot` objects for one-dimensional grids and for
+two-dimensional contour plots.
+
+```{r}
+plot(grid_fit)
+```
+
+For two-dimensional grids, `contour = TRUE` gives a static `ggplot` object.
+The default two-dimensional display uses `plotly`.
+
+```{r}
+x2 <- cbind(rnorm(120), rnorm(120))
+grid_2d <- glbfp_estimate(x2, b = c(0.8, 0.8), m = c(1, 1), grid_size = 12)
+
+plot(grid_2d, contour = TRUE)
+```

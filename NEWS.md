@@ -2,6 +2,12 @@
 
 ## Features
 
+- Added sparse-prefix computation for ASH, LBFP and GLBFP grid-count estimators.
+- Added `compute_Di()` and `compute_di()` for fixed-grid leave-one-out self-support scores.
+- Added lowercase aliases (`ash()`, `lbfp()`, `glbfp()` and corresponding grid functions).
+- Added `as.data.frame()` helpers for grid and `D_i` score objects.
+- Added `plot.glbfp_di()` for leave-one-out score diagnostics.
+- Added a hexagonal package logo and expanded pkgdown article structure.
 - Added test infrastructure (`testthat` edition 3) and regression/invariant tests.
 - Added S3 helpers for `summary()` and `predict()` on fit/grid objects.
 - Added two publication-oriented vignettes (introduction and validation).
@@ -16,6 +22,7 @@
 - Improved numerical robustness in `compute_bi_optim()` for near-singular covariance matrices.
 - Fixed plotting methods for irregular custom grids and metadata handling.
 - Fixed broken references in `plot.ASH_estimate()`.
+- Reduced duplicated S3 plotting and printing code through shared internal helpers.
 
 # GLBFP 0.4.0
 

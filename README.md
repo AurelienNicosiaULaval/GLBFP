@@ -1,3 +1,5 @@
+<img src="man/figures/logo.svg" align="right" width="160" alt="GLBFP hex logo" />
+
 # GLBFP
 
 [![R-CMD-check](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml)
@@ -11,9 +13,9 @@ estimators:
 - Linear Blend Frequency Polygon: `LBFP()`, `LBFP_estimate()`
 - General Linear Blend Frequency Polygon: `GLBFP()`, `GLBFP_estimate()`
 
-The package focuses on pointwise estimation, grid-based estimation, 1D and 2D
-visualization, and reproducible examples suitable for package documentation and
-software-paper preparation.
+The package includes pointwise estimators, grid estimators, sparse-prefix
+grid-count computation, fixed-grid leave-one-out \(D_i\) scores, plotting
+methods for 1D/2D grids, S3 helpers, and a plug-in bandwidth selector.
 
 ## Status
 
@@ -47,6 +49,8 @@ b <- compute_bi_optim(x, m = 1)
 
 fit <- GLBFP(x = 0, data = x, b = b, m = 1)
 fit
+summary(fit)
+predict(fit)
 ```
 
 ## Two-dimensional example
@@ -60,17 +64,27 @@ river_data <- ashua[, c("flow", "level")]
 b <- c(8, 0.4)
 x0 <- c(mean(river_data$flow), mean(river_data$level))
 
-fit <- GLBFP(x = x0, data = river_data, b = b, m = c(1, 1))
+fit <- glbfp(x = x0, data = river_data, b = b, m = c(1, 1))
 fit
 
-grid_fit <- GLBFP_estimate(
+grid_fit <- glbfp_estimate(
   data = river_data,
   b = b,
   m = c(1, 1),
   grid_size = 20
 )
 
+summary(grid_fit)
+head(as.data.frame(grid_fit))
 plot(grid_fit, contour = TRUE)
+```
+
+## Leave-one-out scores
+
+```r
+scores <- compute_di(river_data, b = b, m = c(1, 1), estimator = "GLBFP")
+summary(scores)
+plot(scores)
 ```
 
 ## Main functions
@@ -79,17 +93,23 @@ plot(grid_fit, contour = TRUE)
 |---|---|
 | Pointwise density estimation | `ASH()`, `LBFP()`, `GLBFP()` |
 | Grid-based density estimation | `ASH_estimate()`, `LBFP_estimate()`, `GLBFP_estimate()` |
+| Lowercase aliases | `ash()`, `lbfp()`, `glbfp()`, `ash_estimate()`, `lbfp_estimate()`, `glbfp_estimate()` |
+| Leave-one-out diagnostics | `compute_Di()`, `compute_di()` |
 | Bandwidth helper | `compute_bi_optim()` |
 | Constants used by the bandwidth helper | `K_mi()`, `G_i()`, `compute_G_star()` |
-| Basic S3 helpers | `print()`, `plot()`, `summary()`, `predict()` |
+| Basic S3 helpers | `print()`, `plot()`, `summary()`, `predict()`, `as.data.frame()` |
 
-## Vignettes
+## Vignettes and pkgdown site
 
-The package includes short, reproducible vignettes for:
+The pkgdown site is configured with reproducible guides for:
 
-- getting started;
-- a brief methodological background;
+- getting started with GLBFP;
+- a short methodological overview;
 - two-dimensional density estimation;
+- estimator choice;
+- sparse-prefix computation;
+- leave-one-out \(D_i\) scores;
+- S3 objects and helper methods;
 - validation and benchmark scenarios.
 
 ## References

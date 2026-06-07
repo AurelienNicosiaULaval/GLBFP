@@ -1,6 +1,20 @@
 url: https://aureliennicosiaulaval.github.io/GLBFP/
+
+home:
+  title: GLBFP
+  description: Fast grid-count density estimation with ASH, LBFP and GLBFP estimators.
+
 template:
   bootstrap: 5
+  light-switch: true
+  bslib:
+    primary: "#0f766e"
+    border-radius: 0.35rem
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
 
 reference:
   - title: Package overview
@@ -11,32 +25,53 @@ reference:
       - ASH
       - LBFP
       - GLBFP
+      - ash
+      - lbfp
+      - glbfp
   - title: Grid estimators
     contents:
       - ASH_estimate
       - LBFP_estimate
       - GLBFP_estimate
+      - ash_estimate
+      - lbfp_estimate
+      - glbfp_estimate
+  - title: Leave-one-out scores
+    contents:
+      - compute_Di
+      - compute_di
   - title: Bandwidth helpers
     contents:
       - compute_bi_optim
       - compute_G_star
       - G_i
       - K_mi
-  - title: Data
-    contents:
-      - ashua
   - title: S3 helpers
     contents:
       - predict.glbfp_fit
       - summary.glbfp_fit
+      - as.data.frame.glbfp_grid
+  - title: Data
+    contents:
+      - ashua
 
 articles:
-  - title: User guides
-    navbar: User guides
+  - title: Start here
+    navbar: Start here
     contents:
       - getting-started
       - glbfp-theory-brief
       - two-dimensional-density
       - GLBFP_introduction
+      - GLBFP_estimator_choice
+  - title: Computation and diagnostics
+    navbar: Computation and diagnostics
+    contents:
+      - GLBFP_fast_sparse_computation
+      - GLBFP_leave_one_out_scores
+      - GLBFP_objects_and_s3
+  - title: Validation
+    navbar: Validation
+    contents:
       - GLBFP_validation
       - GLBFP_estimation

@@ -41,7 +41,6 @@ LBFP <- function(
 ) {
   data <- glbfp_validate_data(data)
   d <- ncol(data)
-  n <- nrow(data)
 
   x <- glbfp_validate_vector(x, d = d, name = "x")
   b <- glbfp_validate_vector(b, d = d, name = "b", positive = TRUE)
@@ -50,63 +49,28 @@ LBFP <- function(
   min_vals <- bounds$min_vals
   max_vals <- bounds$max_vals
 
-  a <- min_vals + b / 2
-  max_vals <- max_vals + b / 2
-
-  cell_count <- vapply(seq_len(d), function(i) {
-    glbfp_cell_count(a[i], max_vals[i], b[i])
-  }, integer(1))
-
-  idx <- pmin(
-    pmax(1L, floor((x - a) / b) + 1L),
-    cell_count
-  )
-
-  lowerbound_cell <- a + (idx - 1) * b
-  upperbound_cell <- a + idx * b
-  mid_IK <- (lowerbound_cell + upperbound_cell) / 2
-
-  neighbors <- as.matrix(expand.grid(rep(list(0:1), d)))
-
-  neighbor_stats <- vapply(seq_len(nrow(neighbors)), function(j) {
-    neighbor <- neighbors[j, ]
-    mid <- a + (idx - 0.5) * b
-    lower_bounds <- mid + (neighbor - 1) * b
-    upper_bounds <- mid + neighbor * b
-
-    count <- sum(Reduce(
-      `&`,
-      lapply(seq_len(d), function(i) {
-        data[, i] >= lower_bounds[i] & data[, i] < upper_bounds[i]
-      })
-    ))
-
-    u <- (x - (mid_IK - b / 2)) / b
-    vector_c <- prod(u^neighbor * (1 - u)^(1 - neighbor))
-
-    c(count = count, c_j = vector_c)
-  }, numeric(2))
-
-  estimation <- sum(neighbor_stats["c_j", ] * neighbor_stats["count", ]) / (n * prod(b))
-  estimation <- glbfp_safe_estimation(estimation)
-
-  sigma_hat2 <- sum(neighbor_stats["c_j", ]^2 * estimation) / (n * prod(b))
-  sigma_hat2 <- glbfp_safe_estimation(sigma_hat2)
-
-  se_term <- sqrt(sigma_hat2) / sqrt(n * prod(b))
-  IC <- c(
-    estimation + stats::qnorm(0.025) * se_term,
-    estimation + stats::qnorm(0.975) * se_term
+  fast <- glbfp_evaluate_glbfp_fast(
+    data = data,
+    points = matrix(x, nrow = 1L),
+    b = b,
+    m = rep(1L, d),
+    min_vals = min_vals,
+    max_vals = max_vals
   )
 
   result <- list(
     x = x,
-    estimation = estimation,
-    sd = sqrt(sigma_hat2),
-    IC = IC,
+    estimation = fast$densities[1],
+    sd = fast$sd[1],
+    IC = fast$IC[1, ],
     b = b,
     method = "LBFP",
-    dimension = d
+    dimension = d,
+    u = fast$u[1, ],
+    cell_index = fast$cell_index[1, ],
+    visited = fast$visited[1],
+    prefix_nodes = fast$prefix_nodes[1],
+    prefix_order = fast$prefix_order
   )
   class(result) <- c("glbfp_fit", "LBFP")
   result
@@ -118,10 +82,5 @@ LBFP <- function(
 #' @param ... Additional arguments (unused).
 #' @export
 print.LBFP <- function(x, ...) {
-  cat("LBFP Density Estimation:\n")
-  cat("Point:", paste0("(", paste(x$x, collapse = ", "), ")"), "\n")
-  cat("Estimated density:", x$estimation, "\n")
-  cat("Estimated standard error:", x$sd, "\n")
-  cat("95% confidence interval:", paste(x$IC, collapse = ", "), "\n")
-  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
+  glbfp_print_fit(x, label = "LBFP")
 }

@@ -11,3 +11,7 @@
 ^\.lintr$
 ^_pkgdown\.yml$
 ^CITATION\.cff$
+^pkgdown$
+^GLBFP\.Rcheck$
+^.*\.tar\.gz$
+^\.DS_Store$
