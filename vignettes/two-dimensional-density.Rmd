@@ -13,6 +13,7 @@ set.seed(2026)
 ```
 
 This vignette illustrates two-dimensional density estimation and visualization.
+It complements the estimator-choice vignette by focusing on the 2D workflow.
 
 ```{r}
 library(GLBFP)
@@ -43,9 +44,9 @@ b
 ```{r}
 x0 <- c(0, 0)
 
-ash_fit <- ASH(x0, x, b = b, m = c(1, 1))
-lbfp_fit <- LBFP(x0, x, b = b)
-glbfp_fit <- GLBFP(x0, x, b = b, m = c(1, 1))
+ash_fit <- ash(x0, x, b = b, m = c(1, 1))
+lbfp_fit <- lbfp(x0, x, b = b)
+glbfp_fit <- glbfp(x0, x, b = b, m = c(1, 1))
 
 c(
   ASH = ash_fit$estimation,
@@ -57,8 +58,9 @@ c(
 ## Grid estimation
 
 ```{r}
-grid_fit <- GLBFP_estimate(x, b = b, m = c(1, 1), grid_size = 20)
+grid_fit <- glbfp_estimate(x, b = b, m = c(1, 1), grid_size = 20)
 summary(grid_fit)
+head(as.data.frame(grid_fit))
 ```
 
 ## Visualization
@@ -71,8 +73,8 @@ plot(grid_fit, contour = TRUE)
 ```
 
 With `contour = FALSE`, the plot method returns an interactive `plotly` surface.
-This is useful for exploration, but static contours are usually easier to
-reproduce in manuscripts.
+This is useful for exploration. Static contours are usually easier to reproduce
+in manuscripts.
 
 ```{r}
 surface <- plot(grid_fit, contour = FALSE)

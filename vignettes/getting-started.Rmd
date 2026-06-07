@@ -13,7 +13,8 @@ set.seed(2026)
 ```
 
 This vignette shows the basic workflow for pointwise and grid-based density
-estimation with `GLBFP`.
+estimation with `GLBFP`. It is intentionally practical. For a conceptual map of
+the full package, see the "Package overview and workflow map" vignette.
 
 ## Installation
 
@@ -43,7 +44,7 @@ fit
 ```
 
 Lowercase aliases are also available for interactive workflows. They call the
-same estimators and keep the original uppercase API unchanged.
+same estimators and keep the uppercase API unchanged.
 
 ```{r}
 fit_alias <- glbfp(x = 0, data = x, b = b, m = 1)
@@ -127,3 +128,13 @@ The package expects finite numeric data. Missing values should be removed or
 imputed before estimation. Constant data require explicit non-degenerate
 `min_vals` and `max_vals` bounds because a density estimator for continuous data
 needs a positive evaluation range.
+
+## Where to go next
+
+After this vignette:
+
+- read "Brief methodological background" for the statistical context;
+- read "Choosing between ASH, LBFP and GLBFP" when comparing estimators;
+- read "Two-dimensional density estimation" for 2D workflows;
+- read "Sparse-prefix computation" and "Leave-one-out D_i diagnostics" for
+  implementation diagnostics.

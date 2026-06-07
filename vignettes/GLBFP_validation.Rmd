@@ -1,8 +1,8 @@
 ---
-title: "GLBFP validation and comparison"
+title: "Validation and comparison"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{GLBFP validation and comparison}
+  %\VignetteIndexEntry{Validation and comparison}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -15,7 +15,11 @@ source(system.file("bench", "sim_scenarios.R", package = "GLBFP"))
 source(system.file("bench", "run_validation.R", package = "GLBFP"))
 ```
 
-This vignette provides a lightweight, fully reproducible benchmark for:
+This vignette provides a lightweight, fully reproducible benchmark. It is
+designed for package documentation, not as a final simulation study for a
+journal article.
+
+The benchmark includes:
 
 - 1D scenarios: S1 normal, S2 bimodal mixture, S3 heavy-tail (`t` with 4 d.f.)
 - 2D scenarios: S4 bimodal correlated mixture, S5 correlated Gaussian
@@ -32,6 +36,9 @@ Metrics:
 - ISE per run, MISE across repetitions
 - elapsed time per run
 - sensitivity to parameter changes (`b`, `m`)
+
+For paper-grade evidence, increase the number of repetitions, document the
+simulation design, and report uncertainty around the summarized metrics.
 
 ## Run benchmark suite
 
@@ -57,4 +64,5 @@ result$sensitivity
 ## Notes
 
 - The benchmark is intentionally small to keep vignette runtime short.
-- Increase `reps` and grid sizes in `inst/bench/run_validation.R` for paper-grade tables.
+- Increase `reps` and grid sizes in `inst/bench/run_validation.R` for
+  paper-grade tables.

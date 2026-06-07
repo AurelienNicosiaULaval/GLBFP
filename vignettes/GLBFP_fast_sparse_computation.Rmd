@@ -1,8 +1,8 @@
 ---
-title: "Fast sparse-prefix computation"
+title: "Sparse-prefix computation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Fast sparse-prefix computation}
+  %\VignetteIndexEntry{Sparse-prefix computation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,9 +13,9 @@ set.seed(20260607)
 ```
 
 `GLBFP` uses a sparse-prefix traversal for finite-stencil grid-count density
-estimators. The estimator is unchanged. The computation is accelerated by
-counting occupied grid cells once and pruning stencil branches that cannot
-reach an occupied cell.
+estimators. The estimator definition is unchanged. The implementation counts
+occupied grid cells once and prunes stencil branches that cannot reach an
+occupied cell.
 
 ```{r}
 library(GLBFP)
@@ -36,8 +36,8 @@ c(
 
 The `visited` field records the number of nonzero occupied cells reached for
 each evaluation point. The `prefix_nodes` field records the number of explored
-prefix nodes. These diagnostics are useful for checking whether sparsity is
-helping in a given data set.
+prefix nodes. These diagnostics help assess whether sparsity is useful for a
+given data set and grid.
 
 ```{r}
 summary(fit)
@@ -56,6 +56,6 @@ rbind(
 )
 ```
 
-The sparse-prefix implementation is written in R for CRAN portability. It is
-adapted from the finite-stencil sparse traversal project used for the package
+The sparse-prefix implementation is written in R for CRAN portability. It was
+adapted from the finite-stencil sparse traversal code used during the package
 development experiments.

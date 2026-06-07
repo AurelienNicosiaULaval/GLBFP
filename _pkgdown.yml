@@ -36,7 +36,7 @@ reference:
       - ash_estimate
       - lbfp_estimate
       - glbfp_estimate
-  - title: Leave-one-out scores
+  - title: Leave-one-out diagnostics
     contents:
       - compute_Di
       - compute_di
@@ -60,18 +60,21 @@ articles:
     navbar: Start here
     contents:
       - getting-started
-      - glbfp-theory-brief
-      - two-dimensional-density
       - GLBFP_introduction
+  - title: Methods and workflows
+    navbar: Methods and workflows
+    contents:
+      - glbfp-theory-brief
       - GLBFP_estimator_choice
+      - two-dimensional-density
   - title: Computation and diagnostics
     navbar: Computation and diagnostics
     contents:
       - GLBFP_fast_sparse_computation
       - GLBFP_leave_one_out_scores
       - GLBFP_objects_and_s3
-  - title: Validation
-    navbar: Validation
+  - title: Validation and legacy
+    navbar: Validation and legacy
     contents:
       - GLBFP_validation
       - GLBFP_estimation

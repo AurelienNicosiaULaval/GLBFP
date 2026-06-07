@@ -12,7 +12,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
 This vignette gives only the background needed to understand the software
-interface. It is not a replacement for the methodological paper.
+interface. It is not a replacement for a methodological article.
 
 ## Histogram-based density estimation
 
@@ -27,15 +27,17 @@ estimation bounds such as Terrell and Scott (1985).
 
 ## Estimators implemented in the package
 
-`ASH()` computes an averaged shifted histogram estimate at a point.
+The package separates pointwise and grid-based evaluation.
 
-`LBFP()` computes a linear blend frequency polygon estimate at a point.
+| Estimator | Pointwise function | Grid function |
+|---|---|---|
+| Averaged Shifted Histogram | `ASH()` | `ASH_estimate()` |
+| Linear Blend Frequency Polygon | `LBFP()` | `LBFP_estimate()` |
+| General Linear Blend Frequency Polygon | `GLBFP()` | `GLBFP_estimate()` |
 
-`GLBFP()` computes the general linear blend frequency polygon estimate at a
-point, using the shift vector `m`.
-
-The corresponding `*_estimate()` functions evaluate the same estimators on a
-grid. They are intended for visualization and reproducible numerical summaries.
+The pointwise functions evaluate the density at one supplied location. The
+grid functions evaluate the same estimator on a regular or user-supplied grid.
+They are intended for visualization and reproducible numerical summaries.
 
 ## Bandwidth and shift parameters
 
@@ -48,9 +50,9 @@ number of shifted components and therefore increase computational cost.
 
 ## Scope of this package
 
-The package provides an R implementation, documentation, examples, tests, and
-benchmark scaffolding for GLBFP workflows. It does not introduce a new
-theoretical result.
+The package provides an R implementation, documentation, examples, tests,
+pkgdown articles, and benchmark scaffolding for GLBFP workflows. This vignette
+does not claim a new theoretical result.
 
 ## References
 

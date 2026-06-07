@@ -12,14 +12,15 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 set.seed(20260607)
 ```
 
-The package exposes three related grid-count density estimators.
+This vignette compares the three estimator families exposed by the package.
+It is a practical guide rather than a universal ranking of methods.
 
 - `ASH()` and `ASH_estimate()` implement averaged shifted histogram estimates.
 - `LBFP()` and `LBFP_estimate()` implement linear blend frequency polygon estimates.
 - `GLBFP()` and `GLBFP_estimate()` implement the general linear blend frequency polygon estimate.
 
-All estimators share the same basic arguments: `data`, `b`, optional grid bounds,
-and for ASH/GLBFP the shift vector `m`.
+All estimators share the same basic inputs: `data`, `b`, optional grid bounds,
+and, for ASH/GLBFP, the shift vector `m`.
 
 ```{r}
 library(GLBFP)
@@ -38,7 +39,7 @@ fits <- list(
 vapply(fits, function(z) z$estimation, numeric(1))
 ```
 
-Grid estimates can be compared through a common data-frame interface.
+Grid estimates can be compared through the common `*_estimate()` interface.
 
 ```{r}
 grid_ash <- ash_estimate(x, b = b, m = m, grid_size = 15)
@@ -62,12 +63,19 @@ comparison <- data.frame(
 comparison
 ```
 
-As a practical starting rule:
+## Practical starting rules
 
-- use `LBFP` when `m = 1` is sufficient and a simple linear estimator is desired;
-- use `GLBFP` when a tunable shifted estimator is desired;
-- use `ASH` when an averaged shifted histogram representation is preferred.
+As a first pass:
+
+- use `LBFP` when a simple linear blend frequency polygon is sufficient;
+- use `GLBFP` when a tunable shifted linear blend estimator is desired;
+- use `ASH` when an averaged shifted histogram representation is desired.
 
 The bandwidth vector `b` usually matters more than small changes in `m`.
 Use `compute_bi_optim()` as a reproducible starting point, then inspect
 sensitivity around that value.
+
+For manuscript figures or numerical comparisons, report the selected `b`, the
+selected `m`, the grid definition, and the estimator family. This makes the
+result reproducible and avoids treating the default display as a statistical
+conclusion by itself.
