@@ -56,27 +56,29 @@ ASH_estimate <- function(
     max_vals = max_vals
   )
 
-  densities <- vapply(seq_len(nrow(grid_info$grid)), function(i) {
-    ASH(
-      x = as.numeric(grid_info$grid[i, ]),
-      data = data,
-      b = b,
-      m = m,
-      min_vals = min_vals,
-      max_vals = max_vals
-    )$estimation
-  }, numeric(1))
+  fast <- glbfp_evaluate_ash_fast(
+    data = data,
+    points = grid_info$grid,
+    b = b,
+    m = m,
+    min_vals = min_vals,
+    max_vals = max_vals
+  )
 
   result <- list(
     grid = grid_info$grid,
-    densities = as.numeric(densities),
+    densities = as.numeric(fast$densities),
     b = b,
     m = m,
     method = "ASH",
     grid_size = if (length(unique(grid_info$grid_dims)) == 1L) grid_info$grid_dims[1] else NA_integer_,
     grid_dims = grid_info$grid_dims,
     is_rectangular = grid_info$is_rectangular,
-    col_names = grid_info$col_names
+    col_names = grid_info$col_names,
+    cell_index = fast$cell_index,
+    visited = fast$visited,
+    prefix_nodes = fast$prefix_nodes,
+    prefix_order = fast$prefix_order
   )
 
   class(result) <- c("glbfp_grid", "ASH_estimate")
@@ -89,11 +91,7 @@ ASH_estimate <- function(
 #' @method print ASH_estimate
 #' @export
 print.ASH_estimate <- function(x, ...) {
-  cat("ASH Density Estimation on Grid:\n")
-  cat("Grid points:", nrow(x$grid), "\n")
-  cat("Dimensions:", ncol(x$grid), "\n")
-  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
-  cat("Shifts (m):", paste(x$m, collapse = ", "), "\n")
+  glbfp_print_grid(x, label = "ASH")
 }
 
 #' @describeIn ASH_estimate Plot method for object of class `"ASH_estimate"`.
@@ -101,59 +99,5 @@ print.ASH_estimate <- function(x, ...) {
 #' @method plot ASH_estimate
 #' @export
 plot.ASH_estimate <- function(x, contour = FALSE, ...) {
-  d <- ncol(x$grid)
-  col_names <- x$col_names
-
-  if (d == 1L) {
-    df <- data.frame(grid = x$grid[, 1], density = x$densities)
-    return(
-      ggplot2::ggplot(df, ggplot2::aes(x = grid, y = density)) +
-        ggplot2::geom_line() +
-        ggplot2::labs(title = "ASH Density Estimation", x = col_names[1], y = "Density")
-    )
-  }
-
-  if (d == 2L) {
-    df <- data.frame(x = x$grid[, 1], y = x$grid[, 2], z = x$densities)
-
-    if (isTRUE(contour)) {
-      if (isTRUE(x$is_rectangular)) {
-        return(
-          ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, z = z)) +
-            ggplot2::geom_contour_filled() +
-            ggplot2::labs(title = "ASH Density Estimation", x = col_names[1], y = col_names[2])
-        )
-      }
-      return(
-        ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = z)) +
-          ggplot2::geom_point(size = 1.5) +
-          ggplot2::labs(title = "ASH Density Estimation (Irregular Grid)", x = col_names[1], y = col_names[2], color = "Density")
-      )
-    }
-
-    if (isTRUE(x$is_rectangular)) {
-      x_val <- sort(unique(x$grid[, 1]))
-      y_val <- sort(unique(x$grid[, 2]))
-      z_val <- matrix(x$densities, nrow = length(x_val), ncol = length(y_val), byrow = FALSE)
-      return(
-        plotly::plot_ly(x = x_val, y = y_val, z = z_val, type = "surface") |>
-          plotly::layout(scene = list(
-            xaxis = list(title = col_names[1]),
-            yaxis = list(title = col_names[2]),
-            zaxis = list(title = "Estimated density")
-          ))
-      )
-    }
-
-    return(
-      plotly::plot_ly(df, x = ~x, y = ~y, z = ~z, type = "scatter3d", mode = "markers") |>
-        plotly::layout(scene = list(
-          xaxis = list(title = col_names[1]),
-          yaxis = list(title = col_names[2]),
-          zaxis = list(title = "Estimated density")
-        ))
-    )
-  }
-
-  stop("Plotting is only supported for dimension <= 2.", call. = FALSE)
+  glbfp_plot_grid(x, contour = contour, ...)
 }

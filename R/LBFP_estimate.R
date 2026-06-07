@@ -52,31 +52,31 @@ LBFP_estimate <- function(
     max_vals = max_vals
   )
 
-  results <- vapply(seq_len(nrow(grid_info$grid)), function(i) {
-    res <- LBFP(
-      x = as.numeric(grid_info$grid[i, ]),
-      data = data,
-      b = b,
-      min_vals = min_vals,
-      max_vals = max_vals
-    )
-    c(estimation = res$estimation, sd = res$sd, IC_lower = res$IC[1], IC_upper = res$IC[2])
-  }, numeric(4))
+  fast <- glbfp_evaluate_glbfp_fast(
+    data = data,
+    points = grid_info$grid,
+    b = b,
+    m = rep(1L, d),
+    min_vals = min_vals,
+    max_vals = max_vals
+  )
 
   result <- list(
     grid = grid_info$grid,
-    densities = as.numeric(results["estimation", ]),
-    sd = as.numeric(results["sd", ]),
-    IC = cbind(
-      IC_lower = as.numeric(results["IC_lower", ]),
-      IC_upper = as.numeric(results["IC_upper", ])
-    ),
+    densities = as.numeric(fast$densities),
+    sd = as.numeric(fast$sd),
+    IC = fast$IC,
     b = b,
     method = "LBFP",
     grid_size = if (length(unique(grid_info$grid_dims)) == 1L) grid_info$grid_dims[1] else NA_integer_,
     grid_dims = grid_info$grid_dims,
     is_rectangular = grid_info$is_rectangular,
-    col_names = grid_info$col_names
+    col_names = grid_info$col_names,
+    u = fast$u,
+    cell_index = fast$cell_index,
+    visited = fast$visited,
+    prefix_nodes = fast$prefix_nodes,
+    prefix_order = fast$prefix_order
   )
 
   class(result) <- c("glbfp_grid", "LBFP_estimate")
@@ -88,72 +88,12 @@ LBFP_estimate <- function(
 #' @param ... Additional arguments (unused).
 #' @export
 print.LBFP_estimate <- function(x, ...) {
-  cat("LBFP Density Estimation on Grid:\n")
-  cat("Grid points:", nrow(x$grid), "\n")
-  cat("Dimensions:", ncol(x$grid), "\n")
-  cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
+  glbfp_print_grid(x, label = "LBFP")
 }
 
 #' @describeIn LBFP_estimate Plot method for object of class `"LBFP_estimate"`.
 #' @param contour If `TRUE`, draw a contour-like 2D representation for 2D data.
 #' @export
 plot.LBFP_estimate <- function(x, contour = FALSE, ...) {
-  d <- ncol(x$grid)
-  col_names <- x$col_names
-
-  if (d == 1L) {
-    df <- data.frame(grid = x$grid[, 1], density = x$densities)
-    return(
-      ggplot2::ggplot(df, ggplot2::aes(x = grid, y = density)) +
-        ggplot2::geom_line(color = "blue") +
-        ggplot2::labs(title = "LBFP Density Estimation", x = col_names[1], y = "Estimated density") +
-        ggplot2::theme_minimal()
-    )
-  }
-
-  if (d == 2L) {
-    df <- data.frame(x = x$grid[, 1], y = x$grid[, 2], z = x$densities)
-
-    if (isTRUE(contour)) {
-      if (isTRUE(x$is_rectangular)) {
-        return(
-          ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, z = z)) +
-            ggplot2::geom_contour_filled() +
-            ggplot2::labs(title = "LBFP Density Estimation", x = col_names[1], y = col_names[2], fill = "Density") +
-            ggplot2::theme_minimal()
-        )
-      }
-      return(
-        ggplot2::ggplot(df, ggplot2::aes(x = x, y = y, color = z)) +
-          ggplot2::geom_point(size = 1.5) +
-          ggplot2::labs(title = "LBFP Density Estimation (Irregular Grid)", x = col_names[1], y = col_names[2], color = "Density") +
-          ggplot2::theme_minimal()
-      )
-    }
-
-    if (isTRUE(x$is_rectangular)) {
-      x_val <- sort(unique(x$grid[, 1]))
-      y_val <- sort(unique(x$grid[, 2]))
-      z_val <- matrix(x$densities, nrow = length(x_val), ncol = length(y_val), byrow = FALSE)
-      return(
-        plotly::plot_ly(x = x_val, y = y_val, z = z_val, type = "surface") |>
-          plotly::layout(scene = list(
-            xaxis = list(title = col_names[1]),
-            yaxis = list(title = col_names[2]),
-            zaxis = list(title = "Estimated density")
-          ))
-      )
-    }
-
-    return(
-      plotly::plot_ly(df, x = ~x, y = ~y, z = ~z, type = "scatter3d", mode = "markers") |>
-        plotly::layout(scene = list(
-          xaxis = list(title = col_names[1]),
-          yaxis = list(title = col_names[2]),
-          zaxis = list(title = "Estimated density")
-        ))
-    )
-  }
-
-  stop("Plotting is only supported for dimension <= 2.", call. = FALSE)
+  glbfp_plot_grid(x, contour = contour, ...)
 }

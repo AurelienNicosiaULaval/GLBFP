@@ -1,0 +1,73 @@
+---
+title: "Choosing between ASH, LBFP and GLBFP"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Choosing between ASH, LBFP and GLBFP}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(20260607)
+```
+
+The package exposes three related grid-count density estimators.
+
+- `ASH()` and `ASH_estimate()` implement averaged shifted histogram estimates.
+- `LBFP()` and `LBFP_estimate()` implement linear blend frequency polygon estimates.
+- `GLBFP()` and `GLBFP_estimate()` implement the general linear blend frequency polygon estimate.
+
+All estimators share the same basic arguments: `data`, `b`, optional grid bounds,
+and for ASH/GLBFP the shift vector `m`.
+
+```{r}
+library(GLBFP)
+
+x <- cbind(rnorm(200), rnorm(200, sd = 1.25))
+b <- c(0.75, 0.9)
+m <- c(2, 2)
+point <- c(0, 0)
+
+fits <- list(
+  ASH = ash(point, x, b = b, m = m),
+  LBFP = lbfp(point, x, b = b),
+  GLBFP = glbfp(point, x, b = b, m = m)
+)
+
+vapply(fits, function(z) z$estimation, numeric(1))
+```
+
+Grid estimates can be compared through a common data-frame interface.
+
+```{r}
+grid_ash <- ash_estimate(x, b = b, m = m, grid_size = 15)
+grid_lbfp <- lbfp_estimate(x, b = b, grid_size = 15)
+grid_glbfp <- glbfp_estimate(x, b = b, m = m, grid_size = 15)
+
+comparison <- data.frame(
+  method = c("ASH", "LBFP", "GLBFP"),
+  mean_density = c(
+    mean(grid_ash$densities),
+    mean(grid_lbfp$densities),
+    mean(grid_glbfp$densities)
+  ),
+  max_density = c(
+    max(grid_ash$densities),
+    max(grid_lbfp$densities),
+    max(grid_glbfp$densities)
+  )
+)
+
+comparison
+```
+
+As a practical starting rule:
+
+- use `LBFP` when `m = 1` is sufficient and a simple linear estimator is desired;
+- use `GLBFP` when a tunable shifted estimator is desired;
+- use `ASH` when an averaged shifted histogram representation is preferred.
+
+The bandwidth vector `b` usually matters more than small changes in `m`.
+Use `compute_bi_optim()` as a reproducible starting point, then inspect
+sensitivity around that value.

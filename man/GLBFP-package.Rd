@@ -6,22 +6,27 @@
 \title{GLBFP: General Linear Blend Frequency Polygon Density Estimation}
 \description{
 \code{GLBFP} provides one-point and grid-based density estimators based on
-ASH, LBFP and GLBFP methodology for one and two-dimensional use cases,
-with visualization helpers and bandwidth selection utilities.
+ASH, LBFP and GLBFP methodology, with sparse-prefix computation,
+leave-one-out self-support scores, visualization helpers and bandwidth
+selection utilities.
 }
 \details{
 Main entry points:
 \itemize{
 \item \code{\link[=ASH]{ASH()}}, \code{\link[=LBFP]{LBFP()}}, \code{\link[=GLBFP]{GLBFP()}}
 \item \code{\link[=ASH_estimate]{ASH_estimate()}}, \code{\link[=LBFP_estimate]{LBFP_estimate()}}, \code{\link[=GLBFP_estimate]{GLBFP_estimate()}}
+\item \code{\link[=compute_Di]{compute_Di()}}
 \item \code{\link[=compute_bi_optim]{compute_bi_optim()}}
 }
+
+Lowercase aliases such as \link[=GLBFP]{glbfp()} and \link[=GLBFP_estimate]{glbfp_estimate()} are also provided
+for users who prefer lower-snake-case function names.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/AurelienNicosiaULaval/GLBFP}
   \item \url{https://aureliennicosiaulaval.github.io/GLBFP/}
+  \item \url{https://github.com/AurelienNicosiaULaval/GLBFP}
   \item Report bugs at \url{https://github.com/AurelienNicosiaULaval/GLBFP/issues}
 }
 

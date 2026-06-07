@@ -1,0 +1,61 @@
+---
+title: "Fast sparse-prefix computation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Fast sparse-prefix computation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(20260607)
+```
+
+`GLBFP` uses a sparse-prefix traversal for finite-stencil grid-count density
+estimators. The estimator is unchanged. The computation is accelerated by
+counting occupied grid cells once and pruning stencil branches that cannot
+reach an occupied cell.
+
+```{r}
+library(GLBFP)
+
+x <- cbind(rnorm(250), rnorm(250), rnorm(250))
+b <- c(0.8, 0.8, 0.8)
+m <- c(2, 2, 2)
+
+fit <- glbfp_estimate(x, b = b, m = m, grid_size = 7)
+
+c(
+  grid_points = nrow(fit$grid),
+  nominal_stencil = prod(2 * m),
+  median_visited = median(fit$visited),
+  median_prefix_nodes = median(fit$prefix_nodes)
+)
+```
+
+The `visited` field records the number of nonzero occupied cells reached for
+each evaluation point. The `prefix_nodes` field records the number of explored
+prefix nodes. These diagnostics are useful for checking whether sparsity is
+helping in a given data set.
+
+```{r}
+summary(fit)
+```
+
+The sparse traversal also powers `ASH_estimate()` and `LBFP_estimate()`.
+
+```{r}
+ash_fit <- ash_estimate(x, b = b, m = m, grid_size = 7)
+lbfp_fit <- lbfp_estimate(x, b = b, grid_size = 7)
+
+rbind(
+  ASH = c(median_visited = median(ash_fit$visited), max_visited = max(ash_fit$visited)),
+  LBFP = c(median_visited = median(lbfp_fit$visited), max_visited = max(lbfp_fit$visited)),
+  GLBFP = c(median_visited = median(fit$visited), max_visited = max(fit$visited))
+)
+```
+
+The sparse-prefix implementation is written in R for CRAN portability. It is
+adapted from the finite-stencil sparse traversal project used for the package
+development experiments.

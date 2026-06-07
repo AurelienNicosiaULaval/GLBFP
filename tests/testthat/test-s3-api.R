@@ -31,3 +31,24 @@ test_that("grid fit objects expose summary and nearest-grid prediction", {
   expect_equal(length(pred_new), 3)
   expect_true(all(is.finite(pred_new)))
 })
+
+test_that("lowercase aliases and data-frame helpers are available", {
+  set.seed(20260607)
+  data <- cbind(rnorm(80), rnorm(80))
+  b <- c(0.8, 0.8)
+
+  fit_upper <- GLBFP(c(0, 0), data, b = b, m = c(1, 1))
+  fit_lower <- glbfp(c(0, 0), data, b = b, m = c(1, 1))
+  expect_equal(fit_lower$estimation, fit_upper$estimation)
+
+  grid <- glbfp_estimate(data, b = b, m = c(1, 1), grid_size = 8)
+  grid_df <- as.data.frame(grid)
+  expect_equal(nrow(grid_df), nrow(grid$grid))
+  expect_true("density" %in% names(grid_df))
+
+  di <- compute_di(data, b = b, m = c(1, 1))
+  di_df <- as.data.frame(di)
+  expect_equal(nrow(di_df), nrow(data))
+  expect_true(all(c("D", "density", "self_weight") %in% names(di_df)))
+  expect_s3_class(plot(di), "ggplot")
+})
