@@ -17,9 +17,17 @@
 #' workflows. For applied analysis, sensitivity to the bandwidth should still be
 #' checked.
 #'
+#' The plug-in expression follows the optimal cell-width calculation for
+#' multivariate frequency polygons in Carbon and Duchesne (2024).
+#'
 #' Near-singular covariance matrices are stabilized with a small ridge term. If
 #' this fails, the function returns an error rather than silently producing
 #' non-finite bandwidths.
+#'
+#' @references
+#' Carbon, M. and Duchesne, T. (2024). Multivariate frequency polygon for
+#' stationary random fields. *Annals of the Institute of Statistical
+#' Mathematics*, 76(2), 263-287. doi:10.1007/s10463-023-00883-5.
 #'
 #' @seealso [ASH()], [LBFP()], [GLBFP()]
 #'

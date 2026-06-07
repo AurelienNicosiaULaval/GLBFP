@@ -73,7 +73,9 @@ As a first pass:
 
 The bandwidth vector `b` usually matters more than small changes in `m`.
 Use `compute_bi_optim()` as a reproducible starting point, then inspect
-sensitivity around that value.
+sensitivity around that value. This helper implements a plug-in bandwidth
+choice motivated by the optimal cell-width calculation for multivariate
+frequency polygons in Carbon and Duchesne (2024).
 
 For manuscript figures or numerical comparisons, report the selected `b`, the
 selected `m`, the grid definition, and the estimator family. This makes the

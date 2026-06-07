@@ -133,6 +133,9 @@ vignette is kept for backward compatibility.
 General background on frequency polygons, averaged shifted histograms, and
 multivariate density estimation is available in:
 
+- Carbon, M., and Duchesne, T. (2024). Multivariate frequency polygon for
+  stationary random fields. Annals of the Institute of Statistical Mathematics,
+  76(2), 263-287. doi:10.1007/s10463-023-00883-5.
 - Scott, D. W. (1992). Multivariate Density Estimation: Theory, Practice, and
   Visualization. Wiley. doi:10.1002/9780470316849.
 - Terrell, G. R., and Scott, D. W. (1985). Oversmoothed Nonparametric Density

@@ -43,7 +43,9 @@ They are intended for visualization and reproducible numerical summaries.
 
 The bandwidth vector `b` controls the scale of the bins. Smaller values can
 increase local variation, while larger values can smooth the estimate. The
-helper `compute_bi_optim()` provides a plug-in starting value.
+helper `compute_bi_optim()` provides a plug-in starting value based on the
+optimal cell-width calculation for multivariate frequency polygons in Carbon
+and Duchesne (2024).
 
 The shift vector `m` must contain positive integers. Larger values increase the
 number of shifted components and therefore increase computational cost.
@@ -58,6 +60,10 @@ does not claim a new theoretical result.
 
 Scott, D. W. (1992). Multivariate Density Estimation: Theory, Practice, and
 Visualization. Wiley. doi:10.1002/9780470316849.
+
+Carbon, M., and Duchesne, T. (2024). Multivariate frequency polygon for
+stationary random fields. Annals of the Institute of Statistical Mathematics,
+76(2), 263-287. doi:10.1007/s10463-023-00883-5.
 
 Terrell, G. R., and Scott, D. W. (1985). Oversmoothed Nonparametric Density
 Estimates. Journal of the American Statistical Association, 80(389), 209-214.
