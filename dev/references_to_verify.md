@@ -1,5 +1,16 @@
 # Références à vérifier
 
+## Référence vérifiée pour `compute_bi_optim()`
+
+La référence utilisée pour le calcul de largeur de cellule optimale est:
+
+Carbon, M., and Duchesne, T. (2024). Multivariate frequency polygon for
+stationary random fields. Annals of the Institute of Statistical Mathematics,
+76(2), 263-287. doi:10.1007/s10463-023-00883-5.
+
+Cette référence a été ajoutée à `R/compute_bi_optim.R`, au `README.md` et à la
+vignette méthodologique.
+
 ## Article méthodologique GLBFP
 
 Je ne sais pas quelle est la référence bibliographique complète de l'article

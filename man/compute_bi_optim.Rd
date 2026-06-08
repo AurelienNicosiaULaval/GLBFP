@@ -27,6 +27,9 @@ The returned vector is intended as a starting value for examples and routine
 workflows. For applied analysis, sensitivity to the bandwidth should still be
 checked.
 
+The plug-in expression follows the optimal cell-width calculation for
+multivariate frequency polygons in Carbon and Duchesne (2024).
+
 Near-singular covariance matrices are stabilized with a small ridge term. If
 this fails, the function returns an error rather than silently producing
 non-finite bandwidths.
@@ -36,6 +39,11 @@ set.seed(1)
 x <- cbind(rnorm(200), rnorm(200))
 compute_bi_optim(x, m = c(1, 1))
 
+}
+\references{
+Carbon, M. and Duchesne, T. (2024). Multivariate frequency polygon for
+stationary random fields. \emph{Annals of the Institute of Statistical
+Mathematics}, 76(2), 263-287. doi:10.1007/s10463-023-00883-5.
 }
 \seealso{
 \code{\link[=ASH]{ASH()}}, \code{\link[=LBFP]{LBFP()}}, \code{\link[=GLBFP]{GLBFP()}}

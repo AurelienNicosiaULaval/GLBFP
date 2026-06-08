@@ -1,8 +1,8 @@
 ---
-title: "Introduction to GLBFP"
+title: "Package overview and workflow map"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Introduction to GLBFP}
+  %\VignetteIndexEntry{Package overview and workflow map}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,72 +12,72 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 set.seed(2026)
 ```
 
-## Motivation
+This vignette gives a compact map of the package. For a first executable
+example, start with the "Getting started with GLBFP" vignette.
 
-`GLBFP` provides nonparametric density estimators based on histogram-style
-constructions that remain computationally light and interpretable.
+## Estimator families
 
-Use cases:
+`GLBFP` implements three related histogram-based density estimator families.
 
-- fast exploratory density estimation,
-- smooth alternatives to raw histograms,
-- 1D and 2D density estimation with consistent API.
+| Family | Pointwise function | Grid function | Main tuning inputs |
+|---|---|---|---|
+| Averaged Shifted Histogram | `ASH()` | `ASH_estimate()` | `b`, `m` |
+| Linear Blend Frequency Polygon | `LBFP()` | `LBFP_estimate()` | `b` |
+| General Linear Blend Frequency Polygon | `GLBFP()` | `GLBFP_estimate()` | `b`, `m` |
 
-## Core functions
+Lowercase aliases are also available:
 
 ```{r}
 library(GLBFP)
 
-data("ashua")
-head(ashua)
+c(
+  ash = exists("ash"),
+  lbfp = exists("lbfp"),
+  glbfp = exists("glbfp")
+)
 ```
 
-- `ASH()` estimates at one point.
-- `LBFP()` estimates at one point with linear blending.
-- `GLBFP()` extends LBFP with shift parameter `m`.
-- `*_estimate()` runs the same estimators over a grid.
+The uppercase names are kept for compatibility with the original package API.
 
-## 1D workflow
+## Core workflow
+
+Most analyses follow the same sequence:
+
+1. prepare a finite numeric matrix or data frame;
+2. choose a bandwidth vector `b`;
+3. choose `m` when using `ASH` or `GLBFP`;
+4. evaluate a pointwise estimator or a grid estimator;
+5. inspect the S3 summary, plot, and optional diagnostics.
 
 ```{r}
-x1 <- matrix(rnorm(300), ncol = 1)
-b1 <- compute_bi_optim(x1, m = 1)
+x <- matrix(rnorm(300), ncol = 1)
+b <- compute_bi_optim(x, m = 1)
 
-fit1 <- GLBFP(x = 0, data = x1, b = b1, m = 1)
-fit1
+point_fit <- glbfp(x = 0, data = x, b = b, m = 1)
+grid_fit <- glbfp_estimate(data = x, b = b, m = 1, grid_size = 80)
 
-grid1 <- GLBFP_estimate(data = x1, b = b1, m = 1, grid_size = 100)
-plot(grid1)
+summary(point_fit)
+summary(grid_fit)
 ```
 
-## 2D workflow
+## Article guide
 
-```{r}
-x2 <- ashua[, c("flow", "level")]
-b2 <- c(8, 0.4)
+Use the vignettes in this order when learning the package:
 
-fit2 <- GLBFP(x = c(mean(x2$flow), mean(x2$level)), data = x2, b = b2, m = c(1, 1))
-fit2
+| Article | Purpose |
+|---|---|
+| Getting started with GLBFP | First runnable examples and basic object usage |
+| Package overview and workflow map | Orientation across estimators and workflows |
+| Brief methodological background | Minimal statistical context and references |
+| Choosing between ASH, LBFP and GLBFP | Practical estimator comparison |
+| Two-dimensional density estimation | 2D estimation and visualization |
+| Sparse-prefix computation | Internal sparse grid-count diagnostics |
+| Leave-one-out `D_i` diagnostics | Fixed-grid leave-one-out diagnostics |
+| Objects, summaries and plotting | S3 classes and helper methods |
+| Validation and comparison | Lightweight benchmark scaffolding |
 
-grid2 <- GLBFP_estimate(data = x2, b = b2, m = c(1, 1), grid_size = 20)
-plot(grid2, contour = TRUE)
-```
+## Input expectations
 
-## FAQ
-
-### How should I choose `b`?
-
-Start with `compute_bi_optim(data, m = rep(1, d))`, then tune around this value
-for your context.
-
-### How should I choose `m`?
-
-Use small integers first (e.g. `1` or `2`). Larger values increase smoothing and
-compute time.
-
-### What are common pitfalls?
-
-- Missing values (`NA`) are not accepted.
-- Very small samples can produce unstable tails.
-- For custom `grid_points`, irregular grids are allowed but 3D surfaces are most
-  interpretable with rectangular grids.
+The package expects finite numeric observations with one observation per row.
+Missing values should be removed or handled before estimation. For nearly
+constant data, provide explicit non-degenerate `min_vals` and `max_vals`.

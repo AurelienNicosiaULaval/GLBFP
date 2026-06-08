@@ -1,8 +1,8 @@
 ---
-title: "Leave-one-out D_i scores"
+title: "Leave-one-out D_i diagnostics"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Leave-one-out D_i scores}
+  %\VignetteIndexEntry{Leave-one-out D_i diagnostics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,14 +13,15 @@ set.seed(20260607)
 ```
 
 The function `compute_Di()` computes fixed-grid leave-one-out self-support
-scores
+scores:
 
 \[
 D_i = 1 - \frac{\widehat f_{(-i)}(X_i)}{\widehat f(X_i)}.
 \]
 
 The bandwidths, grid origin and estimator parameters are held fixed. Only the
-contribution of observation `i` is removed.
+contribution of observation `i` is removed. The result is a diagnostic for the
+chosen estimator and grid, not a standalone model-selection criterion.
 
 ```{r}
 library(GLBFP)
@@ -61,6 +62,6 @@ c(
 )
 ```
 
-Interpretation depends on the chosen estimator and bandwidth. Large positive
-values indicate observations whose removal substantially decreases their own
-fitted support under the fixed-grid estimator.
+Interpretation depends on the chosen estimator, bandwidth and grid. Large
+positive values indicate observations whose removal substantially decreases
+their own fitted support under the fixed-grid estimator.

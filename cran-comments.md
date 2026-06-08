@@ -9,15 +9,15 @@
 
 - 0 ERROR
 - 0 WARNING
-- 2 NOTE
+- 1 NOTE
 
-NOTEs are the expected CRAN incoming check note for a new submission and a local
-HTML Tidy availability note during manual HTML validation.
+The NOTE is the expected CRAN incoming feasibility note for a new submission.
 
 ## Downstream and additional checks
 
-- `devtools::test()`
-- `devtools::check(manual = FALSE)`
+- Test suite run file by file with `testthat::test_file()`
+- Source archive built with `R CMD build` from a clean copy of the package
+- `R CMD check --as-cran` run on the source archive
 - URL check via `urlchecker::url_check()`
 
 ## Resubmission

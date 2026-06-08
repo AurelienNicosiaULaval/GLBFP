@@ -12,7 +12,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
 This vignette gives only the background needed to understand the software
-interface. It is not a replacement for the methodological paper.
+interface. It is not a replacement for a methodological article.
 
 ## Histogram-based density estimation
 
@@ -27,35 +27,43 @@ estimation bounds such as Terrell and Scott (1985).
 
 ## Estimators implemented in the package
 
-`ASH()` computes an averaged shifted histogram estimate at a point.
+The package separates pointwise and grid-based evaluation.
 
-`LBFP()` computes a linear blend frequency polygon estimate at a point.
+| Estimator | Pointwise function | Grid function |
+|---|---|---|
+| Averaged Shifted Histogram | `ASH()` | `ASH_estimate()` |
+| Linear Blend Frequency Polygon | `LBFP()` | `LBFP_estimate()` |
+| General Linear Blend Frequency Polygon | `GLBFP()` | `GLBFP_estimate()` |
 
-`GLBFP()` computes the general linear blend frequency polygon estimate at a
-point, using the shift vector `m`.
-
-The corresponding `*_estimate()` functions evaluate the same estimators on a
-grid. They are intended for visualization and reproducible numerical summaries.
+The pointwise functions evaluate the density at one supplied location. The
+grid functions evaluate the same estimator on a regular or user-supplied grid.
+They are intended for visualization and reproducible numerical summaries.
 
 ## Bandwidth and shift parameters
 
 The bandwidth vector `b` controls the scale of the bins. Smaller values can
 increase local variation, while larger values can smooth the estimate. The
-helper `compute_bi_optim()` provides a plug-in starting value.
+helper `compute_bi_optim()` provides a plug-in starting value based on the
+optimal cell-width calculation for multivariate frequency polygons in Carbon
+and Duchesne (2024).
 
 The shift vector `m` must contain positive integers. Larger values increase the
 number of shifted components and therefore increase computational cost.
 
 ## Scope of this package
 
-The package provides an R implementation, documentation, examples, tests, and
-benchmark scaffolding for GLBFP workflows. It does not introduce a new
-theoretical result.
+The package provides an R implementation, documentation, examples, tests,
+pkgdown articles, and benchmark scaffolding for GLBFP workflows. This vignette
+does not claim a new theoretical result.
 
 ## References
 
 Scott, D. W. (1992). Multivariate Density Estimation: Theory, Practice, and
 Visualization. Wiley. doi:10.1002/9780470316849.
+
+Carbon, M., and Duchesne, T. (2024). Multivariate frequency polygon for
+stationary random fields. Annals of the Institute of Statistical Mathematics,
+76(2), 263-287. doi:10.1007/s10463-023-00883-5.
 
 Terrell, G. R., and Scott, D. W. (1985). Oversmoothed Nonparametric Density
 Estimates. Journal of the American Statistical Association, 80(389), 209-214.
