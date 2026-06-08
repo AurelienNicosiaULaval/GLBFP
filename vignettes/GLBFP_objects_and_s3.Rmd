@@ -18,7 +18,6 @@ set.seed(20260607)
 |---|---|---|
 | Pointwise estimator | `"glbfp_fit"` | `print()`, `summary()`, `predict()` |
 | Grid estimator | `"glbfp_grid"` | `print()`, `summary()`, `predict()`, `plot()`, `as.data.frame()` |
-| Leave-one-out scores | `"glbfp_di"` | `print()`, `summary()`, `plot()`, `as.data.frame()` |
 
 ```{r}
 library(GLBFP)
@@ -68,6 +67,3 @@ grid_2d <- glbfp_estimate(x2, b = c(0.8, 0.8), m = c(1, 1), grid_size = 12)
 
 plot(grid_2d, contour = TRUE)
 ```
-
-For leave-one-out score objects, use the dedicated vignette "Leave-one-out D_i
-diagnostics" for interpretation.

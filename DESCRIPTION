@@ -10,8 +10,10 @@ Description: Implements nonparametric density estimation with Averaged Shifted
     Histogram (ASH), Linear Blend Frequency Polygon (LBFP), and General Linear
     Blend Frequency Polygon (GLBFP) estimators. The package provides pointwise
     and grid-based estimation workflows, sparse-prefix grid-count computation,
-    fixed-grid leave-one-out self-support scores, plotting helpers, and plug-in
-    bandwidth selection.
+    plotting helpers, and plug-in bandwidth selection. Methodological
+    background follows Scott (1992) <doi:10.1002/9780470316849>, Terrell and
+    Scott (1985) <doi:10.1080/01621459.1985.10477163>, and Carbon and
+    Duchesne (2024) <doi:10.1007/s10463-023-00883-5>.
 License: GPL (>= 3)
 URL: https://aureliennicosiaulaval.github.io/GLBFP/,
     https://github.com/AurelienNicosiaULaval/GLBFP

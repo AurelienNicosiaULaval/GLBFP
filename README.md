@@ -14,15 +14,13 @@ estimation. It implements:
 - General Linear Blend Frequency Polygon estimators: `GLBFP()`, `GLBFP_estimate()`
 
 The package supports pointwise density estimation, regular-grid estimation,
-1D and 2D plotting, sparse-prefix grid-count computation, fixed-grid
-leave-one-out `D_i` scores, S3 summaries and predictions, and plug-in bandwidth
-selection.
+1D and 2D plotting, sparse-prefix grid-count computation, S3 summaries and
+predictions, and plug-in bandwidth selection.
 
 ## Status
 
-The package is under active development and is not currently on CRAN. The
-current development target is CRAN readiness and preparation of a software
-article for The R Journal.
+The package is prepared for CRAN submission. Development-only features remain
+on GitHub until their methodology and documentation are ready for release.
 
 ## Installation
 
@@ -33,7 +31,7 @@ install.packages("remotes")
 remotes::install_github("AurelienNicosiaULaval/GLBFP")
 ```
 
-If the package is later accepted on CRAN, installation will use:
+If the package is accepted on CRAN, installation will use:
 
 ```r
 install.packages("GLBFP")
@@ -87,15 +85,6 @@ head(as.data.frame(grid_fit))
 plot(grid_fit, contour = TRUE)
 ```
 
-## Leave-one-out diagnostics
-
-```r
-scores <- compute_di(river_data, b = b, m = c(1, 1), estimator = "GLBFP")
-summary(scores)
-head(as.data.frame(scores))
-plot(scores)
-```
-
 ## Main functions
 
 | Task | Functions |
@@ -103,7 +92,6 @@ plot(scores)
 | Pointwise density estimation | `ASH()`, `LBFP()`, `GLBFP()` |
 | Grid-based density estimation | `ASH_estimate()`, `LBFP_estimate()`, `GLBFP_estimate()` |
 | Lowercase aliases | `ash()`, `lbfp()`, `glbfp()`, `ash_estimate()`, `lbfp_estimate()`, `glbfp_estimate()` |
-| Leave-one-out diagnostics | `compute_Di()`, `compute_di()` |
 | Bandwidth helper | `compute_bi_optim()` |
 | Bandwidth constants | `K_mi()`, `G_i()`, `compute_G_star()` |
 | S3 helpers | `print()`, `summary()`, `predict()`, `plot()`, `as.data.frame()` |
@@ -118,15 +106,14 @@ The pkgdown site is organized as a reading path:
 4. Choosing between ASH, LBFP and GLBFP
 5. Two-dimensional density estimation
 6. Sparse-prefix computation
-7. Leave-one-out `D_i` diagnostics
-8. Objects, summaries and plotting
-9. Validation and comparison
-10. Legacy estimation example
+7. Objects, summaries and plotting
+8. Validation and comparison
+9. Legacy estimation example
 
 The first five articles introduce the package and the estimators. The next
-three articles document implementation diagnostics and S3 behavior. The
-validation article gives a lightweight reproducible benchmark, while the legacy
-vignette is kept for backward compatibility.
+two articles document implementation diagnostics and S3 behavior. The validation
+article gives a lightweight reproducible benchmark, while the legacy vignette is
+kept for backward compatibility.
 
 ## References
 

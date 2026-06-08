@@ -7,15 +7,13 @@
 \description{
 \code{GLBFP} provides one-point and grid-based density estimators based on
 ASH, LBFP and GLBFP methodology, with sparse-prefix computation,
-leave-one-out self-support scores, visualization helpers and bandwidth
-selection utilities.
+visualization helpers and bandwidth selection utilities.
 }
 \details{
 Main entry points:
 \itemize{
 \item \code{\link[=ASH]{ASH()}}, \code{\link[=LBFP]{LBFP()}}, \code{\link[=GLBFP]{GLBFP()}}
 \item \code{\link[=ASH_estimate]{ASH_estimate()}}, \code{\link[=LBFP_estimate]{LBFP_estimate()}}, \code{\link[=GLBFP_estimate]{GLBFP_estimate()}}
-\item \code{\link[=compute_Di]{compute_Di()}}
 \item \code{\link[=compute_bi_optim]{compute_bi_optim()}}
 }
 

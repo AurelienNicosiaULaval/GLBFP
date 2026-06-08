@@ -299,11 +299,3 @@ glbfp_evaluate_glbfp_fast <- function(data, points, b, m, min_vals, max_vals, se
     state = state
   )
 }
-
-#' @keywords internal
-glbfp_compute_di_from_density <- function(density, self_weight, n, volume) {
-  D <- rep(NA_real_, length(density))
-  ok <- is.finite(density) & density > 0 & is.finite(self_weight)
-  D[ok] <- (self_weight[ok] / (volume * density[ok]) - 1) / (n - 1)
-  D
-}

@@ -45,9 +45,3 @@ lbfp_estimate <- function(...) {
 glbfp_estimate <- function(...) {
   GLBFP_estimate(...)
 }
-
-#' @rdname lowercase_aliases
-#' @export
-compute_di <- function(...) {
-  compute_Di(...)
-}

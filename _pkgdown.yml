@@ -36,10 +36,6 @@ reference:
       - ash_estimate
       - lbfp_estimate
       - glbfp_estimate
-  - title: Leave-one-out diagnostics
-    contents:
-      - compute_Di
-      - compute_di
   - title: Bandwidth helpers
     contents:
       - compute_bi_optim
@@ -71,7 +67,6 @@ articles:
     navbar: Computation and diagnostics
     contents:
       - GLBFP_fast_sparse_computation
-      - GLBFP_leave_one_out_scores
       - GLBFP_objects_and_s3
   - title: Validation and legacy
     navbar: Validation and legacy

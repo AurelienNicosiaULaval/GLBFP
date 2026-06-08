@@ -45,10 +45,4 @@ test_that("lowercase aliases and data-frame helpers are available", {
   grid_df <- as.data.frame(grid)
   expect_equal(nrow(grid_df), nrow(grid$grid))
   expect_true("density" %in% names(grid_df))
-
-  di <- compute_di(data, b = b, m = c(1, 1))
-  di_df <- as.data.frame(di)
-  expect_equal(nrow(di_df), nrow(data))
-  expect_true(all(c("D", "density", "self_weight") %in% names(di_df)))
-  expect_s3_class(plot(di), "ggplot")
 })

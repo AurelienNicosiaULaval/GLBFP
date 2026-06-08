@@ -103,25 +103,6 @@ grid_fit2 <- GLBFP_estimate(
 plot(grid_fit2, contour = TRUE)
 ```
 
-## Leave-one-out scores
-
-The function `compute_Di()` computes fixed-grid leave-one-out self-support
-scores. These scores are useful for diagnosing observations that receive little
-support from the fitted grid estimator.
-
-```{r}
-scores <- compute_Di(
-  river_data,
-  b = b2,
-  m = c(1, 1),
-  estimator = "GLBFP"
-)
-
-summary(scores)
-head(as.data.frame(scores))
-plot(scores)
-```
-
 ## Input expectations
 
 The package expects finite numeric data. Missing values should be removed or
@@ -136,5 +117,5 @@ After this vignette:
 - read "Brief methodological background" for the statistical context;
 - read "Choosing between ASH, LBFP and GLBFP" when comparing estimators;
 - read "Two-dimensional density estimation" for 2D workflows;
-- read "Sparse-prefix computation" and "Leave-one-out D_i diagnostics" for
-  implementation diagnostics.
+- read "Sparse-prefix computation" for implementation diagnostics;
+- read "Objects, summaries and plotting" for S3 helper behavior.

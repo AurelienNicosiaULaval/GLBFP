@@ -47,7 +47,7 @@ Most analyses follow the same sequence:
 2. choose a bandwidth vector `b`;
 3. choose `m` when using `ASH` or `GLBFP`;
 4. evaluate a pointwise estimator or a grid estimator;
-5. inspect the S3 summary, plot, and optional diagnostics.
+5. inspect the S3 summary, predictions, plots, and grid diagnostics.
 
 ```{r}
 x <- matrix(rnorm(300), ncol = 1)
@@ -72,7 +72,6 @@ Use the vignettes in this order when learning the package:
 | Choosing between ASH, LBFP and GLBFP | Practical estimator comparison |
 | Two-dimensional density estimation | 2D estimation and visualization |
 | Sparse-prefix computation | Internal sparse grid-count diagnostics |
-| Leave-one-out `D_i` diagnostics | Fixed-grid leave-one-out diagnostics |
 | Objects, summaries and plotting | S3 classes and helper methods |
 | Validation and comparison | Lightweight benchmark scaffolding |
 

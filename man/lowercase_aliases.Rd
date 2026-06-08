@@ -8,7 +8,6 @@
 \alias{ash_estimate}
 \alias{lbfp_estimate}
 \alias{glbfp_estimate}
-\alias{compute_di}
 \title{Lowercase aliases for the public API}
 \usage{
 ash(...)
@@ -22,8 +21,6 @@ ash_estimate(...)
 lbfp_estimate(...)
 
 glbfp_estimate(...)
-
-compute_di(...)
 }
 \arguments{
 \item{...}{Arguments passed to the corresponding uppercase function.}

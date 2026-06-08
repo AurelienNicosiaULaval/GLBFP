@@ -2,15 +2,12 @@
 % Please edit documentation in R/data_frame.R
 \name{as.data.frame.glbfp_grid}
 \alias{as.data.frame.glbfp_grid}
-\alias{as.data.frame.glbfp_di}
 \title{Convert GLBFP objects to data frames}
 \usage{
 \method{as.data.frame}{glbfp_grid}(x, row.names = NULL, optional = FALSE, ...)
-
-\method{as.data.frame}{glbfp_di}(x, row.names = NULL, optional = FALSE, ...)
 }
 \arguments{
-\item{x}{A GLBFP grid object or a \code{compute_Di()} result.}
+\item{x}{A GLBFP grid object.}
 
 \item{row.names}{Optional row names.}
 
