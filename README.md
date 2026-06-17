@@ -3,6 +3,9 @@
 # GLBFP
 
 [![R-CMD-check](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/GLBFP)](https://CRAN.R-project.org/package=GLBFP)
+[![CRAN checks](https://badges.cranchecks.info/worst/GLBFP.svg)](https://cran.r-project.org/web/checks/check_results_GLBFP.html)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/GLBFP)](https://cran.r-project.org/package=GLBFP)
 [![Codecov test coverage](https://codecov.io/gh/AurelienNicosiaULaval/GLBFP/branch/main/graph/badge.svg)](https://app.codecov.io/gh/AurelienNicosiaULaval/GLBFP)
 [![DOI](https://zenodo.org/badge/936140873.svg)](https://doi.org/10.5281/zenodo.17945962)
 
@@ -20,23 +23,23 @@ selection.
 
 ## Status
 
-The package is under active development and is not currently on CRAN. The
-current development target is CRAN readiness and preparation of a software
-article for The R Journal.
+The package is available on CRAN. The GitHub development version may include
+features that are not yet part of the CRAN release while their methodology and
+documentation are being finalized.
 
 ## Installation
+
+Install the CRAN release:
+
+```r
+install.packages("GLBFP")
+```
 
 Install the development version from GitHub:
 
 ```r
 install.packages("remotes")
 remotes::install_github("AurelienNicosiaULaval/GLBFP")
-```
-
-If the package is later accepted on CRAN, installation will use:
-
-```r
-install.packages("GLBFP")
 ```
 
 ## Quick start
