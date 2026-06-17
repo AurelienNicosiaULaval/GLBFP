@@ -6,7 +6,6 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/GLBFP)](https://CRAN.R-project.org/package=GLBFP)
 [![GitHub release](https://img.shields.io/github/v/release/AurelienNicosiaULaval/GLBFP?label=GitHub%20release)](https://github.com/AurelienNicosiaULaval/GLBFP/releases/latest)
 [![License](https://img.shields.io/cran/l/GLBFP)](https://CRAN.R-project.org/package=GLBFP)
-[![DOI](https://zenodo.org/badge/936140873.svg)](https://doi.org/10.5281/zenodo.17945962)
 
 `GLBFP` is an R package for histogram-based nonparametric density
 estimation. It implements:
