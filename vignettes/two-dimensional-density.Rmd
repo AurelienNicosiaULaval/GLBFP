@@ -72,11 +72,11 @@ For two-dimensional regular grids, `contour = TRUE` returns a static
 plot(grid_fit, contour = TRUE)
 ```
 
-With `contour = FALSE`, the plot method returns an interactive `plotly` surface.
-This is useful for exploration. Static contours are usually easier to reproduce
-in manuscripts.
+With `contour = FALSE`, the plot method returns an interactive surface. This is
+useful for exploration. Static contours are usually easier to reproduce in
+manuscripts, and they keep this vignette lightweight for CRAN checks.
 
-```{r}
+```{r, eval = FALSE}
 surface <- plot(grid_fit, contour = FALSE)
 surface
 ```

@@ -11,8 +11,12 @@
 - 0 WARNING
 - 2 NOTEs
 
-The first NOTE is the expected CRAN incoming feasibility note for a new
-submission. The second NOTE is local only:
+The first NOTE is the expected CRAN incoming feasibility note for a recent
+submission/update:
+
+`Days since last update: 1`
+
+The second NOTE is local only:
 
 `checking for future file timestamps ... NOTE`
 
@@ -26,10 +30,8 @@ No future file timestamps were reported.
 - Source archive built with `R CMD build` from a clean copy of the package
 - `R CMD check --as-cran` run on the source archive
 - URL check via `urlchecker::url_check()`
-- Experimental leave-one-out `Di` diagnostics are excluded from this CRAN
-  release branch and remain only in the GitHub development branch until the
-  methodology is ready for release.
 
 ## Resubmission
 
-Initial submission.
+This submission updates authorship and citation metadata and keeps the CRAN
+documentation aligned with the official release feature set.

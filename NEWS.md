@@ -1,3 +1,7 @@
+# GLBFP 0.5.2
+
+- Updated package authorship and citation metadata.
+
 # GLBFP 0.5.1
 
 ## Features
