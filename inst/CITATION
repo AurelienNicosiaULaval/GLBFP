@@ -4,10 +4,12 @@ bibentry(
   bibtype = "Manual",
   title = "GLBFP: General Linear Blend Frequency Polygon Density Estimation",
   author = c(
-    person("Aurélien", "Nicosia")
+    person("Aurélien", "Nicosia"),
+    person("Thierry", "Duchesne"),
+    person("Michel", "Carbon")
   ),
   year = "2026",
-  note = "R package version 0.5.1",
+  note = "R package version 0.5.2.9000",
   url = "https://github.com/AurelienNicosiaULaval/GLBFP",
   doi = "10.5281/zenodo.17945962"
 )

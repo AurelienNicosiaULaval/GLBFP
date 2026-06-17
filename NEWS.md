@@ -1,3 +1,8 @@
+# GLBFP 0.5.2.9000
+
+- Updated package authorship and citation metadata for the GitHub development
+  version.
+
 # GLBFP 0.5.1
 
 ## Features

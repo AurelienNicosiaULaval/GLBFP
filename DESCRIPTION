@@ -1,11 +1,19 @@
 Package: GLBFP
 Type: Package
 Title: General Linear Blend Frequency Polygon Density Estimation
-Version: 0.5.1
-Authors@R: person(given = "Aurélien",
-                  family = "Nicosia",
-                  role = c("aut", "cre"),
-                  email = "aurelien.nicosia@mat.ulaval.ca")
+Version: 0.5.2.9000
+Authors@R: c(
+    person(given = "Aurélien",
+           family = "Nicosia",
+           role = c("aut", "cre"),
+           email = "aurelien.nicosia@mat.ulaval.ca"),
+    person(given = "Thierry",
+           family = "Duchesne",
+           role = "aut"),
+    person(given = "Michel",
+           family = "Carbon",
+           role = "aut")
+    )
 Description: Implements nonparametric density estimation with Averaged Shifted
     Histogram (ASH), Linear Blend Frequency Polygon (LBFP), and General Linear
     Blend Frequency Polygon (GLBFP) estimators. The package provides pointwise
