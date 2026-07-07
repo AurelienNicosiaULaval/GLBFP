@@ -25,6 +25,14 @@ The package is available on CRAN. The GitHub development version may include
 features that are not yet part of the CRAN release while their methodology and
 documentation are being finalized.
 
+## Part of the research ecosystem
+
+This repository is part of Aurélien Nicosia's open research and teaching ecosystem in computational statistics, scientific R software, reproducible data science and statistical education.
+
+* Research Lab: [https://aureliennicosiaulaval.github.io/web_site/research-lab.html](https://aureliennicosiaulaval.github.io/web_site/research-lab.html)
+* GitHub profile: [https://github.com/AurelienNicosiaULaval](https://github.com/AurelienNicosiaULaval)
+* Related projects: [`grid-density-sparse-traversal`](https://github.com/AurelienNicosiaULaval/grid-density-sparse-traversal)
+
 ## Installation
 
 Install the CRAN release:
