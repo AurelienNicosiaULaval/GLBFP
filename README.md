@@ -34,6 +34,14 @@ and CRAN integration are being finalized. The article studies the single-grid
 LBFP case. The development package also exposes the same fixed-grid deletion
 diagnostic for ASH and GLBFP as software extensions.
 
+The article's project-specific replication package uses a separate internal R
+package, `LOOLBFP`, for the single-grid calculations reported in the paper.
+In an audit comparison, `LOOLBFP` and
+`GLBFP::compute_Di(..., estimator = "LBFP")` agreed to floating-point precision
+when given equivalent fixed grids. Their default grid anchors differ, however,
+so calls using both packages' defaults need not return identical numerical
+scores. Use `LOOLBFP` for exact reproduction of the submitted article results.
+
 ## Part of the research ecosystem
 
 This repository is part of Aurélien Nicosia's open research and teaching ecosystem in computational statistics, scientific R software, reproducible data science and statistical education.
