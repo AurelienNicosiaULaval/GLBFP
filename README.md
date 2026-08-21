@@ -24,7 +24,7 @@ also includes fixed-grid leave-one-out `D_i` diagnostics.
 | Source | Version | Fixed-grid `D_i` diagnostics |
 |---|---:|---|
 | CRAN | 0.5.2 | Not included |
-| GitHub `main` | 0.5.2.9000 | Development only: `compute_Di()` and `compute_di()` |
+| GitHub `main` | 0.5.2.9000 | Development only: `compute_Di()` |
 
 CRAN 0.5.2 is the stable density-estimation release. The leave-one-out
 diagnostic developed in
@@ -119,7 +119,7 @@ The following example uses the single-grid LBFP setting studied in the article.
 The grid and bandwidth remain fixed when each observation is deleted.
 
 ```r
-scores <- compute_di(river_data, b = b, estimator = "LBFP")
+scores <- compute_Di(river_data, b = b, estimator = "LBFP")
 summary(scores)
 head(as.data.frame(scores))
 plot(scores)
@@ -136,7 +136,7 @@ outlier.
 | Pointwise density estimation | `ASH()`, `LBFP()`, `GLBFP()` |
 | Grid-based density estimation | `ASH_estimate()`, `LBFP_estimate()`, `GLBFP_estimate()` |
 | Lowercase aliases | `ash()`, `lbfp()`, `glbfp()`, `ash_estimate()`, `lbfp_estimate()`, `glbfp_estimate()` |
-| Leave-one-out diagnostics | `compute_Di()`, `compute_di()` |
+| Leave-one-out diagnostics | `compute_Di()` |
 | Bandwidth helper | `compute_bi_optim()` |
 | Bandwidth constants | `K_mi()`, `G_i()`, `compute_G_star()` |
 | S3 helpers | `print()`, `summary()`, `predict()`, `plot()`, `as.data.frame()` |

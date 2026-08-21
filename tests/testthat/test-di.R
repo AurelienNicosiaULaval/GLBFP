@@ -46,3 +46,11 @@ test_that("compute_Di supports LBFP and ASH", {
   s <- summary(lbfp)
   expect_s3_class(s, "summary.glbfp_di")
 })
+
+test_that("compute_Di is the only exported D_i computation interface", {
+  exports <- getNamespaceExports("GLBFP")
+
+  expect_true("compute_Di" %in% exports)
+  expect_false("compute_di" %in% exports)
+  expect_false(exists("compute_di", envir = asNamespace("GLBFP"), inherits = FALSE))
+})
