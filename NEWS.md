@@ -1,5 +1,12 @@
 # GLBFP 0.5.2.9000
 
+- Added `compute_Di()` and `compute_di()` for fixed-grid leave-one-out
+  self-support scores. These functions are available only in the GitHub
+  development version and are not part of CRAN 0.5.2.
+- Added data-frame, summary and plotting methods for `D_i` diagnostics, tests
+  against explicit leave-one-out recomputation, and a dedicated vignette.
+- Linked the single-grid LBFP diagnostic to the accompanying article by
+  Nicosia, Duchesne and Carbon (2026), arXiv:2607.14335.
 - Updated package authorship and citation metadata for the GitHub development
   version.
 
@@ -8,10 +15,8 @@
 ## Features
 
 - Added sparse-prefix computation for ASH, LBFP and GLBFP grid-count estimators.
-- Added `compute_Di()` and `compute_di()` for fixed-grid leave-one-out self-support scores.
 - Added lowercase aliases (`ash()`, `lbfp()`, `glbfp()` and corresponding grid functions).
-- Added `as.data.frame()` helpers for grid and `D_i` score objects.
-- Added `plot.glbfp_di()` for leave-one-out score diagnostics.
+- Added `as.data.frame()` helpers for grid objects.
 - Added a hexagonal package logo and expanded pkgdown article structure.
 - Added test infrastructure (`testthat` edition 3) and regression/invariant tests.
 - Added S3 helpers for `summary()` and `predict()` on fit/grid objects.

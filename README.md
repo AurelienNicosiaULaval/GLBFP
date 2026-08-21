@@ -15,15 +15,24 @@ estimation. It implements:
 - General Linear Blend Frequency Polygon estimators: `GLBFP()`, `GLBFP_estimate()`
 
 The package supports pointwise density estimation, regular-grid estimation,
-1D and 2D plotting, sparse-prefix grid-count computation, fixed-grid
-leave-one-out `D_i` scores, S3 summaries and predictions, and plug-in bandwidth
-selection.
+1D and 2D plotting, sparse-prefix grid-count computation, S3 summaries and
+predictions, and plug-in bandwidth selection. The GitHub development version
+also includes fixed-grid leave-one-out `D_i` diagnostics.
 
-## Status
+## Release status
 
-The package is available on CRAN. The GitHub development version may include
-features that are not yet part of the CRAN release while their methodology and
-documentation are being finalized.
+| Source | Version | Fixed-grid `D_i` diagnostics |
+|---|---:|---|
+| CRAN | 0.5.2 | Not included |
+| GitHub `main` | 0.5.2.9000 | Development only: `compute_Di()` and `compute_di()` |
+
+CRAN 0.5.2 is the stable density-estimation release. The leave-one-out
+diagnostic developed in
+[Nicosia, Duchesne and Carbon (2026)](https://arxiv.org/abs/2607.14335) is
+available only in the GitHub development version while its software interface
+and CRAN integration are being finalized. The article studies the single-grid
+LBFP case. The development package also exposes the same fixed-grid deletion
+diagnostic for ASH and GLBFP as software extensions.
 
 ## Part of the research ecosystem
 
@@ -35,13 +44,13 @@ This repository is part of Aurélien Nicosia's open research and teaching ecosys
 
 ## Installation
 
-Install the CRAN release:
+Install the stable CRAN release, which does not include `D_i`:
 
 ```r
 install.packages("GLBFP")
 ```
 
-Install the development version from GitHub:
+Install the GitHub development version to use `D_i`:
 
 ```r
 install.packages("remotes")
@@ -96,14 +105,21 @@ head(as.data.frame(grid_fit))
 plot(grid_fit, contour = TRUE)
 ```
 
-## Leave-one-out diagnostics
+## Leave-one-out diagnostics (development version only)
+
+The following example uses the single-grid LBFP setting studied in the article.
+The grid and bandwidth remain fixed when each observation is deleted.
 
 ```r
-scores <- compute_di(river_data, b = b, m = c(1, 1), estimator = "GLBFP")
+scores <- compute_di(river_data, b = b, estimator = "LBFP")
 summary(scores)
 head(as.data.frame(scores))
 plot(scores)
 ```
+
+`D_i` measures local self-support under the fitted estimator. It is a
+diagnostic score, not an estimated probability that an observation is an
+outlier.
 
 ## Main functions
 

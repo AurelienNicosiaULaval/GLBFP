@@ -34,4 +34,10 @@ Useful links:
 \author{
 \strong{Maintainer}: Aurélien Nicosia \email{aurelien.nicosia@mat.ulaval.ca}
 
+Authors:
+\itemize{
+  \item Thierry Duchesne
+  \item Michel Carbon
+}
+
 }
