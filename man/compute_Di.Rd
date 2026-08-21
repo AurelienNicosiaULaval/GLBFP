@@ -36,11 +36,19 @@ Computes the fixed-grid leave-one-out score
 \deqn{D_i = 1 - \widehat f_{(-i)}(X_i) / \widehat f(X_i)}
 for observations in \code{data}. The grid, bandwidths, and estimator parameters
 are held fixed when the contribution of observation \code{i} is removed.
+The single-grid LBFP case is developed by Nicosia, Duchesne and Carbon
+(2026). The ASH and GLBFP options extend the same fixed-grid deletion
+diagnostic to the other estimators implemented in this package.
 }
 \examples{
 x <- as.matrix(ashua[seq_len(80), -3])
 b <- c(0.5, 0.5)
-out <- compute_Di(x, b = b, m = c(1, 1), estimator = "GLBFP")
+out <- compute_Di(x, b = b, estimator = "LBFP")
 summary(out)
 
+}
+\references{
+Nicosia, A., Duchesne, T., and Carbon, M. (2026). A Leave-One-Out Influence
+Statistic for Density-Based Outlier Detection. arXiv:2607.14335.
+\doi{10.48550/arXiv.2607.14335}
 }

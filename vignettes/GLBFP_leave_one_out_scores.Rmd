@@ -12,6 +12,9 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 set.seed(20260607)
 ```
 
+This vignette documents a feature of the GitHub development version. The
+functions described here are not included in the CRAN 0.5.2 release.
+
 The function `compute_Di()` computes fixed-grid leave-one-out self-support
 scores:
 
@@ -19,18 +22,20 @@ scores:
 D_i = 1 - \frac{\widehat f_{(-i)}(X_i)}{\widehat f(X_i)}.
 \]
 
-The bandwidths, grid origin and estimator parameters are held fixed. Only the
+The single-grid LBFP case is developed by
+[Nicosia, Duchesne and Carbon (2026)](https://arxiv.org/abs/2607.14335). The
+bandwidths, grid origin and estimator parameters are held fixed. Only the
 contribution of observation `i` is removed. The result is a diagnostic for the
-chosen estimator and grid, not a standalone model-selection criterion.
+chosen estimator and grid, not an estimated outlier probability or a
+standalone model-selection criterion.
 
 ```{r}
 library(GLBFP)
 
 x <- cbind(rnorm(120), rnorm(120))
 b <- c(0.7, 0.7)
-m <- c(2, 2)
 
-scores <- compute_Di(x, b = b, m = m, estimator = "GLBFP")
+scores <- compute_Di(x, b = b, estimator = "LBFP")
 scores
 summary(scores)
 ```
@@ -49,16 +54,18 @@ plot(scores)
 plot(scores, type = "density")
 ```
 
-The same interface supports `LBFP` and `ASH`.
+The development interface also supports ASH and GLBFP as software extensions
+of the fixed-grid deletion diagnostic.
 
 ```{r}
-lbfp_scores <- compute_di(x, b = b, estimator = "LBFP")
+m <- c(2, 2)
 ash_scores <- compute_di(x, b = b, m = m, estimator = "ASH")
+glbfp_scores <- compute_di(x, b = b, m = m, estimator = "GLBFP")
 
 c(
-  LBFP_mean = mean(lbfp_scores$D),
+  LBFP_mean = mean(scores$D),
   ASH_mean = mean(ash_scores$D),
-  GLBFP_mean = mean(scores$D)
+  GLBFP_mean = mean(glbfp_scores$D)
 )
 ```
 
