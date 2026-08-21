@@ -29,6 +29,14 @@ contribution of observation `i` is removed. The result is a diagnostic for the
 chosen estimator and grid, not an estimated outlier probability or a
 standalone model-selection criterion.
 
+The project-specific replication package for the article uses a separate
+internal R package, `LOOLBFP`, for the reported single-grid calculations. In an
+audit comparison, `LOOLBFP` and `compute_Di(..., estimator = "LBFP")` agreed to
+floating-point precision when given equivalent fixed grids. The packages use
+different default grid anchors, however, so their default calls need not
+produce identical numerical scores. Use `LOOLBFP` for exact reproduction of
+the submitted article results.
+
 ```{r}
 library(GLBFP)
 
