@@ -67,8 +67,8 @@ of the fixed-grid deletion diagnostic.
 
 ```{r}
 m <- c(2, 2)
-ash_scores <- compute_di(x, b = b, m = m, estimator = "ASH")
-glbfp_scores <- compute_di(x, b = b, m = m, estimator = "GLBFP")
+ash_scores <- compute_Di(x, b = b, m = m, estimator = "ASH")
+glbfp_scores <- compute_Di(x, b = b, m = m, estimator = "GLBFP")
 
 c(
   LBFP_mean = mean(scores$D),

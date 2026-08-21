@@ -39,7 +39,6 @@ reference:
   - title: Leave-one-out diagnostics
     contents:
       - compute_Di
-      - compute_di
   - title: Bandwidth helpers
     contents:
       - compute_bi_optim

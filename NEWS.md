@@ -1,7 +1,7 @@
 # GLBFP 0.5.2.9000
 
-- Added `compute_Di()` and `compute_di()` for fixed-grid leave-one-out
-  self-support scores. These functions are available only in the GitHub
+- Added `compute_Di()` for fixed-grid leave-one-out
+  self-support scores. This function is available only in the GitHub
   development version and are not part of CRAN 0.5.2.
 - Added data-frame, summary and plotting methods for `D_i` diagnostics, tests
   against explicit leave-one-out recomputation, and a dedicated vignette.

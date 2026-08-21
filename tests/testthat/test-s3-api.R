@@ -46,7 +46,7 @@ test_that("lowercase aliases and data-frame helpers are available", {
   expect_equal(nrow(grid_df), nrow(grid$grid))
   expect_true("density" %in% names(grid_df))
 
-  di <- compute_di(data, b = b, m = c(1, 1))
+  di <- compute_Di(data, b = b, m = c(1, 1))
   di_df <- as.data.frame(di)
   expect_equal(nrow(di_df), nrow(data))
   expect_true(all(c("D", "density", "self_weight") %in% names(di_df)))
