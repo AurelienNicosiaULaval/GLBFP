@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [main, master, dev-publication]
+    branches: [main, develop]
   pull_request:
   workflow_dispatch:
 
@@ -40,19 +40,19 @@ jobs:
         run: Rscript -e 'pkgdown::build_site(new_process = FALSE, install = TRUE)'
 
       - name: Configure GitHub Pages
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v5
         with:
           enablement: true
 
       - name: Upload GitHub Pages artifact
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     permissions:

@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [main, master, dev-publication]
+    branches: [main, develop]
   pull_request:
   workflow_dispatch:
 
