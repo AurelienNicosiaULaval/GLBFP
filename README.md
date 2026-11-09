@@ -42,14 +42,6 @@ when given equivalent fixed grids. Their default grid anchors differ, however,
 so calls using both packages' defaults need not return identical numerical
 scores. Use `LOOLBFP` for exact reproduction of the submitted article results.
 
-## Part of the research ecosystem
-
-This repository is part of Aurélien Nicosia's open research and teaching ecosystem in computational statistics, scientific R software, reproducible data science and statistical education.
-
-* Research Lab: [https://aureliennicosiaulaval.github.io/web_site/research-lab.html](https://aureliennicosiaulaval.github.io/web_site/research-lab.html)
-* GitHub profile: [https://github.com/AurelienNicosiaULaval](https://github.com/AurelienNicosiaULaval)
-* Related projects: [`grid-density-sparse-traversal`](https://github.com/AurelienNicosiaULaval/grid-density-sparse-traversal)
-
 ## Installation
 
 Install the stable CRAN release, which does not include `D_i`:
