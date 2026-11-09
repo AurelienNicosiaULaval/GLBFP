@@ -1,0 +1,161 @@
+---
+title: "Indexed fields: dimensions, grids and inference"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Indexed fields: dimensions, grids and inference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Two different dimensions
+
+The index dimension `N` describes sites in Z^N. The observation dimension `d`
+describes the random vector measured at each site. The density is a function
+on R^d, regardless of `N`. Index coordinates are never silently used as
+observation components.
+
+```{r}
+library(GLBFP)
+set.seed(20261109)
+field2 <- glbfp_field(array(rnorm(10 * 8), c(10, 8)), units = "standard unit")
+field2
+field3 <- glbfp_field(array(rnorm(5 * 4 * 3 * 2), c(5, 4, 3, 2)), value_dim = 4)
+field3
+```
+
+Array entries are scalar observations by default. `value_dim` explicitly names
+the component axis for multivariate arrays. Alternatively, supply an `n x d`
+matrix of observations and a separate `n x N` matrix of integer sites.
+
+```{r}
+sites <- as.matrix(expand.grid(i = 1:10, j = 1:8))
+explicit <- glbfp_field(field2$values, indices = sites)
+stopifnot(identical(field2$values, explicit$values))
+```
+
+Duplicate sites are rejected. Repeated observation values at different sites
+are allowed. Missing values cause an error unless `na.action = "omit"`; then
+the entire site is omitted and its coordinates recorded. Incomplete bounding
+boxes are accepted for descriptive marginal estimation without interpolation
+or imputation of missing sites. Their sampling design can change the
+interpretation of the empirical marginal distribution.
+
+```{r}
+array_missing <- array(rnorm(80), c(10, 8))
+array_missing[3, 4] <- NA_real_
+incomplete <- glbfp_field(array_missing, na.action = "omit")
+incomplete$complete
+incomplete$omitted
+```
+
+## Fixed grid and reusable counts
+
+For bandwidth `b` and integer parameter `m`, the fine-cell width is `delta=b/m`.
+The anchor `min_vals=a` defines half-open counting cells
+`[a+k*delta, a+(k+1)*delta)`. Interpolation uses their centers. All unoccupied
+cells have zero counts on the full lattice. `max_vals` limits the display grid;
+it does not extrapolate, truncate or renormalize the density.
+
+```{r}
+model <- prepare_glbfp(field2, b = .8, m = 2, min_vals = -5, max_vals = 5)
+model
+predict(model, matrix(c(-1, 0, 1), ncol = 1))
+scores <- compute_Di(model)
+summary(scores)
+```
+
+The same preparation supports predictions and fixed-grid D_i scores. Native
+direct enumeration and prefix traversal have identical statistical targets.
+The faster engine depends on occupancy, stencil size and query count. The
+automatic threshold is a heuristic, not a universal optimum. Prefix traversal
+does not eliminate the combinatorial worst case.
+
+## What uncertainty means
+
+The default returns no standard error or interval. Merely providing spatial
+indices does not justify independent sampling or an asymptotic normal law.
+The package does not implement dependent-field confidence intervals.
+
+For independent observations, a fixed anchor, fixed bandwidths and fixed
+evaluation points, write the density estimate as the mean of observation
+weights W_i(x), including the factor `1/prod(b)`. The unbiased variance
+estimate is `var(W_i(x))/n`. This identity does not need a small-bandwidth
+approximation. It does require IID sampling and fixed weights as functions of
+individual observations. A bandwidth selected from the same sample or an
+anchor equal to its minimum does not satisfy that fixed-parameter argument.
+
+```{r}
+iid_data <- matrix(rnorm(200), ncol = 1)
+fit <- GLBFP(0, iid_data, b = .8, m = 2,
+             min_vals = -5, max_vals = 5, inference = "iid")
+fit
+```
+
+The normal interval uses this standard error once. It targets E[fhat(x)],
+the expected smoothed estimate, not the unsmoothed true density. It has no
+finite-sample or simultaneous coverage guarantee. Smoothing bias remains.
+Declaring `dependence = "iid"` for a field is a caller assumption, not a test.
+
+Carbon and Duchesne (2024), Theorem 1, study LBFP on expanding rectangular
+domains under stationarity, smoothness, bounded conditional densities and
+mixing-rate assumptions involving `N`. Carbon and Duchesne (2026, online 2025)
+study asymptotic normality of LBFP. Neither a lattice object nor the general
+GLBFP option establishes those assumptions. Carbon's internal GLBFP working
+note (2024) explicitly leaves its normal approximation unproved. The bandwidth
+helper follows that note's Gaussian-reference L1 heuristic, with sensitivity
+analysis still needed.
+
+## Visualizations and full examples
+
+```{r}
+fit2 <- GLBFP_estimate(field3, b = c(1, 1), m = c(2, 2), grid_size = 15,
+                       min_vals = c(-4, -4), max_vals = c(4, 4))
+plot_density(fit2, "heatmap", units = c("cm", "s"))
+```
+
+The heatmap above concerns `d=2` observations on an `N=3` field. A 3D surface
+of this fit uses density as its height. For `d=3`, use joint-density slices or
+isosurfaces. Slices are not renormalized conditional densities.
+
+`system.file("examples", "indexed_fields.R", package="GLBFP")` locates a full
+executable script: stationary Gaussian moving-average fields for N=1, 2 and 3,
+known marginal-density comparisons, static plots and self-contained interactive
+HTML. The simulation includes innovations beyond the observation box so edge
+sites have the same marginal law.
+
+```{r}
+dem <- read.csv(system.file("extdata", "cdem_quebec.csv", package = "GLBFP"))
+dem_field <- glbfp_field(matrix(dem$elevation_m, ncol = 1),
+                         indices = as.matrix(dem[c("i", "j")]), units = "m")
+dem_field
+```
+
+This small CDEM window near Quebec City is a projected 16 m lattice, with
+indices stored separately from EPSG:3979 cell centers. Natural Resources
+Canada is the publisher. Contains information licensed under the Open
+Government Licence - Canada. The CSV and its `cdem_quebec_PROVENANCE.txt`
+record the source, extraction and projection. It describes a local topographic
+distribution; no stationarity, mixing or confidence coverage is asserted.
+
+## References
+
+Carbon, M. (2024). Le fameux GLBFP. Internal working note, Université Laval,
+été-automne 2024, equations (2)-(7), (22)-(36).
+
+Carbon, M. and Duchesne, T. (2024). Multivariate frequency polygon for stationary
+random fields. Annals of the Institute of Statistical Mathematics 76, 263-287.
+<https://doi.org/10.1007/s10463-023-00883-5>.
+
+Carbon, M. and Duchesne, T. (2026; online 2025). Asymptotic normality of
+multivariate frequency polygons for stationary random fields. Annals of the
+Institute of Statistical Mathematics 78, 297-326.
+<https://doi.org/10.1007/s10463-025-00952-x>.
+
+Natural Resources Canada (2013 product specifications; extracted 2026-11-09).
+Canadian Digital Elevation Model.
+<https://open.canada.ca/data/en/dataset/7f245e4d-76c2-4caa-951a-45d1d2051333>.
+Licence: <https://open.canada.ca/en/open-government-licence-canada>.

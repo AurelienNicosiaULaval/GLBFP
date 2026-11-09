@@ -15,9 +15,60 @@ estimation. It implements:
 - General Linear Blend Frequency Polygon estimators: `GLBFP()`, `GLBFP_estimate()`
 
 The package supports pointwise density estimation, regular-grid estimation,
-1D and 2D plotting, sparse-prefix grid-count computation, S3 summaries and
+1D to 3D plotting, reusable compiled sparse grid-count computation, S3 summaries and
 predictions, and plug-in bandwidth selection. The GitHub development version
 also includes fixed-grid leave-one-out `D_i` diagnostics.
+
+## Local review candidate, 9 November 2026
+
+This checkout is version 0.5.2.9001, prepared locally from main commit
+`cf9e1f541407899d9f715a3d8e84db0cc93ef035`. It has not been published.
+The release table below describes the public releases, not this candidate.
+
+The counting lattice is unbounded with zero counts outside occupied cells.
+`min_vals` is the lower-bound anchor of half-open fine cells; `max_vals` controls
+the plotting grid and does not truncate or clamp density support. Tight-bound
+extrapolation in the previous implementation is corrected. Widths returned by
+`compute_bi_optim()` also change because two transcription errors were corrected.
+Calls and legacy classes remain available; corrected numerical results at
+boundaries and corrected automatically selected bandwidths intentionally differ.
+
+Uncertainty defaults to `inference = "none"` (`sd`/`IC` are `NA`). Opt-in
+`inference = "iid"` requires explicit fixed `b` and `min_vals` and fixed
+independent evaluation points. It uses an unbiased sample estimate of the
+variance of the weighted mean under IID sampling. Normal intervals concern the
+expected smoothed estimator, not a bias-corrected true density. There is no
+implemented dependent-field confidence interval.
+
+```r
+library(GLBFP)
+set.seed(11)
+field <- glbfp_field(array(rnorm(12 * 10 * 8), c(12, 10, 8))) # N=3, d=1
+model <- prepare_glbfp(field, b = 0.8, m = 2,
+                       min_vals = -5, max_vals = 5)
+predict(model, matrix(c(-1, 0, 1), ncol = 1))
+compute_Di(model)
+```
+
+`prepare_glbfp()` reuses fine-grid counts for predictions and all scores.
+`engine = "auto"` selects direct native enumeration for stencils of at most 64
+cells, and native prefix traversal otherwise. Explicit `R`, `cpp_direct`, and
+`cpp_prefix` engines permit comparison. Gains depend on occupancy, dimension,
+`m`, query count and whether preparation is reused. Prefix traversal retains a
+combinatorial worst case. Native code is adapted under the MIT licence retained
+in `inst/COPYRIGHTS`; the package remains GPL (>= 3).
+
+`glbfp_field()` accepts distinct integer sites or scalar/multicomponent arrays,
+stores `N` separately from `d`, records omitted sites and accepts incomplete
+grids for descriptive estimation. Index coordinates are not density variables.
+
+`plot_density(fit, "heatmap")`, `"contour"`, and `"surface"` describe bivariate
+observations. For trivariate observations use `"slices"` or `"isosurface"`.
+`save_density_plot()` exports static PNG/PDF/SVG or self-contained HTML.
+See `inst/examples/indexed_fields.R` for executed N=1, N=2 and N=3 Gaussian
+moving-average examples, known marginal densities, and a small CDEM window
+near Quebec City with source, projection, extraction and licence metadata.
+The real-data example is descriptive and asserts no stationarity or mixing.
 
 ## Release status
 
@@ -175,9 +226,10 @@ multivariate density estimation is available in:
   Estimates. Journal of the American Statistical Association, 80(389), 209-214.
   doi:10.1080/01621459.1985.10477163.
 
-The complete bibliographic record for the original GLBFP methodological article
-has not yet been verified in this repository. It is tracked in
-`dev/references_to_verify.md` and should be added before journal submission.
+The precise GLBFP construction and the Gaussian-reference L1 bandwidth
+heuristic are documented in Carbon, M. (2024), *Le fameux GLBFP*, internal
+working note, Université Laval, equations (2)-(7) and (22)-(36). This note
+explicitly leaves asymptotic normality for GLBFP unproved.
 
 ## Citation
 

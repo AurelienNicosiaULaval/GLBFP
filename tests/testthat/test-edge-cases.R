@@ -17,7 +17,7 @@ test_that("functions reject non-numeric data with clear errors", {
 
 test_that("compute_bi_optim handles degenerate covariance with ridge stabilization", {
   x <- cbind(rep(1, 20), rep(1, 20))
-  b <- compute_bi_optim(x, m = c(1, 1))
+  expect_warning(b <- compute_bi_optim(x, m = c(1, 1)), "regularized")
 
   expect_equal(length(b), 2)
   expect_true(all(is.finite(b)))

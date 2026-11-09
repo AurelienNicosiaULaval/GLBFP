@@ -16,6 +16,9 @@
 #' @param min_vals Numeric vector of lower grid bounds (length `d`).
 #' @param max_vals Numeric vector of upper grid bounds (length `d`).
 #'
+#' @param engine Computational engine; see [prepare_glbfp()].
+#' @details `data` may be a [glbfp_field()] or a [prepare_glbfp()] model.
+#'   This diagnostic is not an outlier probability or a calibrated test.
 #' @return A list with class `"glbfp_di"` containing the score vector `D`,
 #' fitted densities, leave-one-out densities, self-weights, and metadata.
 #'
@@ -31,86 +34,31 @@
 #' summary(out)
 #'
 #' @export
-compute_Di <- function(
-  data,
-  b = compute_bi_optim(data, m = rep(1, ncol(data))),
-  m = rep(1, ncol(data)),
-  estimator = c("GLBFP", "LBFP", "ASH"),
-  min_vals = apply(data, 2, min),
-  max_vals = apply(data, 2, max)
-) {
-  data <- glbfp_validate_data(data)
-  d <- ncol(data)
-  n <- nrow(data)
-  if (n < 2L) {
-    stop("`data` must contain at least two observations.", call. = FALSE)
-  }
-
-  estimator <- match.arg(estimator)
-  b <- glbfp_validate_vector(b, d = d, name = "b", positive = TRUE)
-  if (identical(estimator, "LBFP")) {
-    m <- rep(1L, d)
+compute_Di <- function(data, b = NULL, m = NULL,
+                       estimator = c("GLBFP", "LBFP", "ASH"),
+                       min_vals = NULL, max_vals = NULL,
+                       engine = c("auto", "R", "cpp_direct", "cpp_prefix")) {
+  if (inherits(data, "glbfp_model")) {
+    if (!is.null(b) || !is.null(m) || !is.null(min_vals) || !is.null(max_vals) ||
+        !missing(estimator) || !missing(engine)) {
+      stop("A prepared model already fixes bandwidths, grid, estimator and engine.", call. = FALSE)
+    }
+    model <- data
   } else {
-    m <- glbfp_validate_vector(m, d = d, name = "m", positive = TRUE, integerish = TRUE)
+    model <- prepare_glbfp(data, b, m, match.arg(estimator), min_vals, max_vals, match.arg(engine))
   }
-
-  bounds <- glbfp_validate_bounds(min_vals, max_vals, d = d)
-  min_vals <- bounds$min_vals
-  max_vals <- bounds$max_vals
-
-  delta <- b / m
-  self_state <- glbfp_count_state(data = data, delta = delta, min_vals = min_vals)
-
-  if (identical(estimator, "ASH")) {
-    fast <- glbfp_evaluate_ash_fast(
-      data = data,
-      points = data,
-      b = b,
-      m = m,
-      min_vals = min_vals,
-      max_vals = max_vals,
-      self_keys = self_state$data_keys
-    )
-  } else {
-    fast <- glbfp_evaluate_glbfp_fast(
-      data = data,
-      points = data,
-      b = b,
-      m = m,
-      min_vals = min_vals,
-      max_vals = max_vals,
-      self_keys = self_state$data_keys
-    )
-  }
-
-  volume <- prod(b)
-  D <- glbfp_compute_di_from_density(
-    density = fast$densities,
-    self_weight = fast$self_weight,
-    n = n,
-    volume = volume
-  )
-  density_loo <- (n * fast$densities * volume - fast$self_weight) / ((n - 1) * volume)
-  density_loo[!is.finite(density_loo)] <- NA_real_
-
-  result <- list(
-    D = D,
-    D_positive = pmax(D, 0),
-    density = fast$densities,
-    density_loo = density_loo,
-    self_weight = fast$self_weight,
-    b = b,
-    m = m,
-    method = estimator,
-    dimension = d,
-    n = n,
-    min_vals = min_vals,
-    max_vals = max_vals,
-    cell_index = fast$cell_index,
-    visited = fast$visited,
-    prefix_nodes = fast$prefix_nodes,
-    prefix_order = fast$prefix_order
-  )
+  fast <- glbfp_evaluate_prepared(model, model$data, self = TRUE)
+  D <- glbfp_compute_di_from_density(fast$densities, fast$self_weight, model$n, model$volume)
+  density_loo <- (model$n * fast$densities - fast$self_weight / model$volume) / (model$n - 1)
+  density_loo <- pmax(0, density_loo)
+  result <- list(D = D, D_positive = pmax(D, 0), density = fast$densities,
+    density_loo = density_loo, self_weight = fast$self_weight,
+    b = model$b, m = model$m, method = model$method, dimension = model$d,
+    n = model$n, min_vals = model$min_vals, max_vals = model$max_vals,
+    cell_index = fast$cell_index, visited = fast$visited, prefix_nodes = fast$prefix_nodes,
+    prefix_order = fast$prefix_order, engine = model$engine,
+    index_dimension = if (is.null(model$field)) NULL else model$field$N,
+    indices = if (is.null(model$field)) NULL else model$field$indices)
   class(result) <- "glbfp_di"
   result
 }

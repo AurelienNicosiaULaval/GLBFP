@@ -17,8 +17,11 @@
 #' workflows. For applied analysis, sensitivity to the bandwidth should still be
 #' checked.
 #'
-#' The plug-in expression follows the optimal cell-width calculation for
-#' multivariate frequency polygons in Carbon and Duchesne (2024).
+#' The expression follows equation (36) of Carbon (2024), internal working
+#' note, Le fameux GLBFP, pages 6-10. It minimizes a Gaussian-reference
+#' asymptotic L1 upper-bound criterion, assuming a normal approximation. That
+#' approximation is explicitly unproved for GLBFP in the note. This is not
+#' an IMSE-optimal rule, nor an optimal bandwidth for outlier ranking or tests.
 #'
 #' Near-singular covariance matrices are stabilized with a small ridge term. If
 #' this fails, the function returns an error rather than silently producing
@@ -37,15 +40,17 @@
 #' compute_bi_optim(x, m = c(1, 1))
 #'
 #' @export
-compute_bi_optim <- function(data, m = rep(1, ncol(data))) {
+compute_bi_optim <- function(data, m = NULL) {
   data <- glbfp_validate_data(data)
   d <- ncol(data)
   n <- nrow(data)
 
+  if (is.null(m)) m <- rep(1L, d)
   m <- glbfp_validate_vector(m, d = d, name = "m", positive = TRUE, integerish = TRUE)
 
   Sigma <- stats::cov(data)
   Sigma_stable <- glbfp_stabilize_covariance(Sigma)
+  if (Sigma_stable$ridge > 0) warning("Covariance was regularized; bandwidths depend on the numerical ridge.", call. = FALSE)
   Sigma_inv <- Sigma_stable$Sigma_inv
   Sigma_det <- Sigma_stable$Sigma_det
 
@@ -57,7 +62,7 @@ compute_bi_optim <- function(data, m = rep(1, ncol(data))) {
     Sigma_det^(1 / (2 * (4 + d))) *
     prod(diag(Sigma_inv))^(1 / (2 * (4 + d))) *
     G_i_values^(-1 / 2) *
-    diag(Sigma_inv)^(-1 / (2 * (4 + d))) *
+    diag(Sigma_inv)^(-1 / 2) *
     n^(-1 / (4 + d))
 
   if (any(!is.finite(bi)) || any(bi <= 0)) {

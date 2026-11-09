@@ -22,6 +22,7 @@ test_that("grid estimate summary is stable on reference seed", {
 
   out <- GLBFP_estimate(x, b = b, m = m, grid_size = 8)
 
-  expect_equal(mean(out$densities), 0.0167041295031142, tolerance = 1e-10)
+  reference <- reference_density(x, out$grid, b, m, apply(x, 2, min))
+  expect_equal(mean(out$densities), mean(reference), tolerance = 1e-10)
   expect_equal(max(out$densities), 0.105911507546916, tolerance = 1e-10)
 })

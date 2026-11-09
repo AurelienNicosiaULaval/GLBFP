@@ -13,8 +13,11 @@ glbfp_key_strings <- function(keys) {
 }
 
 #' @keywords internal
-glbfp_count_state <- function(data, delta, min_vals) {
+glbfp_count_state <- function(data, delta, min_vals, build_prefix = TRUE) {
   keys <- floor(sweep(sweep(data, 2, min_vals, "-"), 2, delta, "/")) + 1L
+  if (any(!is.finite(keys)) || any(abs(keys) > .Machine$integer.max / 2)) {
+    stop("Cell indices exceed the supported integer range; rescale data or increase bandwidths.", call. = FALSE)
+  }
   keys <- as.matrix(keys)
   storage.mode(keys) <- "integer"
 
@@ -28,7 +31,7 @@ glbfp_count_state <- function(data, delta, min_vals) {
     storage.mode(cells) <- "integer"
   }
   count_values <- as.integer(counts)
-  prefix_index <- glbfp_build_prefix_index(cells = cells, counts = count_values)
+  prefix_index <- if (build_prefix) glbfp_build_prefix_index(cells = cells, counts = count_values) else NULL
 
   list(
     counts = counts,
@@ -106,6 +109,7 @@ glbfp_sparse_prefix_eval <- function(state, cell_index, candidates, denominator,
   order <- prefix_index$order
 
   densities <- numeric(n_eval)
+  sum_square <- numeric(n_eval)
   visited <- integer(n_eval)
   prefix_nodes <- integer(n_eval)
   self_weight <- if (is.null(self_keys)) NULL else numeric(n_eval)
@@ -117,6 +121,7 @@ glbfp_sparse_prefix_eval <- function(state, cell_index, candidates, denominator,
   for (i in seq_len(n_eval)) {
     candidate_i <- if (is.function(candidates)) candidates(i) else candidates
     acc <- 0
+    square <- 0
     weight_self <- 0
     vi <- 0L
     nodes <- 0L
@@ -144,6 +149,7 @@ glbfp_sparse_prefix_eval <- function(state, cell_index, candidates, denominator,
           if (count != 0L) {
             vi <<- vi + 1L
             acc <<- acc + w * count
+            square <<- square + w^2 * count
           }
           if (!is.null(self_ordered_keys) && identical(new_key, self_ordered_keys[[i]])) {
             weight_self <<- weight_self + w
@@ -158,6 +164,7 @@ glbfp_sparse_prefix_eval <- function(state, cell_index, candidates, denominator,
 
     rec(1L, "", 1)
     densities[[i]] <- acc / denominator
+    sum_square[[i]] <- square
     visited[[i]] <- vi
     prefix_nodes[[i]] <- nodes
     if (!is.null(self_keys)) {
@@ -167,6 +174,7 @@ glbfp_sparse_prefix_eval <- function(state, cell_index, candidates, denominator,
 
   list(
     densities = densities,
+    sum_square = sum_square,
     visited = visited,
     prefix_nodes = prefix_nodes,
     self_weight = self_weight,
@@ -174,130 +182,15 @@ glbfp_sparse_prefix_eval <- function(state, cell_index, candidates, denominator,
   )
 }
 
-#' @keywords internal
+# Internal compatibility wrappers. Preparation can be reused with prepare_glbfp().
 glbfp_evaluate_ash_fast <- function(data, points, b, m, min_vals, max_vals, self_keys = NULL) {
-  points <- as.matrix(points)
-  storage.mode(points) <- "double"
-
-  d <- ncol(data)
-  n <- nrow(data)
-  delta <- b / m
-  volume <- prod(b)
-  state <- glbfp_count_state(data = data, delta = delta, min_vals = min_vals)
-
-  cell_count <- vapply(seq_len(d), function(i) {
-    glbfp_cell_count(min_vals[i], max_vals[i], delta[i])
-  }, integer(1))
-
-  n_eval <- nrow(points)
-  cell_index <- matrix(NA_integer_, nrow = n_eval, ncol = d)
-  for (i in seq_len(n_eval)) {
-    cell_index[i, ] <- as.integer(pmin(
-      pmax(1L, floor((points[i, ] - min_vals) / delta) + 1L),
-      cell_count
-    ))
-  }
-
-  candidates <- lapply(seq_len(d), function(s) {
-    ell <- seq.int(1L - m[s], m[s] - 1L)
-    list(offset = ell, weight = pmax(0, 1 - abs(ell) / m[s]))
-  })
-  sparse <- glbfp_sparse_prefix_eval(
-    state = state,
-    cell_index = cell_index,
-    candidates = candidates,
-    denominator = n * volume,
-    self_keys = self_keys
-  )
-
-  list(
-    densities = vapply(sparse$densities, glbfp_safe_estimation, numeric(1)),
-    self_weight = sparse$self_weight,
-    cell_index = cell_index,
-    visited = sparse$visited,
-    prefix_nodes = sparse$prefix_nodes,
-    prefix_order = sparse$prefix_order,
-    state = state
-  )
+  model <- prepare_glbfp(data, b, m, "ASH", min_vals, max_vals)
+  glbfp_evaluate_prepared(model, points, self = !is.null(self_keys))
 }
 
-#' @keywords internal
 glbfp_evaluate_glbfp_fast <- function(data, points, b, m, min_vals, max_vals, self_keys = NULL) {
-  points <- as.matrix(points)
-  storage.mode(points) <- "double"
-
-  d <- ncol(data)
-  n <- nrow(data)
-  delta <- b / m
-  volume <- prod(b)
-  state <- glbfp_count_state(data = data, delta = delta, min_vals = min_vals)
-
-  a <- min_vals + delta / 2
-  upper_vals <- max_vals + delta / 2
-  cell_count <- vapply(seq_len(d), function(i) {
-    glbfp_cell_count(a[i], upper_vals[i], delta[i])
-  }, integer(1))
-
-  n_eval <- nrow(points)
-  u_mat <- matrix(NA_real_, nrow = n_eval, ncol = d)
-  cell_index <- matrix(NA_integer_, nrow = n_eval, ncol = d)
-
-  for (i in seq_len(n_eval)) {
-    idx <- pmin(
-      pmax(1L, floor((points[i, ] - a) / delta) + 1L),
-      cell_count
-    )
-    idx <- as.integer(idx)
-    cell_index[i, ] <- idx
-
-    lowerbound_cell <- a + (idx - 1L) * delta
-    u <- (points[i, ] - lowerbound_cell) / delta
-    u_mat[i, ] <- u
-  }
-
-  candidates <- function(i) {
-    lapply(seq_len(d), function(s) {
-      ell <- seq.int(1L - m[s], m[s])
-      tri_left <- pmax(0, 1 - abs(ell) / m[s])
-      tri_right <- pmax(0, 1 - abs(ell - 1L) / m[s])
-      list(
-        offset = ell,
-        weight = (1 - u_mat[i, s]) * tri_left + u_mat[i, s] * tri_right
-      )
-    })
-  }
-  sparse <- glbfp_sparse_prefix_eval(
-    state = state,
-    cell_index = cell_index,
-    candidates = candidates,
-    denominator = n * volume,
-    self_keys = self_keys
-  )
-
-  densities <- vapply(sparse$densities, glbfp_safe_estimation, numeric(1))
-  sigma_hat2 <- vapply(seq_len(n_eval), function(i) {
-    glbfp_safe_estimation(
-      (1 / (n * volume)) *
-        prod((2 * m^2 + 1 - 6 * u_mat[i, ] * (1 - u_mat[i, ])) / (3 * m^2)) *
-        densities[i]
-    )
-  }, numeric(1))
-
-  list(
-    densities = densities,
-    sd = sqrt(sigma_hat2),
-    IC = cbind(
-      IC_lower = densities + stats::qnorm(0.025) * sqrt(sigma_hat2) / sqrt(n * volume),
-      IC_upper = densities + stats::qnorm(0.975) * sqrt(sigma_hat2) / sqrt(n * volume)
-    ),
-    self_weight = sparse$self_weight,
-    u = u_mat,
-    cell_index = cell_index,
-    visited = sparse$visited,
-    prefix_nodes = sparse$prefix_nodes,
-    prefix_order = sparse$prefix_order,
-    state = state
-  )
+  model <- prepare_glbfp(data, b, m, "GLBFP", min_vals, max_vals)
+  glbfp_evaluate_prepared(model, points, self = !is.null(self_keys))
 }
 
 #' @keywords internal

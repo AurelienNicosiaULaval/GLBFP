@@ -36,6 +36,12 @@ reference:
       - ash_estimate
       - lbfp_estimate
       - glbfp_estimate
+  - title: Indexed fields and visualization
+    contents:
+      - glbfp_field
+      - prepare_glbfp
+      - plot_density
+      - save_density_plot
   - title: Leave-one-out diagnostics
     contents:
       - compute_Di
@@ -66,6 +72,7 @@ articles:
       - glbfp-theory-brief
       - GLBFP_estimator_choice
       - two-dimensional-density
+      - indexed-fields-and-inference
   - title: Computation and diagnostics
     navbar: Computation and diagnostics
     contents:

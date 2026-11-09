@@ -8,6 +8,20 @@
 #' @param min_vals Numeric vector of lower grid bounds (length `d`).
 #' @param max_vals Numeric vector of upper grid bounds (length `d`).
 #'
+#' @param engine Computational engine; see [prepare_glbfp()].
+#' @param inference Default `"none"` returns `NA` uncertainty fields. `"iid"`
+#'   requires explicit fixed bandwidths and anchor and independent observations.
+#'   The sample variance of observation weights estimates the variance of the
+#'   estimate. Normal 95 percent intervals target the expected smoothed density,
+#'   without bias correction or guaranteed finite-sample coverage. Evaluation
+#'   points must also be fixed independently of the observations. No dependent
+#'   field interval is implemented.
+#' @section Grid conventions:
+#' Fine counting cells are half-open with width `b/m` and lower-bound anchor
+#' `min_vals`. Interpolation is between their centers. Unoccupied cells have
+#' zero counts on an unbounded lattice. `max_vals` controls the display grid,
+#' not the density support. See [prepare_glbfp()] for exact conventions.
+#' `data` may also be a [glbfp_field()]; index coordinates are kept separate.
 #' @return A list with class `c("glbfp_fit", "LBFP")` containing:
 #' `x`, `estimation`, `sd`, `IC`, `b`, `method`, and `dimension`.
 #'
@@ -35,45 +49,16 @@
 LBFP <- function(
   x,
   data,
-  b = compute_bi_optim(data, m = rep(1, ncol(data))),
-  min_vals = apply(data, 2, min),
-  max_vals = apply(data, 2, max)
+  b = NULL,
+  min_vals = NULL,
+  max_vals = NULL,
+  engine = c("auto", "R", "cpp_direct", "cpp_prefix"),
+  inference = c("none", "iid")
 ) {
-  data <- glbfp_validate_data(data)
-  d <- ncol(data)
-
-  x <- glbfp_validate_vector(x, d = d, name = "x")
-  b <- glbfp_validate_vector(b, d = d, name = "b", positive = TRUE)
-
-  bounds <- glbfp_validate_bounds(min_vals, max_vals, d = d)
-  min_vals <- bounds$min_vals
-  max_vals <- bounds$max_vals
-
-  fast <- glbfp_evaluate_glbfp_fast(
-    data = data,
-    points = matrix(x, nrow = 1L),
-    b = b,
-    m = rep(1L, d),
-    min_vals = min_vals,
-    max_vals = max_vals
+  glbfp_fit_point(
+    x, data, b, NULL, "LBFP",
+    min_vals, max_vals, match.arg(engine), match.arg(inference)
   )
-
-  result <- list(
-    x = x,
-    estimation = fast$densities[1],
-    sd = fast$sd[1],
-    IC = fast$IC[1, ],
-    b = b,
-    method = "LBFP",
-    dimension = d,
-    u = fast$u[1, ],
-    cell_index = fast$cell_index[1, ],
-    visited = fast$visited[1],
-    prefix_nodes = fast$prefix_nodes[1],
-    prefix_order = fast$prefix_order
-  )
-  class(result) <- c("glbfp_fit", "LBFP")
-  result
 }
 
 #' @describeIn LBFP Print method for object of class `"LBFP"`.

@@ -21,7 +21,7 @@ The implemented formula is
 \deqn{G^* =
 2^{\frac{3(d - 4)}{2(4 + d)}}
 \exp\left(\frac{1}{4 + d}\right)
-\frac{\pi^{d / 2}}{4 + d}.}
+\pi^{d / (2(4 + d))}.}
 }
 \examples{
 compute_G_star(1)

@@ -11,6 +11,20 @@
 #' @param min_vals Numeric vector of lower grid bounds (length `d`).
 #' @param max_vals Numeric vector of upper grid bounds (length `d`).
 #'
+#' @param engine Computational engine; see [prepare_glbfp()].
+#' @param inference Default `"none"` returns `NA` uncertainty fields. `"iid"`
+#'   requires explicit fixed bandwidths and anchor and independent observations.
+#'   The sample variance of observation weights estimates the variance of the
+#'   estimate. Normal 95 percent intervals target the expected smoothed density,
+#'   without bias correction or guaranteed finite-sample coverage. Evaluation
+#'   points must also be fixed independently of the observations. No dependent
+#'   field interval is implemented.
+#' @section Grid conventions:
+#' Fine counting cells are half-open with width `b/m` and lower-bound anchor
+#' `min_vals`. Interpolation is between their centers. Unoccupied cells have
+#' zero counts on an unbounded lattice. `max_vals` controls the display grid,
+#' not the density support. See [prepare_glbfp()] for exact conventions.
+#' `data` may also be a [glbfp_field()]; index coordinates are kept separate.
 #' @return A list with class `c("glbfp_grid", "ASH_estimate")` containing
 #' grid coordinates, densities, and grid metadata.
 #'
@@ -31,58 +45,19 @@
 #' @export
 ASH_estimate <- function(
   data,
-  b = compute_bi_optim(data, m = rep(1, ncol(data))),
-  m = rep(1, ncol(data)),
+  b = NULL,
+  m = NULL,
   grid_size = 20,
   grid_points = NULL,
-  min_vals = apply(data, 2, min),
-  max_vals = apply(data, 2, max)
+  min_vals = NULL,
+  max_vals = NULL,
+  engine = c("auto", "R", "cpp_direct", "cpp_prefix"),
+  inference = c("none", "iid")
 ) {
-  data <- glbfp_validate_data(data)
-  d <- ncol(data)
-
-  b <- glbfp_validate_vector(b, d = d, name = "b", positive = TRUE)
-  m <- glbfp_validate_vector(m, d = d, name = "m", positive = TRUE, integerish = TRUE)
-
-  bounds <- glbfp_validate_bounds(min_vals, max_vals, d = d)
-  min_vals <- bounds$min_vals
-  max_vals <- bounds$max_vals
-
-  grid_info <- glbfp_prepare_grid(
-    data = data,
-    grid_size = grid_size,
-    grid_points = grid_points,
-    min_vals = min_vals,
-    max_vals = max_vals
+  glbfp_fit_grid(
+    data, grid_size, grid_points, b, m, "ASH",
+    min_vals, max_vals, match.arg(engine), match.arg(inference)
   )
-
-  fast <- glbfp_evaluate_ash_fast(
-    data = data,
-    points = grid_info$grid,
-    b = b,
-    m = m,
-    min_vals = min_vals,
-    max_vals = max_vals
-  )
-
-  result <- list(
-    grid = grid_info$grid,
-    densities = as.numeric(fast$densities),
-    b = b,
-    m = m,
-    method = "ASH",
-    grid_size = if (length(unique(grid_info$grid_dims)) == 1L) grid_info$grid_dims[1] else NA_integer_,
-    grid_dims = grid_info$grid_dims,
-    is_rectangular = grid_info$is_rectangular,
-    col_names = grid_info$col_names,
-    cell_index = fast$cell_index,
-    visited = fast$visited,
-    prefix_nodes = fast$prefix_nodes,
-    prefix_order = fast$prefix_order
-  )
-
-  class(result) <- c("glbfp_grid", "ASH_estimate")
-  result
 }
 
 #' @describeIn ASH_estimate Print method for object of class `"ASH_estimate"`.

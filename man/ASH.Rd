@@ -8,10 +8,12 @@
 ASH(
   x,
   data,
-  b = compute_bi_optim(data, m = rep(1, ncol(data))),
-  m = rep(1, ncol(data)),
-  min_vals = apply(data, 2, min),
-  max_vals = apply(data, 2, max)
+  b = NULL,
+  m = NULL,
+  min_vals = NULL,
+  max_vals = NULL,
+  engine = c("auto", "R", "cpp_direct", "cpp_prefix"),
+  inference = c("none", "iid")
 )
 
 \method{print}{ASH}(x, ...)
@@ -28,6 +30,16 @@ ASH(
 \item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
 \item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
+
+\item{engine}{Computational engine; see \code{\link[=prepare_glbfp]{prepare_glbfp()}}.}
+
+\item{inference}{Default \code{"none"} returns \code{NA} uncertainty fields. \code{"iid"}
+requires explicit fixed bandwidths and anchor and independent observations.
+The sample variance of observation weights estimates the variance of the
+estimate. Normal 95 percent intervals target the expected smoothed density,
+without bias correction or guaranteed finite-sample coverage. Evaluation
+points must also be fixed independently of the observations. No dependent
+field interval is implemented.}
 
 \item{...}{Additional arguments (unused).}
 }
@@ -48,6 +60,15 @@ the estimator.
 \item \code{print(ASH)}: Print method for object of class \code{"ASH"}.
 
 }}
+\section{Grid conventions}{
+
+Fine counting cells are half-open with width \code{b/m} and lower-bound anchor
+\code{min_vals}. Interpolation is between their centers. Unoccupied cells have
+zero counts on an unbounded lattice. \code{max_vals} controls the display grid,
+not the density support. See \code{\link[=prepare_glbfp]{prepare_glbfp()}} for exact conventions.
+\code{data} may also be a \code{\link[=glbfp_field]{glbfp_field()}}; index coordinates are kept separate.
+}
+
 \examples{
 x <- c(200, 30)
 b <- c(0.5, 0.5)

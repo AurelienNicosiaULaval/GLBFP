@@ -8,5 +8,5 @@ utils::globalVariables(c(
   "score",
   "x",
   "y",
-  "z"
+  "z", "xmin", "xmax", "ymin", "ymax"
 ))

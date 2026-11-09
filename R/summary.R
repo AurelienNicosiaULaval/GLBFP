@@ -37,7 +37,7 @@ print.summary.glbfp_fit <- function(x, ...) {
     cat("Standard error:", x$sd, "\n")
   }
   if (all(is.finite(x$IC))) {
-    cat("95% CI:", paste(x$IC, collapse = ", "), "\n")
+    cat("95% normal interval for expected estimate:", paste(x$IC, collapse = ", "), "\n")
   }
   cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
   if (!is.null(x$m)) {
@@ -72,9 +72,9 @@ summary.glbfp_grid <- function(object, ...) {
     density_q75 = unname(stats::quantile(object$densities, 0.75)),
     density_max = max(object$densities),
     density_zero = sum(object$densities == 0),
-    sd_min = if (!is.null(object$sd)) min(object$sd, na.rm = TRUE) else NA_real_,
-    sd_median = if (!is.null(object$sd)) stats::median(object$sd, na.rm = TRUE) else NA_real_,
-    sd_max = if (!is.null(object$sd)) max(object$sd, na.rm = TRUE) else NA_real_,
+    sd_min = if (!is.null(object$sd) && any(is.finite(object$sd))) min(object$sd, na.rm = TRUE) else NA_real_,
+    sd_median = if (!is.null(object$sd) && any(is.finite(object$sd))) stats::median(object$sd, na.rm = TRUE) else NA_real_,
+    sd_max = if (!is.null(object$sd) && any(is.finite(object$sd))) max(object$sd, na.rm = TRUE) else NA_real_,
     visited_median = if (!is.null(object$visited)) stats::median(object$visited, na.rm = TRUE) else NA_real_,
     prefix_nodes_median = if (!is.null(object$prefix_nodes)) stats::median(object$prefix_nodes, na.rm = TRUE) else NA_real_
   )

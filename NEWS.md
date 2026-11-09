@@ -1,3 +1,19 @@
+# GLBFP 0.5.2.9001 (local review candidate)
+
+- Correct tight-bound extrapolation with unbounded zero-completed counts.
+- Correct the precision-diagonal exponent and pi exponent in the working-note
+  Gaussian-reference L1 bandwidth heuristic; defaults now use the requested m.
+- Default to no uncertainty. Opt-in fixed-grid IID sample-weight variances and
+  normal intervals target the expected estimator; dependent inference is absent.
+- Add reusable prepared counts and native direct/prefix engines, preserving the
+  estimators and the public score name compute_Di().
+- Add indexed fields with arbitrary N, scalar or multicomponent arrays, explicit
+  integer sites, missing-site records, duplicates validation and incomplete grids.
+- Correct rectangular surface orientation and duplicate-grid classification.
+  Add heatmaps, trivariate slices/isosurfaces, explicit units and plot export.
+- Add independent mathematical checks, N=1/2/3 examples and a documented small
+  Canadian CDEM lattice. The submitted JCGS replication software is untouched.
+
 # GLBFP 0.5.2.9000
 
 - Added `compute_Di()` for fixed-grid leave-one-out

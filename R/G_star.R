@@ -12,7 +12,7 @@
 #' \deqn{G^* =
 #' 2^{\frac{3(d - 4)}{2(4 + d)}}
 #' \exp\left(\frac{1}{4 + d}\right)
-#' \frac{\pi^{d / 2}}{4 + d}.}
+#' \pi^{d / (2(4 + d))}.}
 #'
 #' @seealso [compute_bi_optim()], [G_i()], [K_mi()]
 #'
@@ -26,7 +26,7 @@ compute_G_star <- function(d) {
     !is.numeric(d) ||
       length(d) != 1L ||
       !is.finite(d) ||
-      d < 1 ||
+      d < 1 || d > .Machine$integer.max ||
       abs(d - round(d)) > sqrt(.Machine$double.eps)
   ) {
     stop("`d` must be a positive integer.", call. = FALSE)
@@ -34,6 +34,6 @@ compute_G_star <- function(d) {
   d <- as.integer(round(d))
   two_term <- 2^((3 * (d - 4)) / (2 * (4 + d)))
   e1_term <- exp(1 / (4 + d))
-  pi_term <- pi^(d / 2) / (4 + d)
+  pi_term <- pi^(d / (2 * (4 + d)))
   two_term * e1_term * pi_term
 }

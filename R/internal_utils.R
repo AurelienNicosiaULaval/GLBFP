@@ -2,6 +2,7 @@
 
 #' @keywords internal
 glbfp_validate_data <- function(data, allow_na = FALSE) {
+  if (inherits(data, "glbfp_field")) data <- data$values
   if (!is.matrix(data) && !is.data.frame(data)) {
     stop("`data` must be a matrix or data frame.", call. = FALSE)
   }
@@ -47,6 +48,9 @@ glbfp_validate_vector <- function(x, d, name, positive = FALSE, integerish = FAL
     stop(sprintf("`%s` must contain integer values.", name), call. = FALSE)
   }
 
+  if (integerish && any(abs(x) > .Machine$integer.max)) {
+    stop(sprintf("`%s` exceeds the integer range.", name), call. = FALSE)
+  }
   if (integerish) {
     return(as.integer(round(x)))
   }
@@ -112,7 +116,8 @@ glbfp_prepare_grid <- function(data, grid_size = 20, grid_points = NULL, min_val
     }
 
     grid_dims <- vapply(seq_len(d), function(i) length(unique(grid[, i])), integer(1))
-    is_rectangular <- prod(grid_dims) == nrow(grid)
+    if (nrow(grid) == 0L) stop("`grid_points` must contain at least one point.", call. = FALSE)
+    is_rectangular <- !anyDuplicated(as.data.frame(grid)) && prod(grid_dims) == nrow(grid)
   } else {
     if (
       !is.numeric(grid_size) ||
@@ -125,6 +130,9 @@ glbfp_prepare_grid <- function(data, grid_size = 20, grid_points = NULL, min_val
     }
     grid_size <- as.integer(round(grid_size))
 
+    if (d * log(grid_size) > log(1e6)) {
+      stop("Automatic grid exceeds one million points. Use a smaller grid or explicit `grid_points`.", call. = FALSE)
+    }
     axes <- lapply(seq_len(d), function(i) {
       seq(min_vals[i], max_vals[i], length.out = grid_size)
     })

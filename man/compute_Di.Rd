@@ -6,11 +6,12 @@
 \usage{
 compute_Di(
   data,
-  b = compute_bi_optim(data, m = rep(1, ncol(data))),
-  m = rep(1, ncol(data)),
+  b = NULL,
+  m = NULL,
   estimator = c("GLBFP", "LBFP", "ASH"),
-  min_vals = apply(data, 2, min),
-  max_vals = apply(data, 2, max)
+  min_vals = NULL,
+  max_vals = NULL,
+  engine = c("auto", "R", "cpp_direct", "cpp_prefix")
 )
 }
 \arguments{
@@ -26,6 +27,8 @@ compute_Di(
 \item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
 \item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
+
+\item{engine}{Computational engine; see \code{\link[=prepare_glbfp]{prepare_glbfp()}}.}
 }
 \value{
 A list with class \code{"glbfp_di"} containing the score vector \code{D},
@@ -39,6 +42,10 @@ are held fixed when the contribution of observation \code{i} is removed.
 The single-grid LBFP case is developed by Nicosia, Duchesne and Carbon
 (2026). The ASH and GLBFP options extend the same fixed-grid deletion
 diagnostic to the other estimators implemented in this package.
+}
+\details{
+\code{data} may be a \code{\link[=glbfp_field]{glbfp_field()}} or a \code{\link[=prepare_glbfp]{prepare_glbfp()}} model.
+This diagnostic is not an outlier probability or a calibrated test.
 }
 \examples{
 x <- as.matrix(ashua[seq_len(80), -3])
