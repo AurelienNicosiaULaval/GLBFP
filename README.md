@@ -35,8 +35,9 @@ install.packages("remotes")
 remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "develop")
 ```
 
-This is a development version for review. The CRAN release and the submitted
-article's separate replication software retain their existing roles.
+The package website documents the development version. The CRAN release
+and the submitted article's separate replication software retain their
+existing roles.
 
 ## Release status
 
