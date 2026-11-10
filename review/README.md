@@ -120,6 +120,11 @@ for compact grids. These machine- and configuration-specific measurements
 do not establish a universal speed ranking. The estimator formulas and native
 traversal kernels have not changed since this campaign. The review preparation
 adds examples and documentation and refreshes generated Rcpp bindings.
+The binding refresh also has a separate three-case timing check, with
+[raw repetitions](binding-benchmark-raw.csv),
+[phase medians](binding-benchmark-median.csv) and its
+[reproduction script](benchmark-bindings.R). Timing differences in either
+direction are retained rather than treated as a new speedup claim.
 
 ## Bandwidths, uncertainty and article scope
 

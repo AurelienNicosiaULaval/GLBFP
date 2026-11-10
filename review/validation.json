@@ -1,0 +1,48 @@
+{
+  "version": "0.5.2.9001",
+  "date": "2026-11-10",
+  "package_source_commit": "1947ec8eaad0d4004aeeee41a17fb4426e158ef2",
+  "source_archive": {
+    "name": "GLBFP_0.5.2.9001.tar.gz",
+    "sha256": "3dbd9bcdf8442100ed7ef02e474b8b758116e9eaab7c91c21e5841f8e2da08bc"
+  },
+  "local_check": {
+    "command": "R CMD check GLBFP_0.5.2.9001.tar.gz",
+    "status": "OK",
+    "R": "4.5.0",
+    "platform": "macOS arm64",
+    "tests": {
+      "pass": 318,
+      "fail": 0,
+      "warn": 0,
+      "skip": 0
+    }
+  },
+  "examples": {
+    "quebec_climate": "executed from installed package",
+    "N2_sites": 92,
+    "N3_site_years": 2760,
+    "d": 2,
+    "static_figures": "inspected",
+    "indexed_fields_validation": "executed from installed package; N=1,2,3 and CDEM"
+  },
+  "numerical_kernels": {
+    "compared_to": "721f516e8e83ac6ed41e9bbb1e8d08bb109e0f98",
+    "files_identical": 28,
+    "generated_Rcpp_bindings_refreshed": true
+  },
+  "article_replication_material_modified": false,
+  "publication_scope": "development scientific review; not a CRAN release",
+  "platform_checks": "See GitHub Actions for the commit being reviewed",
+  "binding_performance_check": {
+    "cases": 3,
+    "repetitions_per_case_and_phase": 3,
+    "phases": [
+      "prepare",
+      "evaluate",
+      "all_scores_prepared",
+      "all_scores_total"
+    ],
+    "results": "binding-benchmark-median.csv"
+  }
+}
