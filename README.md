@@ -19,6 +19,24 @@ The package supports pointwise density estimation, regular-grid estimation,
 predictions, and plug-in bandwidth selection. The GitHub development version
 also includes fixed-grid leave-one-out `D_i` diagnostics.
 
+## Scientific review version
+
+The 0.5.2.9001 review version is available on
+[`develop`](https://github.com/AurelienNicosiaULaval/GLBFP/tree/develop).
+It includes corrected grids and boundaries, native computation, indexed fields
+and real Quebec examples for N=2 and N=3. Start with the
+[scientific review guide](https://github.com/AurelienNicosiaULaval/GLBFP/tree/develop/review).
+
+Install this version explicitly:
+
+```r
+install.packages("remotes")
+remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "develop")
+```
+
+This is a development version for review. The CRAN release and the submitted
+article's separate replication software retain their existing roles.
+
 ## Release status
 
 | Source | Version | Fixed-grid `D_i` diagnostics |
