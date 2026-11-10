@@ -24,8 +24,9 @@ also includes fixed-grid leave-one-out `D_i` diagnostics.
 The 0.5.2.9001 review version is available on
 [`develop`](https://github.com/AurelienNicosiaULaval/GLBFP/tree/develop).
 It includes corrected grids and boundaries, native computation, indexed fields
-and real Quebec examples for N=2 and N=3. Start with the
-[scientific review guide](https://github.com/AurelienNicosiaULaval/GLBFP/tree/develop/review).
+and real Quebec examples for N=2 and N=3. See the
+[climate vignette](https://github.com/AurelienNicosiaULaval/GLBFP/blob/develop/vignettes/quebec-climate-fields.Rmd)
+and the [figures and validation results](https://github.com/AurelienNicosiaULaval/GLBFP/tree/develop/benchmarks/results/2026-11-10).
 
 Install this version explicitly:
 
