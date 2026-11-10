@@ -1,5 +1,8 @@
 url: https://aureliennicosiaulaval.github.io/GLBFP/
 
+repo:
+  branch: develop
+
 home:
   title: GLBFP development version
   description: Fast grid-count density estimation with ASH, LBFP and GLBFP estimators.
