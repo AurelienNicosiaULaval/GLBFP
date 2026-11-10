@@ -15,4 +15,3 @@
 ^GLBFP\.Rcheck$
 ^.*\.tar\.gz$
 ^\.DS_Store$
-^review$

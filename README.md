@@ -31,8 +31,9 @@ packageVersion("GLBFP")
 ```
 
 The stable CRAN release remains available with `install.packages("GLBFP")`.
-The [scientific review guide](review/README.md) records the scope, examples,
-validation evidence and limitations of 0.5.2.9001. This version is not a CRAN
+The [Quebec climate vignette](vignettes/quebec-climate-fields.Rmd) explains
+the examples for indexed fields. The [validation results](benchmarks/results/2026-11-10/README.md)
+record the scope, measured performance and limitations of 0.5.2.9001. This version is not a CRAN
 release and does not replace the submitted article's replication software.
 
 ## Real Quebec data: N=2 and N=3, with d=2
@@ -130,7 +131,7 @@ self-support; it is not an outlier probability or a calibrated test.
 64 cells and native prefix traversal otherwise. `R`, `cpp_direct` and
 `cpp_prefix` can be selected explicitly. Gains depend on sample size, dimension,
 occupancy, `m`, query count and reuse of preparation. Prefix traversal retains
-a combinatorial worst case. The [review guide](review/README.md) reports
+a combinatorial worst case. The [benchmark results](benchmarks/results/2026-11-10/README.md) report
 favourable and unfavourable measured regimes. MIT-licensed native adaptations
 and their notices are retained in `inst/COPYRIGHTS`; the package is GPL (>= 3).
 

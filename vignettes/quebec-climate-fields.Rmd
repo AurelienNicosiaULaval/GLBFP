@@ -83,8 +83,10 @@ fit2 <- GLBFP_estimate(field2, b = c(.6, .6), m = c(3, 3),
   min_vals = c(-8, -8), max_vals = c(8, 8), grid_points = points)
 fit3 <- GLBFP_estimate(field3, b = c(.6, .6), m = c(3, 3),
   min_vals = c(-8, -8), max_vals = c(8, 8), grid_points = points)
+plot_density(fit2, "heatmap", labels = c("Tmin anomaly", "Tmax anomaly"),
+  title = "Bivariate density of the 2020 sites (N=2)") + coord_equal()
 plot_density(fit3, "heatmap", labels = c("Tmin anomaly", "Tmax anomaly"),
-  title = "Bivariate density of all selected site-years") + coord_equal()
+  title = "Bivariate density of all selected site-years (N=3)") + coord_equal()
 ```
 
 The density axes represent the two temperature anomalies. They do not

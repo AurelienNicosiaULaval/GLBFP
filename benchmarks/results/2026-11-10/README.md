@@ -1,4 +1,4 @@
-# Scientific review of GLBFP 0.5.2.9001
+# Validation and performance of GLBFP 0.5.2.9001
 
 This development version corrects grid and boundary behaviour, adds native
 evaluation and reusable counts, and represents integer-indexed fields with
@@ -65,9 +65,9 @@ and interpolated by ECCC to its native 50-km lattice. The maps below retain
 those source-grid cells. Their footprint is the selected window, not a
 province outline. No spatial detail is invented by smoothing the map.
 
-![N=2 climate map](figures/N2-climate-map.png)
+![N=2 climate map](../../../man/figures/climate/N2-climate-map.png)
 
-![Three time slices of the N=3 field](figures/N3-climate-maps.png)
+![Three time slices of the N=3 field](../../../man/figures/climate/N3-climate-maps.png)
 
 The density axes represent temperature anomalies, not spatial coordinates.
 The `N=3` density below pools all selected site-years with equal weights.
@@ -75,9 +75,9 @@ The common parameters are `b=(0.6,0.6)` degrees C, `m=(3,3)`, fine-cell width
 `(0.2,0.2)` degrees C, and anchor `(-8,-8)` degrees C. A fine evaluation grid
 improves rendering without changing the counting grid or the estimator.
 
-![N=2 bivariate density](figures/N2-climate-density.png)
+![N=2 bivariate density](../../../man/figures/climate/N2-climate-density.png)
 
-![N=3 bivariate density](figures/N3-climate-density.png)
+![N=3 bivariate density](../../../man/figures/climate/N3-climate-density.png)
 
 Density colour scales are shown separately for each density. Their colours
 should not be compared without reading the legends. A surface of either

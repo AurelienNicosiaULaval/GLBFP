@@ -27,3 +27,6 @@ GLBFP_BENCH_QUICK=true Rscript benchmarks/benchmark_glbfp_2d.R
 The scripts use fixed seeds and simulated data. They are intended to provide a
 reproducible starting point for tables and figures in a software article. They
 are not part of the package test suite.
+
+The [2026-11-10 validation and performance results](results/2026-11-10/README.md)
+include the benchmark protocol, raw measurements, agreement checks and limits.

@@ -14,7 +14,7 @@
 - Add independent mathematical checks, N=1/2/3 examples and a documented small
   Canadian CDEM lattice. The submitted JCGS replication software is untouched.
 - Add a real Quebec CANGRD subset, source and licence records, an installed
-  N=2/N=3 workflow, a climate vignette and a scientific review guide.
+  N=2/N=3 workflow, a climate vignette and recorded validation results.
 - Keep geographic climate maps on their native 50-km cells and evaluate density
   display grids separately at higher resolution.
 - Document installation from the develop branch and update citation metadata.
