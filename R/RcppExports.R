@@ -2,14 +2,14 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 glbfp_index_cpp <- function(cells, counts, order, prefix) {
-    .Call('_GLBFP_glbfp_index_cpp', PACKAGE = 'GLBFP', cells, counts, order, prefix)
+    .Call(`_GLBFP_glbfp_index_cpp`, cells, counts, order, prefix)
 }
 
 glbfp_index_valid_cpp <- function(pointer) {
-    .Call('_GLBFP_glbfp_index_valid_cpp', PACKAGE = 'GLBFP', pointer)
+    .Call(`_GLBFP_glbfp_index_valid_cpp`, pointer)
 }
 
 glbfp_eval_cpp <- function(pointer, base, u, m, n, volume, ash, self_keys) {
-    .Call('_GLBFP_glbfp_eval_cpp', PACKAGE = 'GLBFP', pointer, base, u, m, n, volume, ash, self_keys)
+    .Call(`_GLBFP_glbfp_eval_cpp`, pointer, base, u, m, n, volume, ash, self_keys)
 }
 

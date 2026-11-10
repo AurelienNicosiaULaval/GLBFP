@@ -72,6 +72,7 @@ articles:
       - glbfp-theory-brief
       - GLBFP_estimator_choice
       - two-dimensional-density
+      - quebec-climate-fields
       - indexed-fields-and-inference
   - title: Computation and diagnostics
     navbar: Computation and diagnostics

@@ -2,254 +2,194 @@
 
 # GLBFP
 
-[![R-CMD-check](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop)](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelop)
 [![CRAN status](https://www.r-pkg.org/badges/version/GLBFP)](https://CRAN.R-project.org/package=GLBFP)
-[![GitHub release](https://img.shields.io/github/v/release/AurelienNicosiaULaval/GLBFP?label=GitHub%20release)](https://github.com/AurelienNicosiaULaval/GLBFP/releases/latest)
 [![License](https://img.shields.io/cran/l/GLBFP)](https://CRAN.R-project.org/package=GLBFP)
 
-`GLBFP` is an R package for histogram-based nonparametric density
-estimation. It implements:
+`GLBFP` implements Averaged Shifted Histograms (ASH), Linear Blend Frequency
+Polygons (LBFP), and General Linear Blend Frequency Polygons (GLBFP) for
+nonparametric density estimation. It provides pointwise and grid evaluation,
+reusable native sparse counts, indexed fields, fixed-grid leave-one-out
+self-support scores, and density plots for one to three observation variables.
 
-- Averaged Shifted Histogram estimators: `ASH()`, `ASH_estimate()`
-- Linear Blend Frequency Polygon estimators: `LBFP()`, `LBFP_estimate()`
-- General Linear Blend Frequency Polygon estimators: `GLBFP()`, `GLBFP_estimate()`
+## Version and installation
 
-The package supports pointwise density estimation, regular-grid estimation,
-1D to 3D plotting, reusable compiled sparse grid-count computation, S3 summaries and
-predictions, and plug-in bandwidth selection. The GitHub development version
-also includes fixed-grid leave-one-out `D_i` diagnostics.
+| Source | Version | Status |
+| --- | --- | --- |
+| CRAN | 0.5.2 | Stable release; no `D_i` diagnostics |
+| GitHub `main` | 0.5.2.9000 | Earlier development version |
+| GitHub `develop` | 0.5.2.9001 | Development version for scientific review |
 
-## Local review candidate, 9 November 2026
-
-This checkout is version 0.5.2.9001, prepared locally from main commit
-`cf9e1f541407899d9f715a3d8e84db0cc93ef035`. It has not been published.
-The release table below describes the public releases, not this candidate.
-
-The counting lattice is unbounded with zero counts outside occupied cells.
-`min_vals` is the lower-bound anchor of half-open fine cells; `max_vals` controls
-the plotting grid and does not truncate or clamp density support. Tight-bound
-extrapolation in the previous implementation is corrected. Widths returned by
-`compute_bi_optim()` also change because two transcription errors were corrected.
-Calls and legacy classes remain available; corrected numerical results at
-boundaries and corrected automatically selected bandwidths intentionally differ.
-
-Uncertainty defaults to `inference = "none"` (`sd`/`IC` are `NA`). Opt-in
-`inference = "iid"` requires explicit fixed `b` and `min_vals` and fixed
-independent evaluation points. It uses an unbiased sample estimate of the
-variance of the weighted mean under IID sampling. Normal intervals concern the
-expected smoothed estimator, not a bias-corrected true density. There is no
-implemented dependent-field confidence interval.
-
-```r
-library(GLBFP)
-set.seed(11)
-field <- glbfp_field(array(rnorm(12 * 10 * 8), c(12, 10, 8))) # N=3, d=1
-model <- prepare_glbfp(field, b = 0.8, m = 2,
-                       min_vals = -5, max_vals = 5)
-predict(model, matrix(c(-1, 0, 1), ncol = 1))
-compute_Di(model)
-```
-
-`prepare_glbfp()` reuses fine-grid counts for predictions and all scores.
-`engine = "auto"` selects direct native enumeration for stencils of at most 64
-cells, and native prefix traversal otherwise. Explicit `R`, `cpp_direct`, and
-`cpp_prefix` engines permit comparison. Gains depend on occupancy, dimension,
-`m`, query count and whether preparation is reused. Prefix traversal retains a
-combinatorial worst case. Native code is adapted under the MIT licence retained
-in `inst/COPYRIGHTS`; the package remains GPL (>= 3).
-
-`glbfp_field()` accepts distinct integer sites or scalar/multicomponent arrays,
-stores `N` separately from `d`, records omitted sites and accepts incomplete
-grids for descriptive estimation. Index coordinates are not density variables.
-
-`plot_density(fit, "heatmap")`, `"contour"`, and `"surface"` describe bivariate
-observations. For trivariate observations use `"slices"` or `"isosurface"`.
-`save_density_plot()` exports static PNG/PDF/SVG or self-contained HTML.
-See `inst/examples/indexed_fields.R` for executed N=1, N=2 and N=3 Gaussian
-moving-average examples, known marginal densities, and a small CDEM window
-near Quebec City with source, projection, extraction and licence metadata.
-The real-data example is descriptive and asserts no stationarity or mixing.
-
-## Release status
-
-| Source | Version | Fixed-grid `D_i` diagnostics |
-|---|---:|---|
-| CRAN | 0.5.2 | Not included |
-| GitHub `main` | 0.5.2.9000 | Development only: `compute_Di()` |
-
-CRAN 0.5.2 is the stable density-estimation release. The leave-one-out
-diagnostic developed in
-[Nicosia, Duchesne and Carbon (2026)](https://arxiv.org/abs/2607.14335) is
-available only in the GitHub development version while its software interface
-and CRAN integration are being finalized. The article studies the single-grid
-LBFP case. The development package also exposes the same fixed-grid deletion
-diagnostic for ASH and GLBFP as software extensions.
-
-The article's project-specific replication package uses a separate internal R
-package, `LOOLBFP`, for the single-grid calculations reported in the paper.
-In an audit comparison, `LOOLBFP` and
-`GLBFP::compute_Di(..., estimator = "LBFP")` agreed to floating-point precision
-when given equivalent fixed grids. Their default grid anchors differ, however,
-so calls using both packages' defaults need not return identical numerical
-scores. Use `LOOLBFP` for exact reproduction of the submitted article results.
-
-## Installation
-
-Install the stable CRAN release, which does not include `D_i`:
-
-```r
-install.packages("GLBFP")
-```
-
-Install the GitHub development version to use `D_i`:
+To examine the corrections, indexed fields and real Quebec examples described
+here, install `develop` explicitly. Source installation requires a C++ compiler.
 
 ```r
 install.packages("remotes")
-remotes::install_github("AurelienNicosiaULaval/GLBFP")
+remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "develop")
+library(GLBFP)
+packageVersion("GLBFP")
 ```
 
-## Quick start
+The stable CRAN release remains available with `install.packages("GLBFP")`.
+The [scientific review guide](review/README.md) records the scope, examples,
+validation evidence and limitations of 0.5.2.9001. This version is not a CRAN
+release and does not replace the submitted article's replication software.
+
+## Real Quebec data: N=2 and N=3, with d=2
+
+The bundled CANGRD subset contains 92 Quebec grid sites for each year from
+1991 to 2020. ECCC homogenized station observations and interpolated them onto
+its native 50-km lattice. No further spatial interpolation is applied here.
+The two measured components are anomalies of annual mean daily minimum and
+maximum temperatures relative to 1961-1990, in degrees Celsius.
+
+- `N=2`: the spatial indices `(i,j)` for 2020, with 92 observations.
+- `N=3`: the spatial and year indices `(i,j,year)`, with 2,760 observations.
+- `d=2` in both cases: the two temperature-anomaly variables.
 
 ```r
 library(GLBFP)
-
-set.seed(2026)
-x <- matrix(rnorm(300), ncol = 1)
-b <- compute_bi_optim(x, m = 1)
-
-fit <- glbfp(x = 0, data = x, b = b, m = 1)
-fit
-summary(fit)
-predict(fit)
-```
-
-Uppercase function names remain available and are the historical API:
-
-```r
-fit_upper <- GLBFP(x = 0, data = x, b = b, m = 1)
-identical(fit$estimation, fit_upper$estimation)
-```
-
-## Two-dimensional workflow
-
-```r
-library(GLBFP)
-
-data("ashua")
-
-river_data <- ashua[, c("flow", "level")]
-b <- c(8, 0.4)
-x0 <- c(mean(river_data$flow), mean(river_data$level))
-
-point_fit <- glbfp(x = x0, data = river_data, b = b, m = c(1, 1))
-point_fit
-
-grid_fit <- glbfp_estimate(
-  data = river_data,
-  b = b,
-  m = c(1, 1),
-  grid_size = 20
+climate <- read.csv(system.file(
+  "extdata", "cangrd_quebec_1991_2020.csv", package = "GLBFP"
+))
+field <- glbfp_field(
+  values = as.matrix(climate[c("tmin_anomaly_c", "tmax_anomaly_c")]),
+  indices = as.matrix(climate[c("i", "j", "year")]),
+  units = c("deg C", "deg C"), dependence = "dependent"
 )
-
-summary(grid_fit)
-head(as.data.frame(grid_fit))
-plot(grid_fit, contour = TRUE)
+field
+points <- as.matrix(expand.grid(
+  tmin = seq(-3, 5, length.out = 201),
+  tmax = seq(-3, 5, length.out = 201)
+))
+fit <- GLBFP_estimate(
+  field, b = c(.6, .6), m = c(3, 3),
+  min_vals = c(-8, -8), max_vals = c(8, 8), grid_points = points
+)
+plot_density(fit, "heatmap", labels = c("Tmin anomaly", "Tmax anomaly"))
+plot_density(fit, "contour", labels = c("Tmin anomaly", "Tmax anomaly"))
+plot_density(fit, "surface", labels = c("Tmin anomaly", "Tmax anomaly"))
 ```
 
-## Leave-one-out diagnostics (development version only)
+The density describes the observed anomaly pairs, with equal weights per
+selected site-year. It does not estimate a density over spatial indices.
+A 3D surface uses density as height; the observation dimension remains `d=2`.
+Native geographic grid cells remain visible in the maps. The smoothness of a
+density display is controlled separately by its evaluation grid.
 
-The following example uses the single-grid LBFP setting studied in the article.
-The grid and bandwidth remain fixed when each observation is deleted.
+Run the installed example to export maps, heatmaps, contours and interactive
+surfaces without downloading any additional data:
 
 ```r
-scores <- compute_Di(river_data, b = b, estimator = "LBFP")
-summary(scores)
-head(as.data.frame(scores))
-plot(scores)
+source(system.file("examples", "quebec_climate.R", package = "GLBFP"))
 ```
 
-`D_i` measures local self-support under the fitted estimator. It is a
-diagnostic score, not an estimated probability that an observation is an
-outlier.
+The [climate vignette](vignettes/quebec-climate-fields.Rmd) explains the data
+structure, grid settings, unequal roles of `N` and `d`, and interpretation.
+Source hashes, coordinates, extraction details and data-licence attribution
+are included in `inst/extdata/cangrd_quebec_PROVENANCE.txt` and
+`inst/extdata/cangrd_quebec_SOURCE.json`. A separate CDEM elevation example
+near Quebec City is also included. These applications are descriptive.
 
-## Main functions
+## Grid conventions and corrected behaviour
 
-| Task | Functions |
-|---|---|
-| Pointwise density estimation | `ASH()`, `LBFP()`, `GLBFP()` |
-| Grid-based density estimation | `ASH_estimate()`, `LBFP_estimate()`, `GLBFP_estimate()` |
-| Lowercase aliases | `ash()`, `lbfp()`, `glbfp()`, `ash_estimate()`, `lbfp_estimate()`, `glbfp_estimate()` |
-| Leave-one-out diagnostics | `compute_Di()` |
-| Bandwidth helper | `compute_bi_optim()` |
-| Bandwidth constants | `K_mi()`, `G_i()`, `compute_G_star()` |
-| S3 helpers | `print()`, `summary()`, `predict()`, `plot()`, `as.data.frame()` |
+For bandwidth `b`, integer `m`, and anchor `a=min_vals`, fine counting cells
+are half-open intervals `[a+k*b/m, a+(k+1)*b/m)`. Interpolation uses cell
+centres. The lattice is unbounded and unoccupied cells have zero counts.
+`max_vals` limits a plotting grid; it does not clamp or renormalize density
+support. The previous tight-bound extrapolation is corrected.
 
-## Documentation
+`compute_bi_optim()` retains its historical name and implements a
+Gaussian-reference L1 bandwidth heuristic from Carbon's working note.
+Two transcription errors are corrected and the requested `m` is used.
+Automatically selected widths and affected boundary values intentionally
+change. Historical calls, uppercase functions, lowercase aliases and legacy
+classes remain available.
 
-The pkgdown site is organized as a reading path:
+`glbfp_field()` accepts explicit integer sites or scalar/multicomponent
+arrays, stores `N` separately from `d`, rejects duplicate sites, records omitted
+sites and accepts incomplete grids without imputation. A field object does
+not establish stationarity or mixing assumptions.
 
-1. Getting started with GLBFP
-2. Package overview and workflow map
-3. Brief methodological background
-4. Choosing between ASH, LBFP and GLBFP
-5. Two-dimensional density estimation
-6. Sparse-prefix computation
-7. Leave-one-out `D_i` diagnostics
-8. Objects, summaries and plotting
-9. Validation and comparison
-10. Legacy estimation example
+## Computation and fixed-grid diagnostics
 
-The first five articles introduce the package and the estimators. The next
-three articles document implementation diagnostics and S3 behavior. The
-validation article gives a lightweight reproducible benchmark, while the legacy
-vignette is kept for backward compatibility.
+```r
+model <- prepare_glbfp(field, b = c(.6, .6), m = c(3, 3),
+                       min_vals = c(-8, -8), max_vals = c(8, 8))
+predict(model, matrix(c(0, 0), nrow = 1))
+scores <- compute_Di(model)
+summary(scores)
+```
+
+`prepare_glbfp()` reuses the same counts for predictions and all `D_i` scores.
+`compute_Di()` is the only public name for this score. The grid and bandwidth
+remain fixed when each observation is deleted. The score measures local
+self-support; it is not an outlier probability or a calibrated test.
+
+`engine="auto"` selects native direct enumeration for stencils of at most
+64 cells and native prefix traversal otherwise. `R`, `cpp_direct` and
+`cpp_prefix` can be selected explicitly. Gains depend on sample size, dimension,
+occupancy, `m`, query count and reuse of preparation. Prefix traversal retains
+a combinatorial worst case. The [review guide](review/README.md) reports
+favourable and unfavourable measured regimes. MIT-licensed native adaptations
+and their notices are retained in `inst/COPYRIGHTS`; the package is GPL (>= 3).
+
+## Inference and scope
+
+Uncertainty defaults to `inference="none"`, with `sd` and `IC` set to `NA`.
+Opt-in `inference="iid"` requires independent observations, explicit fixed
+bandwidths and anchor, and evaluation points fixed independently of the data.
+Its variance is the sample variance of observation weights divided by `n`.
+Normal intervals target the expected smoothed estimator, with smoothing bias
+remaining. There is no implemented dependent-field confidence interval.
+
+The single-grid LBFP diagnostic studied by Nicosia, Duchesne and Carbon
+(2026, [arXiv:2607.14335](https://arxiv.org/abs/2607.14335)) has a separate,
+frozen `LOOLBFP` replication package. Use that environment to reproduce the
+submitted JCGS results. Equivalent fixed grids give agreement to floating-point
+precision; default anchors differ. The package's ASH/GLBFP diagnostic extensions
+and arbitrary index representation do not inherit all results of that article.
+
+## Visualization and documentation
+
+`plot_density()` supports lines for `d=1`, heatmaps/contours/surfaces for `d=2`,
+and joint-density slices/isosurfaces for `d=3`. `save_density_plot()` exports
+PNG, PDF, SVG, or self-contained interactive HTML. Simulated examples with
+known marginal laws are retained for numerical validation in
+`inst/examples/indexed_fields.R`.
+
+The package includes function manuals and executable vignettes on estimator
+choice, indexed fields, computation, diagnostics and validation. Built vignettes
+are included in source archives attached to the review release.
 
 ## References
 
-General background on frequency polygons, averaged shifted histograms, and
-multivariate density estimation is available in:
-
-- Carbon, M., and Duchesne, T. (2024). Multivariate frequency polygon for
+- Carbon, M. and Duchesne, T. (2024). Multivariate frequency polygon for
   stationary random fields. Annals of the Institute of Statistical Mathematics,
-  76(2), 263-287. doi:10.1007/s10463-023-00883-5.
+  76, 263-287. <https://doi.org/10.1007/s10463-023-00883-5>.
+- Carbon, M. and Duchesne, T. (2026; online 2025). Asymptotic normality of
+  multivariate frequency polygons for stationary random fields. Annals of the
+  Institute of Statistical Mathematics, 78, 297-326.
+  <https://doi.org/10.1007/s10463-025-00952-x>.
+- Carbon, M. (2024). Le fameux GLBFP. Internal working note, Universite Laval,
+  equations (2)-(7) and (22)-(36). This note specifies the package construction
+  and Gaussian-reference L1 heuristic; general GLBFP normality is left unproved.
 - Scott, D. W. (1992). Multivariate Density Estimation: Theory, Practice, and
-  Visualization. Wiley. doi:10.1002/9780470316849.
-- Terrell, G. R., and Scott, D. W. (1985). Oversmoothed Nonparametric Density
-  Estimates. Journal of the American Statistical Association, 80(389), 209-214.
-  doi:10.1080/01621459.1985.10477163.
+  Visualization. Wiley. <https://doi.org/10.1002/9780470316849>.
+- Terrell, G. R. and Scott, D. W. (1985). Oversmoothed Nonparametric Density
+  Estimates. Journal of the American Statistical Association, 80, 209-214.
+  <https://doi.org/10.1080/01621459.1985.10477163>.
 
-The precise GLBFP construction and the Gaussian-reference L1 bandwidth
-heuristic are documented in Carbon, M. (2024), *Le fameux GLBFP*, internal
-working note, Université Laval, equations (2)-(7) and (22)-(36). This note
-explicitly leaves asymptotic normality for GLBFP unproved.
-
-## Citation
-
-To cite the package from R:
-
-```r
-citation("GLBFP")
-```
-
-The repository also includes `CITATION.cff` for software citation metadata.
+Use `citation("GLBFP")` for software citation metadata. Report the version and
+commit used. The software concept DOI is <https://doi.org/10.5281/zenodo.17945962>;
+it does not establish that every development commit has been archived.
 
 ## Development checks
 
 ```r
-devtools::document()
 devtools::test()
 devtools::check()
-rcmdcheck::rcmdcheck(args = c("--as-cran"))
 ```
 
-Benchmarks are stored in `benchmarks/` and are not run automatically during
-`R CMD check`.
-
-## Contributing
-
-Please use GitHub issues and pull requests:
-<https://github.com/AurelienNicosiaULaval/GLBFP/issues>
-
-## License
-
-GPL (>= 3).
+Benchmarks are stored in `benchmarks/` and are not run during `R CMD check`.
+Please report issues at <https://github.com/AurelienNicosiaULaval/GLBFP/issues>.

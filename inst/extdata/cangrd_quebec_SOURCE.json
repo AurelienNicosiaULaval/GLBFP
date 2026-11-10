@@ -1,0 +1,17 @@
+{
+  "dataset": "CANGRD v2023",
+  "source": "https://crd-data-donnees-rdc.ec.gc.ca/CDAS/products/EC_data/CANGRD/",
+  "archive": "ctvb_cangrd_temp_v2023_Gen3",
+  "retrieved": "2026-11-09",
+  "years": [1991, 2020],
+  "period_code": 13,
+  "reference_period": [1961, 1990],
+  "latitude_bounds": [46.5, 50],
+  "longitude_bounds": [-76, -69],
+  "source_hashes": {
+    "ctvb_cangrd_temp_v2023_Gen3.tar.gz": "0ef08ec7255d01c38abd793155132282d901d132861e73d5f3e8aa5d3267279d",
+    "CANGRD_points_LL.txt": "7bf6ed0972642d0899357b1820d56fde718033c193928484113ea690be962c20",
+    "CANGRD_Documentation.doc": "c3c81d0c8e3a895a78a1940a2cd0ff9e66328a5759c894e0a93e6c2c0e26f9be",
+    "CANGRD_CTVB_Background_Information.doc": "89d665d1449ee04f33f148bb78f07ce99f9f7fdd04e018685880658fbd04ea48"
+  }
+}

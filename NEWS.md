@@ -1,4 +1,4 @@
-# GLBFP 0.5.2.9001 (local review candidate)
+# GLBFP 0.5.2.9001 (development review version)
 
 - Correct tight-bound extrapolation with unbounded zero-completed counts.
 - Correct the precision-diagonal exponent and pi exponent in the working-note
@@ -13,12 +13,17 @@
   Add heatmaps, trivariate slices/isosurfaces, explicit units and plot export.
 - Add independent mathematical checks, N=1/2/3 examples and a documented small
   Canadian CDEM lattice. The submitted JCGS replication software is untouched.
+- Add a real Quebec CANGRD subset, source and licence records, an installed
+  N=2/N=3 workflow, a climate vignette and a scientific review guide.
+- Keep geographic climate maps on their native 50-km cells and evaluate density
+  display grids separately at higher resolution.
+- Document installation from the develop branch and update citation metadata.
 
 # GLBFP 0.5.2.9000
 
 - Added `compute_Di()` for fixed-grid leave-one-out
   self-support scores. This function is available only in the GitHub
-  development version and are not part of CRAN 0.5.2.
+  development version and is not part of CRAN 0.5.2.
 - Added data-frame, summary and plotting methods for `D_i` diagnostics, tests
   against explicit leave-one-out recomputation, and a dedicated vignette.
 - Linked the single-grid LBFP diagnostic to the accompanying article by
