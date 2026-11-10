@@ -31,7 +31,7 @@ packageVersion("GLBFP")
 ```
 
 The stable CRAN release remains available with `install.packages("GLBFP")`.
-The [Quebec climate vignette](vignettes/quebec-climate-fields.Rmd) explains
+The [Quebec climate vignette](https://aureliennicosiaulaval.github.io/GLBFP/articles/quebec-climate-fields.html) explains
 the examples for indexed fields. The [validation results](benchmarks/results/2026-11-10/README.md)
 record the scope, measured performance and limitations of 0.5.2.9001. This version is not a CRAN
 release and does not replace the submitted article's replication software.
@@ -85,7 +85,7 @@ surfaces without downloading any additional data:
 source(system.file("examples", "quebec_climate.R", package = "GLBFP"))
 ```
 
-The [climate vignette](vignettes/quebec-climate-fields.Rmd) explains the data
+The [climate vignette](https://aureliennicosiaulaval.github.io/GLBFP/articles/quebec-climate-fields.html) explains the data
 structure, grid settings, unequal roles of `N` and `d`, and interpretation.
 Source hashes, coordinates, extraction details and data-licence attribution
 are included in `inst/extdata/cangrd_quebec_PROVENANCE.txt` and
