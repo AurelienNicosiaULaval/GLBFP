@@ -1,6 +1,9 @@
 ---
 title: "Reuse a prepared estimator"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Reuse a prepared estimator}
   %\VignetteEngine{knitr::rmarkdown}

@@ -1,6 +1,9 @@
 ---
 title: "Legacy estimation example"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Legacy estimation example}
   %\VignetteEngine{knitr::rmarkdown}

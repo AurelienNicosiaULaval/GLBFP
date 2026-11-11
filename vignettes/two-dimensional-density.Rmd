@@ -1,6 +1,9 @@
 ---
 title: "Two-dimensional density estimation"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Two-dimensional density estimation}
   %\VignetteEngine{knitr::rmarkdown}

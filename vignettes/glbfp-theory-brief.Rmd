@@ -1,6 +1,9 @@
 ---
 title: "Brief methodological background"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Brief methodological background}
   %\VignetteEngine{knitr::rmarkdown}
@@ -77,8 +80,8 @@ as a published paper or a proof of asymptotic normality for GLBFP.
 
 ## Inference and index dimensions
 
-The observation dimension `d` and the index dimension `N` are distinct.
-`glbfp_field()` stores sites in Z^N, while density estimation uses observation
+The observation dimension $d$ and the index dimension $N$ are distinct.
+`glbfp_field()` stores sites in $\mathbb{Z}^N$, while density estimation uses observation
 components only. The point estimate requires no index-dimension-specific
 formula. Carbon and Duchesne (2024) study LBFP under stationarity, mixing,
 smoothness and expanding rectangular-domain conditions. Carbon and Duchesne

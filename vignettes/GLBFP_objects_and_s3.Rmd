@@ -1,6 +1,9 @@
 ---
 title: "Objects, summaries and plotting"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Objects, summaries and plotting}
   %\VignetteEngine{knitr::rmarkdown}

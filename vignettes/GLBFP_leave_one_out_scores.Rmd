@@ -1,8 +1,11 @@
 ---
-title: "Leave-one-out D_i diagnostics"
-output: rmarkdown::html_vignette
+title: "Leave-one-out diagnostics"
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
-  %\VignetteIndexEntry{Leave-one-out D_i diagnostics}
+  %\VignetteIndexEntry{Leave-one-out diagnostics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,7 +19,7 @@ This vignette documents a feature of the GitHub development version. The
 functions described here are not included in the CRAN 0.5.2 release.
 
 The function `compute_Di()` computes fixed-grid leave-one-out self-support
-scores:
+scores $D_i$:
 
 \[
 D_i = 1 - \frac{\widehat f_{(-i)}(X_i)}{\widehat f(X_i)}.
@@ -25,7 +28,7 @@ D_i = 1 - \frac{\widehat f_{(-i)}(X_i)}{\widehat f(X_i)}.
 The single-grid LBFP case is developed by
 [Nicosia, Duchesne and Carbon (2026)](https://arxiv.org/abs/2607.14335). The
 bandwidths, grid origin and estimator parameters are held fixed. Only the
-contribution of observation `i` is removed. The result is a diagnostic for the
+contribution of observation $i$ is removed. The result is a diagnostic for the
 chosen estimator and grid, not an estimated outlier probability or a
 standalone model-selection criterion.
 

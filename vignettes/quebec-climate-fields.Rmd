@@ -1,6 +1,9 @@
 ---
 title: "Real Quebec climate fields: N=2 and N=3"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Real Quebec climate fields: N=2 and N=3}
   %\VignetteEngine{knitr::rmarkdown}
@@ -19,7 +22,7 @@ Each native cell is nominally 50 km wide. No further spatial interpolation,
 resampling, or imputation is performed in this example.
 
 The two observation variables are anomalies of annual mean daily minimum and
-maximum temperatures, in degrees Celsius, relative to 1961-1990. Thus `d=2`.
+maximum temperatures, in degrees Celsius, relative to 1961-1990. Thus $d=2$.
 The values are anomalies, not absolute temperatures or annual extreme values.
 
 ```{r}
@@ -29,8 +32,8 @@ climate <- read.csv(system.file("extdata", "cangrd_quebec_1991_2020.csv", packag
 head(climate[c("i", "j", "year", "tmin_anomaly_c", "tmax_anomaly_c")])
 ```
 
-For 2020, sites are indexed by `(i,j)`, so `N=2`. For the 1991-2020 sequence,
-sites are indexed by `(i,j,year)`, so `N=3`. Adding time changes the index
+For 2020, sites are indexed by $(i,j)$, so $N=2$. For the 1991-2020 sequence,
+sites are indexed by $(i,j,\text{year})$, so $N=3$. Adding time changes the index
 dimension; it does not add a third observation variable.
 
 ```{r}
@@ -70,8 +73,8 @@ detail. These are input maps, not GLBFP density estimates.
 
 ## A bivariate density for either index dimension
 
-Use common illustrative bandwidths `b=(0.6,0.6)`, integers `m=(3,3)`, fine
-counting-cell widths `b/m=(0.2,0.2)`, and anchor `(-8,-8)`, in temperature units.
+Use common illustrative bandwidths $b=(0.6,0.6)$, integers $m=(3,3)$, fine
+counting-cell widths $b/m=(0.2,0.2)$, and anchor $(-8,-8)$, in temperature units.
 Counting cells are half-open, interpolation uses their centres, and unoccupied
 cells have zero counts on an unbounded lattice. Display limits do not clamp
 or renormalize the density.
@@ -93,7 +96,7 @@ The density axes represent the two temperature anomalies. They do not
 represent geographic coordinates or time. A high density indicates a
 concentration of observed anomaly pairs. Density units are reciprocal squared
 degrees Celsius. A 3D surface would add density as its height while keeping
-`d=2`. For true `d=3` observations, use density slices or isosurfaces instead.
+$d=2$. For true $d=3$ observations, use density slices or isosurfaces instead.
 
 Pooling years gives equal weights to the selected site-years. This describes
 their finite mixture and does not assert a unique stationary climate law.

@@ -1,6 +1,9 @@
 ---
 title: "Indexed fields: dimensions, grids and inference"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Indexed fields: dimensions, grids and inference}
   %\VignetteEngine{knitr::rmarkdown}
@@ -13,9 +16,9 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 
 ## Two different dimensions
 
-The index dimension `N` describes sites in Z^N. The observation dimension `d`
+The index dimension $N$ describes sites in $\mathbb{Z}^N$. The observation dimension $d$
 describes the random vector measured at each site. The density is a function
-on R^d, regardless of `N`. Index coordinates are never silently used as
+on $\mathbb{R}^d$, regardless of $N$. Index coordinates are never silently used as
 observation components.
 
 ```{r}
@@ -28,8 +31,8 @@ field3
 ```
 
 Array entries are scalar observations by default. `value_dim` explicitly names
-the component axis for multivariate arrays. Alternatively, supply an `n x d`
-matrix of observations and a separate `n x N` matrix of integer sites.
+the component axis for multivariate arrays. Alternatively, supply an $n \times d$
+matrix of observations and a separate $n \times N$ matrix of integer sites.
 
 ```{r}
 sites <- as.matrix(expand.grid(i = 1:10, j = 1:8))
@@ -54,9 +57,9 @@ incomplete$omitted
 
 ## Fixed grid and reusable counts
 
-For bandwidth `b` and integer parameter `m`, the fine-cell width is `delta=b/m`.
-The anchor `min_vals=a` defines half-open counting cells
-`[a+k*delta, a+(k+1)*delta)`. Interpolation uses their centers. All unoccupied
+For bandwidth $b$ and integer parameter $m$, the fine-cell width is $\delta=b/m$.
+The anchor $a$ (specified by `min_vals`) defines half-open counting cells
+$[a+k\delta,\,a+(k+1)\delta)$. Interpolation uses their centers. All unoccupied
 cells have zero counts on the full lattice. `max_vals` limits the display grid;
 it does not extrapolate, truncate or renormalize the density.
 
@@ -83,8 +86,8 @@ is available under the assumptions described below.
 
 For independent observations, a fixed anchor, fixed bandwidths and fixed
 evaluation points, write the density estimate as the mean of observation
-weights W_i(x), including the factor `1/prod(b)`. The unbiased variance
-estimate is `var(W_i(x))/n`. This identity does not need a small-bandwidth
+weights $W_i(x)$, including the factor $1/\prod_{j=1}^d b_j$. The unbiased
+variance estimate is $\operatorname{var}\{W_i(x)\}/n$. This identity does not need a small-bandwidth
 approximation. It does require IID sampling and fixed weights as functions of
 individual observations. A bandwidth selected from the same sample or an
 anchor equal to its minimum does not satisfy that fixed-parameter argument.
@@ -96,14 +99,14 @@ fit <- GLBFP(0, iid_data, b = .8, m = 2,
 fit
 ```
 
-The normal interval uses this standard error once. It targets E[fhat(x)],
+The normal interval uses this standard error once. It targets $\mathbb{E}\{\widehat f(x)\}$,
 the expected smoothed estimate, not the unsmoothed true density. It has no
 finite-sample or simultaneous coverage guarantee. Smoothing bias remains.
 Declaring `dependence = "iid"` for a field is a caller assumption, not a test.
 
 Carbon and Duchesne (2024), Theorem 1, study LBFP on expanding rectangular
 domains under stationarity, smoothness, bounded conditional densities and
-mixing-rate assumptions involving `N`. Carbon and Duchesne (2026, online 2025)
+mixing-rate assumptions involving $N$. Carbon and Duchesne (2026, online 2025)
 study asymptotic normality of LBFP. Neither a lattice object nor the general
 GLBFP option establishes those assumptions. Carbon's internal GLBFP working
 note (2024) explicitly leaves its normal approximation unproved. The bandwidth
@@ -116,9 +119,12 @@ Carbon and Duchesne (2026, online 2025) prove asymptotic normality of the LBFP
 for certain stationary mixing fields on expanding rectangular domains. Their
 plug-in asymptotic variance for the density estimate is
 
-`fhat(x) * product_j((1-u_j)^2 + u_j^2) / (n * product_j(b_j))`,
+\[
+\frac{\widehat f(x)}{n\prod_{j=1}^{d} b_j}
+\prod_{j=1}^{d}\left\{(1-u_j)^2+u_j^2\right\}.
+\]
 
-where `u_j` is the phase between adjacent histogram cell centres. The 95%
+Here $u_j$ is the phase between adjacent histogram cell centres. The 95%
 interval is the LBFP estimate plus or minus the normal quantile times the
 square root of this expression. The phase is computed on the same grid as the
 estimate. It is a pointwise asymptotic approximation, not a simultaneous band
@@ -129,7 +135,7 @@ smoothness assumptions, expanding rectangles of comparable side lengths,
 positive marginal density at the fixed query point, and the bandwidth-rate
 conditions of its normality and variance-estimation results. In particular, the
 bias must be negligible at the standard-error scale; the paper gives an
-undersmoothing condition involving `n * max(b)^(d+4)`. These assumptions cannot
+undersmoothing condition involving $n\{\max_j b_j\}^{d+4}$. These assumptions cannot
 be checked by the software from a single observed field. Explicit fixed `b`,
 anchor and evaluation points are required. Bandwidths may vary with sample
 size as prescribed by the theorem, but must be fixed independently of the
@@ -148,8 +154,8 @@ fit_mixing
 
 The function warns that these intervals are asymptotic and that strong
 dependence can cause substantial undercoverage in finite samples. This option
-also works for GLBFP when every `m=1`, which gives the LBFP. Intervals under
-dependence are not provided for ASH or general GLBFP with `m>1`.
+also works for GLBFP when every $m=1$, which gives the LBFP. Intervals under
+dependence are not provided for ASH or general GLBFP with $m>1$.
 
 ## Visualizations and full examples
 
@@ -159,12 +165,12 @@ fit2 <- GLBFP_estimate(field3, b = c(1, 1), m = c(2, 2), grid_size = 15,
 plot_density(fit2, "heatmap", units = c("cm", "s"))
 ```
 
-The heatmap above concerns `d=2` observations on an `N=3` field. A 3D surface
-of this fit uses density as its height. For `d=3`, use joint-density slices or
+The heatmap above concerns $d=2$ observations on an $N=3$ field. A 3D surface
+of this fit uses density as its height. For $d=3$, use joint-density slices or
 isosurfaces. Slices are not renormalized conditional densities.
 
 For examples using real data, see the [Quebec climate fields](quebec-climate-fields.html)
-vignette. It illustrates `N=2` and `N=3` fields with `d=2` observations.
+vignette. It illustrates $N=2$ and $N=3$ fields with $d=2$ observations.
 
 ## References
 

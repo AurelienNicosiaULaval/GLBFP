@@ -1,6 +1,9 @@
 ---
 title: "Package overview and workflow map"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Package overview and workflow map}
   %\VignetteEngine{knitr::rmarkdown}
@@ -72,7 +75,7 @@ Use the vignettes in this order when learning the package:
 | Choosing between ASH, LBFP and GLBFP | Practical estimator comparison |
 | Two-dimensional density estimation | 2D estimation and visualization |
 | Reuse a prepared estimator | Predictions and diagnostics from shared grid counts |
-| Leave-one-out `D_i` diagnostics | Fixed-grid leave-one-out diagnostics |
+| Leave-one-out $D_i$ diagnostics | Fixed-grid leave-one-out diagnostics |
 | Objects, summaries and plotting | S3 classes and helper methods |
 
 ## Input expectations

@@ -1,6 +1,9 @@
 ---
 title: "Choosing between ASH, LBFP and GLBFP"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    mathjax: null
+    pandoc_args: ["--mathml"]
 vignette: >
   %\VignetteIndexEntry{Choosing between ASH, LBFP and GLBFP}
   %\VignetteEngine{knitr::rmarkdown}
