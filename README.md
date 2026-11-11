@@ -52,8 +52,9 @@ plot(fit)
 | `compute_Di()` | Compute fixed-grid leave-one-out diagnostics |
 
 `glbfp_field()` and `compute_Di()` are available in the development version.
-For interval estimation and its assumptions, see `?LBFP` in the installed
-package.
+For inference assumptions in the development version, see `?LBFP`. The
+`compute_Di()` score is a diagnostic, not an outlier probability; the
+article's results use the separate `LOOLBFP` replication package.
 
 ## Documentation
 
@@ -68,5 +69,9 @@ indexed in two and three dimensions.
   stationary random fields. [doi:10.1007/s10463-023-00883-5](https://doi.org/10.1007/s10463-023-00883-5).
 - Carbon, M. and Duchesne, T. (2026). Asymptotic normality of multivariate
   frequency polygons for stationary random fields. [doi:10.1007/s10463-025-00952-x](https://doi.org/10.1007/s10463-025-00952-x).
+- Nicosia, A., Duchesne, T. and Carbon, M. (2026). A Leave-One-Out Influence
+  Statistic for Density-Based Outlier Detection. [arXiv:2607.14335](https://arxiv.org/abs/2607.14335).
+- Scott, D. W. (1992). *Multivariate Density Estimation: Theory, Practice, and
+  Visualization*. Wiley. [doi:10.1002/9780470316849](https://doi.org/10.1002/9780470316849).
 
 Use `citation("GLBFP")` to cite the package.
