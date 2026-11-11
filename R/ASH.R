@@ -16,7 +16,7 @@
 #'   estimate. Normal 95 percent intervals target the expected smoothed density,
 #'   without bias correction or guaranteed finite-sample coverage. Evaluation
 #'   points must also be fixed independently of the observations. No dependent
-#'   field interval is implemented.
+#'   field interval is implemented for ASH.
 #' @section Grid conventions:
 #' Fine counting cells are half-open with width `b/m` and lower-bound anchor
 #' `min_vals`. Interpolation is between their centers. Unoccupied cells have

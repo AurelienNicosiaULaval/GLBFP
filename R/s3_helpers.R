@@ -19,7 +19,8 @@ glbfp_print_fit <- function(x, label) {
     cat("Estimated standard error:", glbfp_format_number(x$sd), "\n")
   }
   if (!is.null(x$IC) && all(is.finite(x$IC))) {
-    cat("95% normal interval for expected estimate:", glbfp_format_vector(x$IC), "\n")
+    label <- if (identical(x$inference, "stationary_mixing")) "95% asymptotic interval for density:" else "95% normal interval for expected estimate:"
+    cat(label, glbfp_format_vector(x$IC), "\n")
   }
   cat("Bandwidths (b):", glbfp_format_vector(x$b), "\n")
   if (!is.null(x$m)) {

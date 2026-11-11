@@ -97,8 +97,8 @@ degrees Celsius. A 3D surface would add density as its height while keeping
 
 Pooling years gives equal weights to the selected site-years. This describes
 their finite mixture and does not assert a unique stationary climate law.
-There is no correction for geographic cell area, and no confidence interval
-under dependence or calibrated climate-trend test. The bandwidth is
+There is no correction for geographic cell area; this example computes no
+confidence interval under dependence or calibrated climate-trend test. The bandwidth is
 illustrative, not claimed to be optimal. Dependence and interpolation
 uncertainty are not estimated by this demonstration.
 

@@ -88,5 +88,7 @@ normality for LBFP; those results are not automatically GLBFP results.
 Uncertainty is disabled by default. `inference = "iid"` with explicit fixed
 bandwidths and anchor uses the sample variance of observation weights. Its
 normal interval concerns the expected smoothed estimator, with no bias
-correction, no simultaneous coverage and no dependent-field guarantee.
+correction or simultaneous coverage. For dependent fields, the separate LBFP
+option and its assumptions are described in the indexed-field vignette; no
+general GLBFP dependent-field guarantee is asserted.
 The user must also fix evaluation points independently of the sample.

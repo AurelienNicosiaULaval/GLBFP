@@ -11,6 +11,7 @@
 summary.glbfp_fit <- function(object, ...) {
   out <- list(
     method = object$method,
+    inference = object$inference %||% "none",
     dimension = object$dimension,
     point = object$x,
     estimation = object$estimation,
@@ -37,7 +38,8 @@ print.summary.glbfp_fit <- function(x, ...) {
     cat("Standard error:", x$sd, "\n")
   }
   if (all(is.finite(x$IC))) {
-    cat("95% normal interval for expected estimate:", paste(x$IC, collapse = ", "), "\n")
+    label <- if (identical(x$inference, "stationary_mixing")) "95% asymptotic interval for density:" else "95% normal interval for expected estimate:"
+    cat(label, paste(x$IC, collapse = ", "), "\n")
   }
   cat("Bandwidths (b):", paste(x$b, collapse = ", "), "\n")
   if (!is.null(x$m)) {

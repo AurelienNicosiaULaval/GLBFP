@@ -18,7 +18,7 @@ self-support scores, and density plots for one to three observation variables.
 | --- | --- | --- |
 | CRAN | 0.5.2 | Stable release; no `D_i` diagnostics |
 | GitHub `main` | 0.5.2.9000 | Earlier development version |
-| GitHub `develop` | 0.5.2.9001 | Development version for scientific review |
+| GitHub `develop` | 0.5.2.9002 | Development version for scientific review |
 
 To examine the corrections, indexed fields and real Quebec examples described
 here, install `develop` explicitly. Source installation requires a C++ compiler.
@@ -142,7 +142,14 @@ Opt-in `inference="iid"` requires independent observations, explicit fixed
 bandwidths and anchor, and evaluation points fixed independently of the data.
 Its variance is the sample variance of observation weights divided by `n`.
 Normal intervals target the expected smoothed estimator, with smoothing bias
-remaining. There is no implemented dependent-field confidence interval.
+remaining. For LBFP, `inference="stationary_mixing"` adds the pointwise
+asymptotic interval of Carbon and Duchesne (2026) for a complete rectangular
+indexed field, with explicitly fixed bandwidth and anchor. The caller must
+justify stationarity, mixing, regularity and the required asymptotic bandwidth
+and negligible-bias conditions. This is not a finite-sample coverage guarantee;
+strong dependence caused substantial undercoverage in the included simulation.
+This mode always issues an explicit warning. For GLBFP, this option applies only when all `m=1`; no dependent-field interval
+is established here for general `m>1` or ASH.
 
 The single-grid LBFP diagnostic studied by Nicosia, Duchesne and Carbon
 (2026, [arXiv:2607.14335](https://arxiv.org/abs/2607.14335)) has a separate,

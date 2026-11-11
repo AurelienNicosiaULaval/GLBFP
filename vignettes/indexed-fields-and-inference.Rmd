@@ -78,7 +78,8 @@ does not eliminate the combinatorial worst case.
 
 The default returns no standard error or interval. Merely providing spatial
 indices does not justify independent sampling or an asymptotic normal law.
-The package does not implement dependent-field confidence intervals.
+For LBFP on a complete rectangular indexed field, an opt-in asymptotic method
+is available under the assumptions described below.
 
 For independent observations, a fixed anchor, fixed bandwidths and fixed
 evaluation points, write the density estimate as the mean of observation
@@ -108,6 +109,60 @@ GLBFP option establishes those assumptions. Carbon's internal GLBFP working
 note (2024) explicitly leaves its normal approximation unproved. The bandwidth
 helper follows that note's Gaussian-reference L1 heuristic, with sensitivity
 analysis still needed.
+
+## Asymptotic LBFP intervals for stationary mixing fields
+
+Carbon and Duchesne (2026, online 2025) prove asymptotic normality of the LBFP
+for certain stationary mixing fields on expanding rectangular domains. Their
+plug-in asymptotic variance for the density estimate is
+
+`fhat(x) * product_j((1-u_j)^2 + u_j^2) / (n * product_j(b_j))`,
+
+where `u_j` is the phase between adjacent histogram cell centres. The 95%
+interval is the LBFP estimate plus or minus the normal quantile times the
+square root of this expression. The phase is computed on the same grid as the
+estimate. It is a pointwise asymptotic approximation, not a simultaneous band
+or a finite-sample guarantee. No covariance model is estimated by this formula.
+
+The result requires the paper's strict stationarity, mixing, joint-density and
+smoothness assumptions, expanding rectangles of comparable side lengths,
+positive marginal density at the fixed query point, and the bandwidth-rate
+conditions of its normality and variance-estimation results. In particular, the
+bias must be negligible at the standard-error scale; the paper gives an
+undersmoothing condition involving `n * max(b)^(d+4)`. These assumptions cannot
+be checked by the software from a single observed field. Explicit fixed `b`,
+anchor and evaluation points are required. Bandwidths may vary with sample
+size as prescribed by the theorem, but must be fixed independently of the
+observations in this implementation; data-selected values do not by themselves
+establish the theorem's assumptions. Zero plug-in densities yield
+unavailable intervals. Incomplete rectangles and omitted sites are rejected.
+
+```{r}
+set.seed(20261111)
+field_mixing <- glbfp_field(array(rnorm(20 * 20), c(20, 20)),
+                            dependence = "iid")
+fit_mixing <- LBFP(0, field_mixing, b = .4, min_vals = -5, max_vals = 5,
+                   inference = "stationary_mixing")
+fit_mixing
+```
+
+The function warns that these intervals are asymptotic and that strong
+dependence can lead to substantial finite-sample undercoverage. In 500
+replications of a separable Gaussian autoregressive field with correlation
+parameter 0.9, fixed `b=0.3` and sample sizes 900 (N=2) or 1000 (N=3),
+coverage of the true standard-normal density at `x=0.15` was 47.2% and 29.2%,
+respectively. The corresponding Monte Carlo standard errors were 2.2 and
+2.0 percentage points. These finite configurations do not establish or
+contradict an asymptotic theorem. The full protocol, raw outcomes and weaker
+dependence results are available in the repository's
+[simulation results](https://github.com/AurelienNicosiaULaval/GLBFP/tree/develop/benchmarks/results/2026-11-11).
+
+The independent Gaussian field above is a reproducible illustration, not a test of
+coverage for arbitrary dependent fields. The same option works for a GLBFP
+with every `m=1`, exactly the LBFP. The article's formula for general GLBFP
+is explicitly heuristic, and this package does not present it as a proven
+interval. The climate subset is an incomplete spatial window pooled over
+years, so the complete-rectangle method is not applied to it.
 
 ## Visualizations and full examples
 

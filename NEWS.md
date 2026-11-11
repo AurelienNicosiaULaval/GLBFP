@@ -1,3 +1,12 @@
+# GLBFP 0.5.2.9002 (development version)
+
+- Add pointwise 95% asymptotic LBFP intervals for complete stationary mixing
+  fields, following Carbon and Duchesne (2026). Explicit assumptions, fixed
+  parameters and the negligible-bias requirement are documented. The method
+  applies to GLBFP only when every m equals 1.
+- Retain default no-inference behavior and the separate IID method. General
+  GLBFP and ASH dependent-field intervals are not claimed.
+
 # GLBFP 0.5.2.9001 (development review version)
 
 - Correct tight-bound extrapolation with unbounded zero-completed counts.

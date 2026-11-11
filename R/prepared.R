@@ -84,12 +84,30 @@ glbfp_evaluate_prepared <- function(model, points, self = FALSE, inference = "no
   if (model$engine == "cpp_direct" && nrow(points) * model$nominal_stencil > 2e7) {
     stop("Direct stencil exceeds 20 million combinations; use `cpp_prefix` or smaller query batches.", call. = FALSE)
   }
-  inference <- match.arg(inference, c("none", "iid"))
+  inference <- match.arg(inference, c("none", "iid", "stationary_mixing"))
   if (inference == "iid") {
     if (!model$fixed_parameters) stop("IID uncertainty requires explicit fixed `b` and `min_vals`.", call. = FALSE)
     if (!is.null(model$field) && model$field$dependence != "iid") {
-      stop("IID uncertainty requires `dependence = 'iid'` for an indexed field; dependent-field inference is not implemented.", call. = FALSE)
+      stop("IID uncertainty requires `dependence = 'iid'` for an indexed field; use an appropriate dependent-field method otherwise.", call. = FALSE)
     }
+  }
+  if (inference == "stationary_mixing") {
+    if (model$method == "ASH" || any(model$m != 1L)) {
+      stop("Stationary-mixing intervals are supported only for LBFP (GLBFP with all m = 1).", call. = FALSE)
+    }
+    if (!model$fixed_parameters) {
+      stop("Stationary-mixing uncertainty requires explicit fixed `b` and `min_vals`.", call. = FALSE)
+    }
+    if (is.null(model$field)) {
+      stop("Stationary-mixing uncertainty requires a `glbfp_field` with explicit lattice sites.", call. = FALSE)
+    }
+    if (model$field$dependence == "unspecified") {
+      stop("Declare `dependence = 'dependent'` or `'iid'` for stationary-mixing inference.", call. = FALSE)
+    }
+    if (!isTRUE(model$field$complete) || nrow(model$field$omitted) > 0L) {
+      stop("Stationary-mixing inference requires a complete rectangular field without omitted sites.", call. = FALSE)
+    }
+    warning("Stationary-mixing intervals are asymptotic and require negligible bias; strong dependence can cause severe finite-sample undercoverage.", call. = FALSE)
   }
   ash <- model$method == "ASH"
   offset <- if (ash) 0 else model$delta / 2
@@ -127,6 +145,17 @@ glbfp_evaluate_prepared <- function(model, points, self = FALSE, inference = "no
   variance <- if (inference == "iid") pmax(0,
     (out$sum_square / model$volume / model$volume - model$n * out$densities^2) /
       (model$n * (model$n - 1))) else rep(NA_real_, nrow(points))
+  if (inference == "stationary_mixing") {
+    # Carbon and Duchesne (2026), eqs. (13), (16) in accepted manuscript:
+    # sigma^2 = fhat(x) * product_j [(1-u_j)^2 + u_j^2].
+    phase_factor <- apply((1 - u)^2 + u^2, 1L, prod)
+    variance <- (out$densities / model$n / model$volume) * phase_factor
+    undefined <- out$densities <= 0 | outside | !is.finite(variance) | variance <= 0
+    variance[undefined] <- NA_real_
+    if (any(undefined)) {
+      warning("Stationary-mixing intervals are unavailable where the plug-in density or variance is zero or non-finite.", call. = FALSE)
+    }
+  }
   if (inference == "iid" && any(!is.finite(variance))) stop("Nonrepresentable IID variance; rescale observations and bandwidths.", call. = FALSE)
   out$sd <- sqrt(variance)
   out$IC <- cbind(IC_lower = out$densities - stats::qnorm(.975) * out$sd,

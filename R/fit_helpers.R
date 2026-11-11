@@ -28,8 +28,8 @@ glbfp_fit_point <- function(x, data, b, m, method, min_vals, max_vals, engine, i
 
 glbfp_fit_grid <- function(data, grid_size, grid_points, b, m, method,
                            min_vals, max_vals, engine, inference) {
-  if (inference == "iid" && is.null(grid_points) && is.null(max_vals)) {
-    stop("IID uncertainty on an automatic grid requires explicit fixed `max_vals`.", call. = FALSE)
+  if (inference %in% c("iid", "stationary_mixing") && is.null(grid_points) && is.null(max_vals)) {
+    stop("Uncertainty on an automatic grid requires explicit fixed `max_vals`.", call. = FALSE)
   }
   model <- prepare_glbfp(data, b, m, method, min_vals, max_vals, engine)
   info <- glbfp_prepare_grid(model$data, grid_size, grid_points, model$min_vals, model$max_vals)

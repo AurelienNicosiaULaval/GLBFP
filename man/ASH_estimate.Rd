@@ -46,7 +46,7 @@ The sample variance of observation weights estimates the variance of the
 estimate. Normal 95 percent intervals target the expected smoothed density,
 without bias correction or guaranteed finite-sample coverage. Evaluation
 points must also be fixed independently of the observations. No dependent
-field interval is implemented.}
+field interval is implemented for ASH.}
 
 \item{x}{Object from \code{\link[=ASH_estimate]{ASH_estimate()}} to print.}
 
