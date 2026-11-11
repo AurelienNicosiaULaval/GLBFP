@@ -83,8 +83,7 @@ articles:
       - GLBFP_fast_sparse_computation
       - GLBFP_leave_one_out_scores
       - GLBFP_objects_and_s3
-  - title: Validation and legacy
-    navbar: Validation and legacy
+  - title: Other examples
+    navbar: Other examples
     contents:
-      - GLBFP_validation
       - GLBFP_estimation

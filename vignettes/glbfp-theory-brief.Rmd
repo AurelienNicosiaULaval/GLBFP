@@ -55,7 +55,7 @@ number of shifted components and therefore increase computational cost.
 ## Scope of this package
 
 The package provides an R implementation, documentation, examples, tests,
-pkgdown articles, and benchmark scaffolding for GLBFP workflows. This vignette
+and pkgdown articles for GLBFP workflows. This vignette
 does not claim a new theoretical result.
 
 ## References

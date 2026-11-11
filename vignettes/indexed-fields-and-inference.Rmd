@@ -147,22 +147,9 @@ fit_mixing
 ```
 
 The function warns that these intervals are asymptotic and that strong
-dependence can lead to substantial finite-sample undercoverage. In 500
-replications of a separable Gaussian autoregressive field with correlation
-parameter 0.9, fixed `b=0.3` and sample sizes 900 (N=2) or 1000 (N=3),
-coverage of the true standard-normal density at `x=0.15` was 47.2% and 29.2%,
-respectively. The corresponding Monte Carlo standard errors were 2.2 and
-2.0 percentage points. These finite configurations do not establish or
-contradict an asymptotic theorem. The full protocol, raw outcomes and weaker
-dependence results are available in the repository's
-[simulation results](https://github.com/AurelienNicosiaULaval/GLBFP/tree/develop/benchmarks/results/2026-11-11).
-
-The independent Gaussian field above is a reproducible illustration, not a test of
-coverage for arbitrary dependent fields. The same option works for a GLBFP
-with every `m=1`, exactly the LBFP. The article's formula for general GLBFP
-is explicitly heuristic, and this package does not present it as a proven
-interval. The climate subset is an incomplete spatial window pooled over
-years, so the complete-rectangle method is not applied to it.
+dependence can cause substantial undercoverage in finite samples. This option
+also works for GLBFP when every `m=1`, which gives the LBFP. Intervals under
+dependence are not provided for ASH or general GLBFP with `m>1`.
 
 ## Visualizations and full examples
 
@@ -176,25 +163,8 @@ The heatmap above concerns `d=2` observations on an `N=3` field. A 3D surface
 of this fit uses density as its height. For `d=3`, use joint-density slices or
 isosurfaces. Slices are not renormalized conditional densities.
 
-`system.file("examples", "indexed_fields.R", package="GLBFP")` locates a full
-executable script: stationary Gaussian moving-average fields for N=1, 2 and 3,
-known marginal-density comparisons, static plots and self-contained interactive
-HTML. The simulation includes innovations beyond the observation box so edge
-sites have the same marginal law.
-
-```{r}
-dem <- read.csv(system.file("extdata", "cdem_quebec.csv", package = "GLBFP"))
-dem_field <- glbfp_field(matrix(dem$elevation_m, ncol = 1),
-                         indices = as.matrix(dem[c("i", "j")]), units = "m")
-dem_field
-```
-
-This small CDEM window near Quebec City is a projected 16 m lattice, with
-indices stored separately from EPSG:3979 cell centers. Natural Resources
-Canada is the publisher. Contains information licensed under the Open
-Government Licence - Canada. The CSV and its `cdem_quebec_PROVENANCE.txt`
-record the source, extraction and projection. It describes a local topographic
-distribution; no stationarity, mixing or confidence coverage is asserted.
+For examples using real data, see the [Quebec climate fields](quebec-climate-fields.html)
+vignette. It illustrates `N=2` and `N=3` fields with `d=2` observations.
 
 ## References
 
@@ -209,8 +179,3 @@ Carbon, M. and Duchesne, T. (2026; online 2025). Asymptotic normality of
 multivariate frequency polygons for stationary random fields. Annals of the
 Institute of Statistical Mathematics 78, 297-326.
 <https://doi.org/10.1007/s10463-025-00952-x>.
-
-Natural Resources Canada (2013 product specifications; extracted 2026-11-09).
-Canadian Digital Elevation Model.
-<https://open.canada.ca/data/en/dataset/7f245e4d-76c2-4caa-951a-45d1d2051333>.
-Licence: <https://open.canada.ca/en/open-government-licence-canada>.
