@@ -4,7 +4,7 @@ repo:
   branch: main
 
 home:
-  title: GLBFP development version
+  title: GLBFP
   description: Fast grid-count density estimation with ASH, LBFP and GLBFP estimators.
 
 template:

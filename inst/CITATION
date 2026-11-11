@@ -9,7 +9,7 @@ bibentry(
     person("Michel", "Carbon")
   ),
   year = "2026",
-  note = "R package version 0.5.2.9002 (development review version)",
+  note = paste("R package version", meta$Version),
   url = "https://github.com/AurelienNicosiaULaval/GLBFP",
   doi = "10.5281/zenodo.17945962"
 )

@@ -1,3 +1,16 @@
+# GLBFP 0.6.0
+
+- Publish `compute_Di()` for fixed-grid leave-one-out self-support scores.
+  The single-grid LBFP case is described in arXiv:2607.14335.
+- Support fields indexed by any positive number of dimensions. The Quebec
+  climate vignette illustrates spatial and space-time fields.
+- Add reusable grid counts, native computation engines and plots for up to
+  three observation dimensions.
+- Provide opt-in pointwise asymptotic LBFP intervals for complete rectangular
+  fields under the documented stationarity, mixing and bandwidth assumptions.
+- Render vignette equations as MathML in both the website and installed HTML
+  vignettes.
+
 # GLBFP 0.5.2.9002 (development version)
 
 - Add pointwise 95% asymptotic LBFP intervals for complete stationary mixing

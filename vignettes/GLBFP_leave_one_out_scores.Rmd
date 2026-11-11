@@ -15,8 +15,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 set.seed(20260607)
 ```
 
-This vignette documents a feature of the GitHub development version. The
-functions described here are not included in the CRAN 0.5.2 release.
+This vignette uses `compute_Di()` from GLBFP 0.6.0, available on GitHub.
 
 The function `compute_Di()` computes fixed-grid leave-one-out self-support
 scores $D_i$:
@@ -65,7 +64,7 @@ plot(scores)
 plot(scores, type = "density")
 ```
 
-The development interface also supports ASH and GLBFP as software extensions
+The interface also supports ASH and GLBFP as software extensions
 of the fixed-grid deletion diagnostic.
 
 ```{r}
