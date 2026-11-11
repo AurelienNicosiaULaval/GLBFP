@@ -16,7 +16,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base
 
 other attached packages:
-[1] Rcpp_1.1.2       LOOLBFP_0.0.1    GLBFP_0.5.2.9001
+[1] Rcpp_1.1.2       GLBFP_0.5.2.9001
 
 loaded via a namespace (and not attached):
 [1] compiler_4.5.0      tools_4.5.0         RcppParallel_5.1.10

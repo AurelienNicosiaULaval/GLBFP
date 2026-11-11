@@ -46,8 +46,6 @@ diagnostic to the other estimators implemented in this package.
 \details{
 \code{data} may be a \code{\link[=glbfp_field]{glbfp_field()}} or a \code{\link[=prepare_glbfp]{prepare_glbfp()}} model.
 This diagnostic is not an outlier probability or a calibrated test.
-To reproduce the article's results, use its separate \code{LOOLBFP} replication
-package. Default grid origins can differ between the two packages.
 }
 \examples{
 x <- as.matrix(ashua[seq_len(80), -3])

@@ -1,3 +1,7 @@
+# GLBFP 0.6.1
+
+- Update the documentation and benchmark records for GLBFP.
+
 # GLBFP 0.6.0
 
 - Publish `compute_Di()` for fixed-grid leave-one-out self-support scores.
@@ -34,7 +38,7 @@
 - Correct rectangular surface orientation and duplicate-grid classification.
   Add heatmaps, trivariate slices/isosurfaces, explicit units and plot export.
 - Add independent mathematical checks, N=1/2/3 examples and a documented small
-  Canadian CDEM lattice. The submitted JCGS replication software is untouched.
+  Canadian CDEM lattice.
 - Add a real Quebec CANGRD subset, source and licence records, an installed
   N=2/N=3 workflow, a climate vignette and recorded validation results.
 - Keep geographic climate maps on their native 50-km cells and evaluate density

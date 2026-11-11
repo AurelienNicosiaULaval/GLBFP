@@ -19,8 +19,6 @@
 #' @param engine Computational engine; see [prepare_glbfp()].
 #' @details `data` may be a [glbfp_field()] or a [prepare_glbfp()] model.
 #'   This diagnostic is not an outlier probability or a calibrated test.
-#'   To reproduce the article's results, use its separate `LOOLBFP` replication
-#'   package. Default grid origins can differ between the two packages.
 #' @return A list with class `"glbfp_di"` containing the score vector `D`,
 #' fitted densities, leave-one-out densities, self-weights, and metadata.
 #'

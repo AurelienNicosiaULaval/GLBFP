@@ -31,7 +31,6 @@
     "files_identical": 28,
     "generated_Rcpp_bindings_refreshed": true
   },
-  "article_replication_material_modified": false,
   "publication_scope": "development scientific review; not a CRAN release",
   "platform_checks": "See GitHub Actions for the commit being reviewed",
   "binding_performance_check": {

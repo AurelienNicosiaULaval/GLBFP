@@ -10,7 +10,7 @@ freedom.
 
 ```r
 install.packages("remotes")
-remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "develop")
+remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "v0.5.2.9001")
 library(GLBFP)
 packageVersion("GLBFP")
 ```
@@ -104,8 +104,8 @@ at most 64 cells; it is a heuristic, not a universal optimal choice.
 
 The local campaign uses 14 configurations, three timing repetitions,
 equivalent anchors and padded grids, and no timed bandwidth selection.
-Preparation, evaluation and all-score costs are separated. Full raw and
-median results, including unfavourable cases, are provided:
+Preparation, evaluation and all-score costs are separated. The raw and median
+results for the GLBFP and GLBFP-OS engines include unfavourable cases:
 
 - [Before/after summaries](benchmarks-before-after.csv)
 - [Phase medians](benchmarks-median.csv)
@@ -149,10 +149,7 @@ the computational difficulty also depends strongly on observation dimension
 
 `compute_Di()` remains the only public score name. It is a local self-support
 diagnostic, not an outlier probability or calibrated hypothesis test. The
-single-grid LBFP article has a separate frozen `LOOLBFP` replication package.
-Its JCGS submission material is not modified by this version. ASH/GLBFP
-software extensions and new field representations do not automatically
-inherit the article's scientific guarantees.
+article covers the single-grid LBFP. ASH and GLBFP are software extensions.
 
 ## Validation evidence
 
@@ -163,7 +160,5 @@ provide the current platform results. CI conclusions should be read for the
 specific commit being examined. Passing checks do not prove absence of all
 numerical or scientific errors.
 
-The pre-release source archive includes built vignettes. The full private
-audit directory and the article submission archives are not distributed in
-this repository. Licences, source attributions and native-code notices are
-retained.
+The pre-release source archive includes built vignettes, licences, source
+attributions and native-code notices.

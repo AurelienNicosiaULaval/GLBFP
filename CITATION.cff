@@ -13,6 +13,6 @@ authors:
 repository-code: "https://github.com/AurelienNicosiaULaval/GLBFP"
 url: "https://github.com/AurelienNicosiaULaval/GLBFP"
 license: "GPL-3.0-or-later"
-version: "0.6.0"
+version: "0.6.1"
 date-released: "2026-11-11"
 doi: "10.5281/zenodo.17945962"

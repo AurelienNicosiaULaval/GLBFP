@@ -22,13 +22,13 @@ ASH, LBFP and GLBFP density estimation.
 install.packages("GLBFP")
 ```
 
-Install [GLBFP 0.6.0 from GitHub](https://github.com/AurelienNicosiaULaval/GLBFP/releases/tag/v0.6.0)
+Install [GLBFP 0.6.1 from GitHub](https://github.com/AurelienNicosiaULaval/GLBFP/releases/tag/v0.6.1)
 for indexed fields, including fields with more than one index dimension, and
 `compute_Di()`.
 
 ```r
 install.packages("remotes")
-remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "v0.6.0")
+remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "v0.6.1")
 ```
 
 ## Example
@@ -54,11 +54,10 @@ plot(fit)
 | `plot_density()` | Display a density |
 | [`compute_Di()`](https://aureliennicosiaulaval.github.io/GLBFP/reference/compute_Di.html) | Compute fixed-grid leave-one-out diagnostics |
 
-`glbfp_field()` and `compute_Di()` are available in GitHub release 0.6.0.
+`glbfp_field()` and `compute_Di()` are available in the GitHub release.
 For the assumptions behind the inference options, see `?LBFP`. The
 `compute_Di()` score is a diagnostic, not an outlier probability. The LBFP
-case is described in [Nicosia, Duchesne and Carbon (2026)](https://arxiv.org/abs/2607.14335);
-their results use the separate `LOOLBFP` replication package.
+case is described in [Nicosia, Duchesne and Carbon (2026)](https://arxiv.org/abs/2607.14335).
 
 ## Documentation
 

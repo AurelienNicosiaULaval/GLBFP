@@ -21,11 +21,11 @@ the full package, see the "Package overview and workflow map" vignette.
 
 ## Installation
 
-This vignette uses GLBFP 0.6.0 from GitHub. CRAN distributes GLBFP 0.5.2.
+This vignette uses GLBFP 0.6.1 from GitHub. CRAN distributes GLBFP 0.5.2.
 
 ```{r, eval = FALSE}
 install.packages("remotes")
-remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "v0.6.0")
+remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "v0.6.1")
 ```
 
 ## Load the package

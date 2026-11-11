@@ -122,11 +122,6 @@
 7,2000,2,2,"sparse","GLBFP_OS","all_scores_total",0.00120312499999997
 11,300,3,2,"sparse","GLBFP_OS","all_scores_total",0.00103125000000004
 2,2000,1,4,"sparse","GLBFP_OS","all_scores_total",0.000296875000000002
-1,200,1,1,"dense","LOOLBFP_submitted","all_scores_total",2.34375000000009e-05
-4,500,2,1,"dense","LOOLBFP_submitted","all_scores_total",4.68750000000018e-05
-5,2000,2,1,"sparse","LOOLBFP_submitted","all_scores_total",0.00053906250000002
-8,300,3,1,"sparse","LOOLBFP_submitted","all_scores_total",0.000117187500000115
-12,200,6,1,"sparse","LOOLBFP_submitted","all_scores_total",0.000101562499999819
 1,200,1,1,"dense","R","all_scores_total",0.00356250000000002
 4,500,2,1,"dense","R","all_scores_total",0.0184999999999995
 3,10000,1,2,"dense","R","all_scores_total",0.214000000000002
