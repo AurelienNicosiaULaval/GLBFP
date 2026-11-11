@@ -1,8 +1,38 @@
+# GLBFP 0.5.2.9002 (development version)
+
+- Add pointwise 95% asymptotic LBFP intervals for complete stationary mixing
+  fields, following Carbon and Duchesne (2026). Explicit assumptions, fixed
+  parameters and the negligible-bias requirement are documented. The method
+  applies to GLBFP only when every m equals 1.
+- Retain default no-inference behavior and the separate IID method. General
+  GLBFP and ASH dependent-field intervals are not claimed.
+
+# GLBFP 0.5.2.9001 (development review version)
+
+- Correct tight-bound extrapolation with unbounded zero-completed counts.
+- Correct the precision-diagonal exponent and pi exponent in the working-note
+  Gaussian-reference L1 bandwidth heuristic; defaults now use the requested m.
+- Default to no uncertainty. Opt-in fixed-grid IID sample-weight variances and
+  normal intervals target the expected estimator; dependent inference is absent.
+- Add reusable prepared counts and native direct/prefix engines, preserving the
+  estimators and the public score name compute_Di().
+- Add indexed fields with arbitrary N, scalar or multicomponent arrays, explicit
+  integer sites, missing-site records, duplicates validation and incomplete grids.
+- Correct rectangular surface orientation and duplicate-grid classification.
+  Add heatmaps, trivariate slices/isosurfaces, explicit units and plot export.
+- Add independent mathematical checks, N=1/2/3 examples and a documented small
+  Canadian CDEM lattice. The submitted JCGS replication software is untouched.
+- Add a real Quebec CANGRD subset, source and licence records, an installed
+  N=2/N=3 workflow, a climate vignette and recorded validation results.
+- Keep geographic climate maps on their native 50-km cells and evaluate density
+  display grids separately at higher resolution.
+- Document installation from the develop branch and update citation metadata.
+
 # GLBFP 0.5.2.9000
 
 - Added `compute_Di()` for fixed-grid leave-one-out
   self-support scores. This function is available only in the GitHub
-  development version and are not part of CRAN 0.5.2.
+  development version and is not part of CRAN 0.5.2.
 - Added data-frame, summary and plotting methods for `D_i` diagnostics, tests
   against explicit leave-one-out recomputation, and a dedicated vignette.
 - Linked the single-grid LBFP diagnostic to the accompanying article by

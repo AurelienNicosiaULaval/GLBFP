@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: "GLBFP"
-message: "If you use GLBFP, please cite this software. Cite the GLBFP methodological article separately once the complete reference has been verified."
+message: "If you use GLBFP, please cite this software and the methodological references relevant to the estimator used."
 type: software
 authors:
   - family-names: "Nicosia"
@@ -13,5 +13,6 @@ authors:
 repository-code: "https://github.com/AurelienNicosiaULaval/GLBFP"
 url: "https://github.com/AurelienNicosiaULaval/GLBFP"
 license: "GPL-3.0-or-later"
-version: "0.5.2.9000"
+version: "0.5.2.9002"
+date-released: "2026-11-11"
 doi: "10.5281/zenodo.17945962"

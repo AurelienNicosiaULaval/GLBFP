@@ -43,6 +43,11 @@ as.data.frame.glbfp_di <- function(x, row.names = NULL, optional = FALSE, ...) {
     visited = as.integer(x$visited),
     prefix_nodes = as.integer(x$prefix_nodes)
   )
+  if (!is.null(x$indices)) {
+    indices <- as.data.frame(x$indices)
+    names(indices) <- paste0("index_", seq_len(ncol(indices)))
+    out <- cbind(out, indices)
+  }
   row.names(out) <- row.names
   out
 }

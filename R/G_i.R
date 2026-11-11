@@ -22,5 +22,7 @@ G_i <- function(mi) {
   if (!is.numeric(mi) || length(mi) != 1L || !is.finite(mi) || mi <= 0) {
     stop("`mi` must be a single positive numeric value.", call. = FALSE)
   }
-  (1 / 12) * (1 + 1 / (2 * mi^2))
+  value <- (1 / 12) * (1 + (1 / mi)^2 / 2)
+  if (!is.finite(value)) stop("`mi` is too small for a finite constant.", call. = FALSE)
+  value
 }

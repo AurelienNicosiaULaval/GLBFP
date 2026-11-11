@@ -1,0 +1,16 @@
+Source: https://datacube-prod-data-public.s3.ca-central-1.amazonaws.com/store/elevation/cdem-cdsm/cdem/cdem-canada-dem.tif
+Retrieved: 2026-11-09
+Product: CDEM; publisher: Natural Resources Canada
+Catalogue: https://open.canada.ca/data/en/dataset/7f245e4d-76c2-4caa-951a-45d1d2051333
+Licence: Open Government Licence - Canada
+https://open.canada.ca/en/open-government-licence-canada
+Contains information licensed under the Open Government Licence - Canada.
+Small window near Quebec City; center requested in EPSG:4326 (-71.305, 46.805).
+Coordinates transformed to the source CRS before cropping. No resampling.
+CRS: EPSG:3979; source COG grid resolution: 16 m; elevation units: m.
+Rows: 32 Columns: 32
+Source extent: 1782944, 1783456, 90640, 91152
+i increases eastward, j northward; x/y are projected cell-center coordinates.
+This is a descriptive topographic distribution. Stationarity/mixing are not asserted.
+CDEM source acquisition dates vary by location; extraction date is not a measurement date.
+No endorsement by Natural Resources Canada is implied.

@@ -1,7 +1,10 @@
 url: https://aureliennicosiaulaval.github.io/GLBFP/
 
+repo:
+  branch: main
+
 home:
-  title: GLBFP
+  title: GLBFP development version
   description: Fast grid-count density estimation with ASH, LBFP and GLBFP estimators.
 
 template:
@@ -36,6 +39,12 @@ reference:
       - ash_estimate
       - lbfp_estimate
       - glbfp_estimate
+  - title: Indexed fields and visualization
+    contents:
+      - glbfp_field
+      - prepare_glbfp
+      - plot_density
+      - save_density_plot
   - title: Leave-one-out diagnostics
     contents:
       - compute_Di
@@ -66,14 +75,15 @@ articles:
       - glbfp-theory-brief
       - GLBFP_estimator_choice
       - two-dimensional-density
+      - quebec-climate-fields
+      - indexed-fields-and-inference
   - title: Computation and diagnostics
     navbar: Computation and diagnostics
     contents:
       - GLBFP_fast_sparse_computation
       - GLBFP_leave_one_out_scores
       - GLBFP_objects_and_s3
-  - title: Validation and legacy
-    navbar: Validation and legacy
+  - title: Other examples
+    navbar: Other examples
     contents:
-      - GLBFP_validation
       - GLBFP_estimation

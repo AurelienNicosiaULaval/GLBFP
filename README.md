@@ -2,7 +2,7 @@
 
 # GLBFP
 
-[![R-CMD-check](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml/badge.svg?branch=develop)](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml?query=branch%3Adevelop)
+[![R-CMD-check](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/AurelienNicosiaULaval/GLBFP/actions/workflows/R-CMD-check.yaml?query=branch%3Amain)
 [![CRAN status](https://www.r-pkg.org/badges/version/GLBFP)](https://CRAN.R-project.org/package=GLBFP)
 [![License](https://img.shields.io/cran/l/GLBFP)](https://CRAN.R-project.org/package=GLBFP)
 
@@ -25,7 +25,7 @@ To use the development version, including indexed fields and `compute_Di()`:
 
 ```r
 install.packages("remotes")
-remotes::install_github("AurelienNicosiaULaval/GLBFP", ref = "develop")
+remotes::install_github("AurelienNicosiaULaval/GLBFP")
 ```
 
 ## Example
@@ -49,12 +49,13 @@ plot(fit)
 | `compute_bi_optim()` | Select a reference bandwidth |
 | `glbfp_field()` | Represent an indexed field |
 | `plot_density()` | Display a density |
-| `compute_Di()` | Compute fixed-grid leave-one-out diagnostics |
+| [`compute_Di()`](https://aureliennicosiaulaval.github.io/GLBFP/reference/compute_Di.html) | Compute fixed-grid leave-one-out diagnostics |
 
 `glbfp_field()` and `compute_Di()` are available in the development version.
 For inference assumptions in the development version, see `?LBFP`. The
-`compute_Di()` score is a diagnostic, not an outlier probability; the
-article's results use the separate `LOOLBFP` replication package.
+`compute_Di()` score is a diagnostic, not an outlier probability. The LBFP
+case is described in [Nicosia, Duchesne and Carbon (2026)](https://arxiv.org/abs/2607.14335);
+their results use the separate `LOOLBFP` replication package.
 
 ## Documentation
 

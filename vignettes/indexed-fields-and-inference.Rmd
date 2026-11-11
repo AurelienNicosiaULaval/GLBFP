@@ -1,0 +1,181 @@
+---
+title: "Indexed fields: dimensions, grids and inference"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Indexed fields: dimensions, grids and inference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Two different dimensions
+
+The index dimension `N` describes sites in Z^N. The observation dimension `d`
+describes the random vector measured at each site. The density is a function
+on R^d, regardless of `N`. Index coordinates are never silently used as
+observation components.
+
+```{r}
+library(GLBFP)
+set.seed(20261109)
+field2 <- glbfp_field(array(rnorm(10 * 8), c(10, 8)), units = "standard unit")
+field2
+field3 <- glbfp_field(array(rnorm(5 * 4 * 3 * 2), c(5, 4, 3, 2)), value_dim = 4)
+field3
+```
+
+Array entries are scalar observations by default. `value_dim` explicitly names
+the component axis for multivariate arrays. Alternatively, supply an `n x d`
+matrix of observations and a separate `n x N` matrix of integer sites.
+
+```{r}
+sites <- as.matrix(expand.grid(i = 1:10, j = 1:8))
+explicit <- glbfp_field(field2$values, indices = sites)
+stopifnot(identical(field2$values, explicit$values))
+```
+
+Duplicate sites are rejected. Repeated observation values at different sites
+are allowed. Missing values cause an error unless `na.action = "omit"`; then
+the entire site is omitted and its coordinates recorded. Incomplete bounding
+boxes are accepted for descriptive marginal estimation without interpolation
+or imputation of missing sites. Their sampling design can change the
+interpretation of the empirical marginal distribution.
+
+```{r}
+array_missing <- array(rnorm(80), c(10, 8))
+array_missing[3, 4] <- NA_real_
+incomplete <- glbfp_field(array_missing, na.action = "omit")
+incomplete$complete
+incomplete$omitted
+```
+
+## Fixed grid and reusable counts
+
+For bandwidth `b` and integer parameter `m`, the fine-cell width is `delta=b/m`.
+The anchor `min_vals=a` defines half-open counting cells
+`[a+k*delta, a+(k+1)*delta)`. Interpolation uses their centers. All unoccupied
+cells have zero counts on the full lattice. `max_vals` limits the display grid;
+it does not extrapolate, truncate or renormalize the density.
+
+```{r}
+model <- prepare_glbfp(field2, b = .8, m = 2, min_vals = -5, max_vals = 5)
+model
+predict(model, matrix(c(-1, 0, 1), ncol = 1))
+scores <- compute_Di(model)
+summary(scores)
+```
+
+The same preparation supports predictions and fixed-grid D_i scores. Native
+direct enumeration and prefix traversal have identical statistical targets.
+The faster engine depends on occupancy, stencil size and query count. The
+automatic threshold is a heuristic, not a universal optimum. Prefix traversal
+does not eliminate the combinatorial worst case.
+
+## What uncertainty means
+
+The default returns no standard error or interval. Merely providing spatial
+indices does not justify independent sampling or an asymptotic normal law.
+For LBFP on a complete rectangular indexed field, an opt-in asymptotic method
+is available under the assumptions described below.
+
+For independent observations, a fixed anchor, fixed bandwidths and fixed
+evaluation points, write the density estimate as the mean of observation
+weights W_i(x), including the factor `1/prod(b)`. The unbiased variance
+estimate is `var(W_i(x))/n`. This identity does not need a small-bandwidth
+approximation. It does require IID sampling and fixed weights as functions of
+individual observations. A bandwidth selected from the same sample or an
+anchor equal to its minimum does not satisfy that fixed-parameter argument.
+
+```{r}
+iid_data <- matrix(rnorm(200), ncol = 1)
+fit <- GLBFP(0, iid_data, b = .8, m = 2,
+             min_vals = -5, max_vals = 5, inference = "iid")
+fit
+```
+
+The normal interval uses this standard error once. It targets E[fhat(x)],
+the expected smoothed estimate, not the unsmoothed true density. It has no
+finite-sample or simultaneous coverage guarantee. Smoothing bias remains.
+Declaring `dependence = "iid"` for a field is a caller assumption, not a test.
+
+Carbon and Duchesne (2024), Theorem 1, study LBFP on expanding rectangular
+domains under stationarity, smoothness, bounded conditional densities and
+mixing-rate assumptions involving `N`. Carbon and Duchesne (2026, online 2025)
+study asymptotic normality of LBFP. Neither a lattice object nor the general
+GLBFP option establishes those assumptions. Carbon's internal GLBFP working
+note (2024) explicitly leaves its normal approximation unproved. The bandwidth
+helper follows that note's Gaussian-reference L1 heuristic, with sensitivity
+analysis still needed.
+
+## Asymptotic LBFP intervals for stationary mixing fields
+
+Carbon and Duchesne (2026, online 2025) prove asymptotic normality of the LBFP
+for certain stationary mixing fields on expanding rectangular domains. Their
+plug-in asymptotic variance for the density estimate is
+
+`fhat(x) * product_j((1-u_j)^2 + u_j^2) / (n * product_j(b_j))`,
+
+where `u_j` is the phase between adjacent histogram cell centres. The 95%
+interval is the LBFP estimate plus or minus the normal quantile times the
+square root of this expression. The phase is computed on the same grid as the
+estimate. It is a pointwise asymptotic approximation, not a simultaneous band
+or a finite-sample guarantee. No covariance model is estimated by this formula.
+
+The result requires the paper's strict stationarity, mixing, joint-density and
+smoothness assumptions, expanding rectangles of comparable side lengths,
+positive marginal density at the fixed query point, and the bandwidth-rate
+conditions of its normality and variance-estimation results. In particular, the
+bias must be negligible at the standard-error scale; the paper gives an
+undersmoothing condition involving `n * max(b)^(d+4)`. These assumptions cannot
+be checked by the software from a single observed field. Explicit fixed `b`,
+anchor and evaluation points are required. Bandwidths may vary with sample
+size as prescribed by the theorem, but must be fixed independently of the
+observations in this implementation; data-selected values do not by themselves
+establish the theorem's assumptions. Zero plug-in densities yield
+unavailable intervals. Incomplete rectangles and omitted sites are rejected.
+
+```{r}
+set.seed(20261111)
+field_mixing <- glbfp_field(array(rnorm(20 * 20), c(20, 20)),
+                            dependence = "iid")
+fit_mixing <- LBFP(0, field_mixing, b = .4, min_vals = -5, max_vals = 5,
+                   inference = "stationary_mixing")
+fit_mixing
+```
+
+The function warns that these intervals are asymptotic and that strong
+dependence can cause substantial undercoverage in finite samples. This option
+also works for GLBFP when every `m=1`, which gives the LBFP. Intervals under
+dependence are not provided for ASH or general GLBFP with `m>1`.
+
+## Visualizations and full examples
+
+```{r}
+fit2 <- GLBFP_estimate(field3, b = c(1, 1), m = c(2, 2), grid_size = 15,
+                       min_vals = c(-4, -4), max_vals = c(4, 4))
+plot_density(fit2, "heatmap", units = c("cm", "s"))
+```
+
+The heatmap above concerns `d=2` observations on an `N=3` field. A 3D surface
+of this fit uses density as its height. For `d=3`, use joint-density slices or
+isosurfaces. Slices are not renormalized conditional densities.
+
+For examples using real data, see the [Quebec climate fields](quebec-climate-fields.html)
+vignette. It illustrates `N=2` and `N=3` fields with `d=2` observations.
+
+## References
+
+Carbon, M. (2024). Le fameux GLBFP. Internal working note, Université Laval,
+été-automne 2024, equations (2)-(7), (22)-(36).
+
+Carbon, M. and Duchesne, T. (2024). Multivariate frequency polygon for stationary
+random fields. Annals of the Institute of Statistical Mathematics 76, 263-287.
+<https://doi.org/10.1007/s10463-023-00883-5>.
+
+Carbon, M. and Duchesne, T. (2026; online 2025). Asymptotic normality of
+multivariate frequency polygons for stationary random fields. Annals of the
+Institute of Statistical Mathematics 78, 297-326.
+<https://doi.org/10.1007/s10463-025-00952-x>.

@@ -1,0 +1,40 @@
+Dataset: Canadian Gridded Temperature and Precipitation Anomalies (CANGRD).
+Publisher: Environment and Climate Change Canada (ECCC).
+Source archive: ctvb_cangrd_temp_v2023_Gen3.tar.gz
+Source URL: https://crd-data-donnees-rdc.ec.gc.ca/CDAS/products/EC_data/CANGRD/
+Retrieved: 2026-11-09. Extraction is not an observation date.
+Documentation: https://eccc-msc.github.io/open-data/msc-data/climate_cangrd/readme_cangrd_en/
+Native coordinates: CANGRD_points_LL.txt, i=column and j=row, zero-based.
+Native lattice: 125 columns by 95 rows, nominal 50-km polar stereographic grid.
+Selection: latitude 46.5 to 50 degrees North; longitude -76 to -69 degrees.
+Years: 1991 through 2020. Native period code 13 denotes annual values.
+Source values are homogenized station observations interpolated by ECCC.
+No further interpolation, reprojection or spatial resampling was applied here.
+
+Columns:
+  j, i: native integer row and column of the source grid.
+  latitude, longitude: source geographic coordinates of the grid point, degrees.
+  source_cell: row in the native coordinate file, retained for traceability.
+  year: calendar year, an integer time index.
+  tmin_anomaly_c: anomaly of annual mean daily minimum temperature, degrees C.
+  tmax_anomaly_c: anomaly of annual mean daily maximum temperature, degrees C.
+Reference period: 1961-1990. These values are anomalies, not absolute temperatures.
+
+The selected footprint has 92 sites and is not a complete integer bounding box.
+All 92 sites have both values for every selected year: 2760 site-years.
+Values above 1e30 in absolute magnitude were treated as the documented native
+missing-value sentinel. None occurs in this selected subset.
+The source archive and coordinate-file SHA256 hashes are in
+cangrd_quebec_SOURCE.json. The original 55-MB archive is not bundled.
+
+The example is descriptive, with equal weights per selected site-year.
+No area correction, stationarity, independence, mixing, trend-test calibration
+or dependent-field confidence coverage is asserted.
+
+Licence: Environment and Climate Change Canada Data Services End-use Licence,
+version displayed as 2.1.1, August 2026; checked 2026-11-10.
+https://eccc-msc.github.io/open-data/licence/readme_en/
+Data Source: Environment and Climate Change Canada.
+Contains information licenced under the Data Server End-use Licence of Environment and Climate Change Canada.
+No endorsement by ECCC is implied. The data retain their source licence;
+the package's GPL licence does not replace the data-provider terms.

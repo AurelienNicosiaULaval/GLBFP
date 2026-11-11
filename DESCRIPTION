@@ -1,7 +1,7 @@
 Package: GLBFP
 Type: Package
 Title: General Linear Blend Frequency Polygon Density Estimation
-Version: 0.5.2.9000
+Version: 0.5.2.9002
 Authors@R: c(
     person(given = "Aurélien",
            family = "Nicosia",
@@ -18,8 +18,8 @@ Description: Implements nonparametric density estimation with Averaged Shifted
     Histogram (ASH), Linear Blend Frequency Polygon (LBFP), and General Linear
     Blend Frequency Polygon (GLBFP) estimators. The package provides pointwise
     and grid-based estimation workflows, sparse-prefix grid-count computation,
-    fixed-grid leave-one-out self-support scores, plotting helpers, and plug-in
-    bandwidth selection.
+    fixed-grid leave-one-out self-support scores, plotting helpers, indexed
+    fields, and Gaussian-reference bandwidth selection.
 License: GPL (>= 3)
 URL: https://aureliennicosiaulaval.github.io/GLBFP/,
     https://github.com/AurelienNicosiaULaval/GLBFP
@@ -27,9 +27,13 @@ BugReports: https://github.com/AurelienNicosiaULaval/GLBFP/issues
 Depends:
     R (>= 4.1.0)
 Imports:
+    Rcpp,
     ggplot2,
+    grid,
     plotly
+LinkingTo: Rcpp
 Suggests:
+    htmlwidgets,
     knitr,
     MASS,
     rmarkdown,
@@ -39,4 +43,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
+Config/roxygen2/version: 8.1.0

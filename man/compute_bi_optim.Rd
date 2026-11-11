@@ -4,7 +4,7 @@
 \alias{compute_bi_optim}
 \title{Compute bandwidth vector \eqn{b_i}}
 \usage{
-compute_bi_optim(data, m = rep(1, ncol(data)))
+compute_bi_optim(data, m = NULL)
 }
 \arguments{
 \item{data}{A numeric matrix or data frame where rows are observations and
@@ -27,8 +27,11 @@ The returned vector is intended as a starting value for examples and routine
 workflows. For applied analysis, sensitivity to the bandwidth should still be
 checked.
 
-The plug-in expression follows the optimal cell-width calculation for
-multivariate frequency polygons in Carbon and Duchesne (2024).
+The expression follows equation (36) of Carbon (2024), internal working
+note, Le fameux GLBFP, pages 6-10. It minimizes a Gaussian-reference
+asymptotic L1 upper-bound criterion, assuming a normal approximation. That
+approximation is explicitly unproved for GLBFP in the note. This is not
+an IMSE-optimal rule, nor an optimal bandwidth for outlier ranking or tests.
 
 Near-singular covariance matrices are stabilized with a small ridge term. If
 this fails, the function returns an error rather than silently producing

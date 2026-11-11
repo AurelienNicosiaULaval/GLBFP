@@ -29,9 +29,10 @@ K_mi <- function(mi) {
   if (!is.numeric(mi) || length(mi) != 1L || !is.finite(mi) || mi <= 0.5) {
     stop("`mi` must be a single numeric value greater than 0.5.", call. = FALSE)
   }
-  term1 <- sqrt(1 / 6 + 1 / (12 * mi^2))
-  term2 <- (4 * mi^2 - 1) / (6 * sqrt(2) * mi)
-  term3 <- log((sqrt(3) + sqrt(4 * mi^2 + 2)) / sqrt(4 * mi^2 - 1))
-
-  term1 + term2 * term3
+  inverse <- 1 / mi
+  term1 <- sqrt(1 / 6 + inverse^2 / 12)
+  arg <- sqrt(3) * inverse / sqrt(4 - inverse^2)
+  ratio <- if (arg == 0) 1 else asinh(arg) / arg
+  term2 <- sqrt(12 - 3 * inverse^2) / (6 * sqrt(2)) * ratio
+  term1 + term2
 }

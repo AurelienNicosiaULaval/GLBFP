@@ -4,3 +4,10 @@
 Meta/
 doc/
 rjournal-prep/
+
+# Local native build products
+src/*.o
+src/*.so
+src/*.dll
+data-raw/cdem-quebec-3979.tif
+data-raw/cdem-extraction-environment.txt

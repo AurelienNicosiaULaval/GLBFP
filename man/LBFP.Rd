@@ -8,9 +8,11 @@
 LBFP(
   x,
   data,
-  b = compute_bi_optim(data, m = rep(1, ncol(data))),
-  min_vals = apply(data, 2, min),
-  max_vals = apply(data, 2, max)
+  b = NULL,
+  min_vals = NULL,
+  max_vals = NULL,
+  engine = c("auto", "R", "cpp_direct", "cpp_prefix"),
+  inference = c("none", "iid", "stationary_mixing")
 )
 
 \method{print}{LBFP}(x, ...)
@@ -25,6 +27,24 @@ LBFP(
 \item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
 \item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
+
+\item{engine}{Computational engine; see \code{\link[=prepare_glbfp]{prepare_glbfp()}}.}
+
+\item{inference}{Default \code{"none"} returns \code{NA} uncertainty fields. \code{"iid"}
+requires explicit fixed bandwidths and anchor and independent observations.
+The sample variance of observation weights estimates the variance of the
+estimate. Normal 95 percent intervals target the expected smoothed density,
+without bias correction or guaranteed finite-sample coverage. Evaluation
+points must also be fixed independently of the observations.
+\code{"stationary_mixing"} implements the LBFP plug-in asymptotic interval of
+Carbon and Duchesne (2026), requiring a complete rectangular indexed
+field, explicit fixed bandwidths and anchor, and fixed query points. It
+applies to GLBFP only when all \code{m} equal 1. Stationarity, mixing, regularity,
+asymptotic bandwidth conditions and negligible bias are caller assumptions;
+the function cannot verify them. The interval targets the marginal density,
+is pointwise and asymptotic, and does not guarantee finite-sample coverage.
+A warning is issued: strong dependence can cause severe undercoverage in
+finite samples. Zero plug-in density gives an unavailable interval.}
 
 \item{...}{Additional arguments (unused).}
 }
@@ -45,6 +65,15 @@ before calling the estimator.
 \item \code{print(LBFP)}: Print method for object of class \code{"LBFP"}.
 
 }}
+\section{Grid conventions}{
+
+Fine counting cells are half-open with width \code{b/m} and lower-bound anchor
+\code{min_vals}. Interpolation is between their centers. Unoccupied cells have
+zero counts on an unbounded lattice. \code{max_vals} controls the display grid,
+not the density support. See \code{\link[=prepare_glbfp]{prepare_glbfp()}} for exact conventions.
+\code{data} may also be a \code{\link[=glbfp_field]{glbfp_field()}}; index coordinates are kept separate.
+}
+
 \examples{
 x <- c(200, 30)
 b <- c(0.5, 0.5)
@@ -52,6 +81,11 @@ LBFP(x, ashua[, -3], b = b)
 
 }
 \references{
+Carbon, M., and Duchesne, T. (2026; online 2025). Asymptotic normality of
+multivariate frequency polygons for stationary random fields. \emph{Annals of the
+Institute of Statistical Mathematics}, 78, 297-326.
+doi:10.1007/s10463-025-00952-x.
+
 Scott, D. W. (1992). \emph{Multivariate Density Estimation: Theory, Practice, and
 Visualization}. Wiley. doi:10.1002/9780470316849.
 

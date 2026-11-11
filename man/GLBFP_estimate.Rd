@@ -8,12 +8,14 @@
 \usage{
 GLBFP_estimate(
   data,
-  b = compute_bi_optim(data, m = rep(1, ncol(data))),
-  m = rep(1, ncol(data)),
+  b = NULL,
+  m = NULL,
   grid_size = 20,
   grid_points = NULL,
-  min_vals = apply(data, 2, min),
-  max_vals = apply(data, 2, max)
+  min_vals = NULL,
+  max_vals = NULL,
+  engine = c("auto", "R", "cpp_direct", "cpp_prefix"),
+  inference = c("none", "iid", "stationary_mixing")
 )
 
 \method{print}{GLBFP_estimate}(x, ...)
@@ -35,6 +37,24 @@ GLBFP_estimate(
 \item{min_vals}{Numeric vector of lower grid bounds (length \code{d}).}
 
 \item{max_vals}{Numeric vector of upper grid bounds (length \code{d}).}
+
+\item{engine}{Computational engine; see \code{\link[=prepare_glbfp]{prepare_glbfp()}}.}
+
+\item{inference}{Default \code{"none"} returns \code{NA} uncertainty fields. \code{"iid"}
+requires explicit fixed bandwidths and anchor and independent observations.
+The sample variance of observation weights estimates the variance of the
+estimate. Normal 95 percent intervals target the expected smoothed density,
+without bias correction or guaranteed finite-sample coverage. Evaluation
+points must also be fixed independently of the observations.
+\code{"stationary_mixing"} implements the LBFP plug-in asymptotic interval of
+Carbon and Duchesne (2026), requiring a complete rectangular indexed
+field, explicit fixed bandwidths and anchor, and fixed query points. It
+applies to GLBFP only when all \code{m} equal 1. Stationarity, mixing, regularity,
+asymptotic bandwidth conditions and negligible bias are caller assumptions;
+the function cannot verify them. The interval targets the marginal density,
+is pointwise and asymptotic, and does not guarantee finite-sample coverage.
+A warning is issued: strong dependence can cause severe undercoverage in
+finite samples. Zero plug-in density gives an unavailable interval.}
 
 \item{x}{Object returned by \code{\link[=GLBFP_estimate]{GLBFP_estimate()}}.}
 
@@ -61,6 +81,15 @@ scatter representations instead of a surface.
 \item \code{plot(GLBFP_estimate)}: Plot method for object of class \code{"GLBFP_estimate"}.
 
 }}
+\section{Grid conventions}{
+
+Fine counting cells are half-open with width \code{b/m} and lower-bound anchor
+\code{min_vals}. Interpolation is between their centers. Unoccupied cells have
+zero counts on an unbounded lattice. \code{max_vals} controls the display grid,
+not the density support. See \code{\link[=prepare_glbfp]{prepare_glbfp()}} for exact conventions.
+\code{data} may also be a \code{\link[=glbfp_field]{glbfp_field()}}; index coordinates are kept separate.
+}
+
 \examples{
 b <- c(0.5, 0.5)
 # Use a small, representative subset so examples remain fast in checks.

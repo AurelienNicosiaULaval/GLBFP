@@ -36,6 +36,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Aurélien Nicosia \email{aurelien.nicosia@mat.ulaval.ca}
   \item Thierry Duchesne
   \item Michel Carbon
 }
